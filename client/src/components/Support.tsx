@@ -1,51 +1,54 @@
 export default function Support() {
   return (
-    <section className="mx-auto max-w-7xl px-6 pb-32">
+    <section className="bg-[#05070d] px-6 pb-32 text-white">
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/30 to-cyan-900/20 p-8 text-center shadow-[0_0_40px_#9333ea22] md:p-12">
 
-      <div className="rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/30 to-cyan-900/20 p-12 text-center">
+          <p className="mb-4 text-sm font-bold uppercase tracking-[0.4em] text-cyan-400">
+            Join The Community
+          </p>
 
-        <h2 className="text-5xl font-black">
-          Support PulsePlay
-        </h2>
+          <h2 className="text-5xl font-black">
+            Support <span className="text-purple-500">PulsePlay</span>
+          </h2>
 
-        <p className="mx-auto mt-6 max-w-3xl text-gray-300">
-          Every purchase and contribution helps improve the stream,
-          create better content, and grow the PulsePlay community.
-        </p>
+          <p className="mx-auto mt-6 max-w-3xl text-gray-300">
+            Every follow, purchase, and contribution helps improve the stream,
+            create better content, and grow the PulsePlay gaming community.
+          </p>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-5">
+          <div className="mt-10 flex flex-wrap justify-center gap-5">
 
-          <a
-            href="https://pulseplay-online.wegic.net/"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-xl bg-cyan-400 px-8 py-4 font-bold text-black"
-          >
-            🌐 Website
-          </a>
+            <a
+              href="https://pulseplay-online.wegic.net/"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl bg-cyan-400 px-8 py-4 font-bold text-black transition hover:shadow-[0_0_25px_#22d3ee]"
+            >
+              🌐 Website
+            </a>
 
-          <a
-            href="https://throne.com/ve"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-xl border border-purple-500 px-8 py-4"
-          >
-            🎁 Throne Wishlist
-          </a>
+            <a
+              href="https://throne.com/ve"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl border border-purple-500 px-8 py-4 font-bold transition hover:bg-purple-500/10 hover:shadow-[0_0_25px_#9333ea]"
+            >
+              🎁 Throne Wishlist
+            </a>
 
-          <a
-            href="https://amzn.to/4vmEtDy"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-xl border border-cyan-500 px-8 py-4"
-          >
-            🛒 Amazon Picks
-          </a>
+            <a
+              href="https://amzn.to/4vmEtDy"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl border border-cyan-500 px-8 py-4 font-bold transition hover:bg-cyan-500/10 hover:shadow-[0_0_25px_#22d3ee]"
+            >
+              🛒 Amazon Picks
+            </a>
 
+          </div>
         </div>
-
       </div>
-
     </section>
   );
 }
