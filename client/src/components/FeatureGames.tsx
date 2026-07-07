@@ -9,7 +9,7 @@ const games: Game[] = [
   { title: "Fortnite", genre: "Battle Royale" },
 ];
 
-export default function FeaturedGames() {
+export default function FeatureGames() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-24">
       <h2 className="mb-12 text-center text-5xl font-black">
