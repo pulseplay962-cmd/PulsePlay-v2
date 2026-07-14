@@ -12,3 +12,18 @@ body {
   color: white;
   font-family: Inter, system-ui, sans-serif;
 }
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #05070d;
+  color: white;
+}
+
+* {
+  transition:
+    color .2s ease,
+    background-color .2s ease,
+    border-color .2s ease;
+}

@@ -1,86 +1,268 @@
+import { useEffect, useState } from "react";
+import { getProducts } from "../services/products";
+
 type Product = {
+  id: string;
   name: string;
-  category: string;
   description: string;
-  link: string;
+  price?: number;
+  image?: string;
+  category?: string;
+  link?: string;
 };
 
-const products: Product[] = [
-  {
-    name: "Gaming Headset",
-    category: "Audio",
-    description: "Immersive sound and crystal-clear communication.",
-    link: "https://amzn.to/4vmEtDy",
-  },
-  {
-    name: "Mechanical Keyboard",
-    category: "Accessories",
-    description: "Responsive switches with customizable RGB lighting.",
-    link: "https://amzn.to/4vmEtDy",
-  },
-  {
-    name: "Streaming Microphone",
-    category: "Streaming",
-    description: "Professional-quality audio for streams and videos.",
-    link: "https://amzn.to/4vmEtDy",
-  },
-];
 
 export default function Store() {
-  return (
-    <section className="bg-[#05070d] px-6 py-24 text-white">
-      <div className="mx-auto max-w-7xl">
-        <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.4em] text-cyan-400">
-            PulsePlay Store
-          </p>
 
-          <h1 className="mt-4 text-5xl font-black md:text-6xl">
-            Level Up Your <span className="text-cyan-400">Gaming Setup</span>
-          </h1>
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-400">
-            Browse creator-recommended gaming gear, streaming equipment,
-            and future PulsePlay merchandise.
-          </p>
-        </div>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-3">
-          {products.map((product) => (
-            <article
-              key={product.name}
-              className="group overflow-hidden rounded-3xl border border-cyan-500/20 bg-white/5 transition duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:shadow-[0_0_30px_#22d3ee55]"
-            >
-              <div className="flex aspect-square items-center justify-center bg-gradient-to-br from-cyan-500/20 to-purple-600/20">
-                <span className="text-6xl">🎮</span>
-              </div>
 
-              <div className="p-6">
-                <span className="rounded-full border border-cyan-400/30 px-3 py-1 text-xs font-bold text-cyan-300">
-                  {product.category}
-                </span>
+  useEffect(() => {
 
-                <h2 className="mt-4 text-2xl font-bold">
-                  {product.name}
-                </h2>
+    async function loadProducts() {
 
-                <p className="mt-3 text-gray-400">
-                  {product.description}
-                </p>
+      try {
 
-                <a
-                  href={product.link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-6 inline-block rounded-lg bg-cyan-400 px-5 py-3 font-bold text-black transition hover:bg-cyan-300 hover:shadow-[0_0_20px_#22d3ee]"
-                >
-                  View Product
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
+        const data = await getProducts();
+
+        setProducts(data || []);
+
+
+      } catch (err) {
+
+        console.error(
+          "Failed to load products:",
+          err
+        );
+
+        setError(
+          "Unable to load products."
+        );
+
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    }
+
+
+    loadProducts();
+
+  }, []);
+
+
+
+
+  if (loading) {
+
+    return (
+
+      <div className="mx-auto max-w-7xl px-6 py-24 text-white">
+
+        <h1 className="text-5xl font-black">
+          PulsePlay Store
+        </h1>
+
+
+        <p className="mt-4 text-gray-400">
+          Loading products...
+        </p>
+
       </div>
-    </section>
+
+    );
+
+  }
+
+
+
+
+
+  return (
+
+    <div className="mx-auto max-w-7xl px-6 py-24 text-white">
+
+
+      <h1 className="text-5xl font-black">
+        PulsePlay Store
+      </h1>
+
+
+      <p className="mt-4 text-gray-400">
+        Gear up with products selected for gamers.
+      </p>
+
+
+
+      {error && (
+
+        <p className="mt-8 rounded-xl bg-red-500/20 p-4 text-red-300">
+          {error}
+        </p>
+
+      )}
+
+
+
+
+
+
+      <div className="mt-12 grid gap-8 md:grid-cols-3">
+
+
+        {products.map((product)=>(
+
+          <div
+
+            key={product.id}
+
+            className="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:-translate-y-1 hover:border-cyan-400"
+
+          >
+
+
+
+            {product.image ? (
+
+              <img
+
+                src={product.image}
+
+                alt={product.name}
+
+                className="h-56 w-full rounded-xl object-cover"
+
+              />
+
+            ) : (
+
+              <div className="flex h-56 items-center justify-center rounded-xl bg-white/5 text-5xl">
+
+                🎮
+
+              </div>
+
+            )}
+
+
+
+
+
+
+            <h2 className="mt-5 text-2xl font-bold">
+
+              {product.name}
+
+            </h2>
+
+
+
+
+
+
+            {product.category && (
+
+              <p className="mt-2 text-purple-400">
+
+                {product.category}
+
+              </p>
+
+            )}
+
+
+
+
+
+
+
+            <p className="mt-3 text-gray-400">
+
+              {product.description}
+
+            </p>
+
+
+
+
+
+
+
+            {product.price !== undefined && (
+
+              <p className="mt-4 text-xl font-bold text-cyan-400">
+
+                ${product.price}
+
+              </p>
+
+            )}
+
+
+
+
+
+
+
+
+            {product.link && (
+
+              <a
+
+                href={product.link}
+
+                target="_blank"
+
+                rel="noopener noreferrer"
+
+                className="mt-5 inline-block rounded-lg bg-purple-600 px-5 py-2 font-bold transition hover:bg-purple-500"
+
+              >
+
+                View Product
+
+              </a>
+
+            )}
+
+
+
+
+          </div>
+
+        ))}
+
+
+
+      </div>
+
+
+
+
+
+
+
+      {products.length === 0 && (
+
+        <p className="mt-10 text-gray-400">
+
+          No products available yet.
+
+        </p>
+
+      )}
+
+
+
+
+    </div>
+
   );
+
 }
