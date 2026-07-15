@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 
 import healthRoutes from "./routes/health.js";
 import twitchRoutes from "./routes/twitch.js";
+import gamesRoutes from "./routes/games.js";
+import videosRoutes from "./routes/videos.js";
 
 dotenv.config();
 
@@ -62,6 +64,10 @@ app.get("/", (req, res) => {
 app.use("/api/health", healthRoutes);
 
 app.use("/api/twitch", twitchRoutes);
+
+app.use("/api/games", gamesRoutes);
+
+app.use("/api/videos", videosRoutes);
 
 
 // -------------------------
