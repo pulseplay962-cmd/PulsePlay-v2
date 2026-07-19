@@ -11,6 +11,7 @@ import Community from "../pages/Community";
 import News from "../pages/News";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
+import NewsArticle from "../pages/NewsArticle";
 
 import Dashboard from "../pages/admin/Dashboard";
 import Games from "../pages/admin/Games";
@@ -23,27 +24,66 @@ import Login from "../pages/admin/Login";
 
 const router = createBrowserRouter([
 
+  // Public Website
   {
     path: "/",
     element: <MainLayout />,
     children: [
-      { index: true, element: <Home /> },
-      { path: "streams", element: <Streams /> },
-      { path: "store", element: <Store /> },
-      { path: "community", element: <Community /> },
-      { path: "news", element: <News /> },
-      { path: "about", element: <About /> },
-      { path: "contact", element: <Contact /> },
+
+      {
+        index: true,
+        element: <Home />,
+      },
+
+      {
+        path: "streams",
+        element: <Streams />,
+      },
+
+      {
+        path: "store",
+        element: <Store />,
+      },
+
+      {
+        path: "community",
+        element: <Community />,
+      },
+
+      // News Listing
+      {
+        path: "news",
+        element: <News />,
+      },
+
+      // Individual News Article
+      {
+        path: "news/:slug",
+        element: <NewsArticle />,
+      },
+
+      {
+        path: "about",
+        element: <About />,
+      },
+
+      {
+        path: "contact",
+        element: <Contact />,
+      },
+
     ],
   },
 
 
+  // Admin Login
   {
     path: "/admin/login",
     element: <Login />,
   },
 
 
+  // Protected Admin Area
   {
     path: "/admin",
     element: (
@@ -51,14 +91,47 @@ const router = createBrowserRouter([
         <AdminLayout />
       </ProtectedRoute>
     ),
+
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: "games", element: <Games /> },
-      { path: "videos", element: <Videos /> },
-      { path: "products", element: <Products /> },
-      { path: "news", element: <NewsAdmin /> },
-      { path: "settings", element: <Settings /> },
+
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+
+      {
+        path: "games",
+        element: <Games />,
+      },
+
+      {
+        path: "videos",
+        element: <Videos />,
+      },
+
+      {
+        path: "products",
+        element: <Products />,
+      },
+
+      {
+        path: "news",
+        element: <NewsAdmin />,
+      },
+
+      {
+        path: "settings",
+        element: <Settings />,
+      },
+
     ],
+  },
+
+
+  // Fallback
+  {
+    path: "*",
+    element: <Home />,
   },
 
 ]);

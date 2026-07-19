@@ -1,45 +1,166 @@
-import { Link, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
-const links = [
-  { to: "/", label: "Home" },
-  { to: "/streams", label: "Streams" },
-  { to: "/store", label: "Store" },
-  { to: "/about", label: "About" },
-];
 
 export default function Navbar() {
+
+  const [open, setOpen] = useState(false);
+
+
+  const links = [
+    {
+      name: "Home",
+      path: "/",
+    },
+    {
+      name: "Streams",
+      path: "/streams",
+    },
+    {
+      name: "Store",
+      path: "/store",
+    },
+    {
+      name: "News",
+      path: "/news",
+    },
+    {
+      name: "Community",
+      path: "/community",
+    },
+    {
+      name: "About",
+      path: "/about",
+    },
+    {
+      name: "Contact",
+      path: "/contact",
+    },
+  ];
+
+
   return (
-    <header className="sticky top-0 z-50 border-b border-cyan-500/20 bg-[#05070d]/90 backdrop-blur-xl">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
 
-        <Link
+    <nav className="border-b border-cyan-500/20 bg-[#050816] px-6 py-4">
+
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+
+
+        {/* Logo */}
+
+        <NavLink
           to="/"
-          className="text-2xl font-black tracking-widest text-cyan-400"
+          className="text-3xl font-black tracking-wider text-cyan-400"
+          onClick={() => setOpen(false)}
         >
-          PULSEPLAY
-        </Link>
+          PulsePlay
+        </NavLink>
 
-        <div className="hidden md:flex items-center gap-8">
+
+
+        {/* Desktop Menu */}
+
+        <div className="hidden items-center gap-6 md:flex">
+
           {links.map((link) => (
+
             <NavLink
-              key={link.to}
-              to={link.to}
+
+              key={link.path}
+
+              to={link.path}
+
               className={({ isActive }) =>
-                isActive
-                  ? "text-cyan-400 font-semibold"
-                  : "text-gray-300 hover:text-cyan-300 transition"
+                `
+                font-bold transition
+                ${
+                  isActive
+                    ? "text-cyan-400"
+                    : "text-gray-300 hover:text-cyan-400"
+                }
+                `
               }
+
             >
-              {link.label}
+
+              {link.name}
+
             </NavLink>
+
           ))}
+
         </div>
 
-        <div className="rounded-full bg-red-600 px-4 py-1 text-sm font-bold">
-          LIVE
+
+
+
+        {/* Mobile Button */}
+
+        <button
+
+          onClick={() => setOpen(!open)}
+
+          className="text-3xl text-cyan-400 md:hidden"
+
+          aria-label="Toggle menu"
+
+        >
+
+          ☰
+
+        </button>
+
+
+      </div>
+
+
+
+
+
+      {/* Mobile Menu */}
+
+      {open && (
+
+        <div className="mt-6 flex flex-col gap-4 md:hidden">
+
+
+          {links.map((link) => (
+
+            <NavLink
+
+              key={link.path}
+
+              to={link.path}
+
+              onClick={() => setOpen(false)}
+
+              className={({ isActive }) =>
+                `
+                rounded-lg px-4 py-3 font-bold transition
+                ${
+                  isActive
+                    ? "bg-cyan-500 text-black"
+                    : "text-gray-300 hover:bg-[#111827] hover:text-cyan-400"
+                }
+                `
+              }
+
+            >
+
+              {link.name}
+
+            </NavLink>
+
+          ))}
+
+
         </div>
 
-      </nav>
-    </header>
+      )}
+
+
+    </nav>
+
   );
+
 }

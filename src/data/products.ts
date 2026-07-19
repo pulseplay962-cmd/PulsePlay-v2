@@ -1,9 +1,12 @@
-export const products = [
-  {
-    id: 1,
-    name: "Gaming Mouse",
-    price: "$49.99",
-    image: "https://placehold.co/400x400",
-    link: "https://amzn.to/4vmEtDy",
-  },
-];
+export type Product = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  category: string;
+  price?: string;
+  featured?: boolean;
+};
+
+
+export const products: Product[] = [];

@@ -17,6 +17,7 @@ type Product = {
   image: string;
   link: string;
   featured: boolean;
+  category: string;
 };
 
 export default function Products() {
@@ -31,6 +32,7 @@ export default function Products() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [link, setLink] = useState("");
   const [featured, setFeatured] = useState(false);
+  const [category, setCategory] = useState("Gaming Accessories");
 
   async function loadProducts() {
     try {
@@ -65,15 +67,15 @@ export default function Products() {
         console.log("Image uploaded:", imageUrl);
       }
 
-      const product = {
-        name,
-        description,
-        price,
-        image: imageUrl,
-        link,
-        featured,
-      };
-
+     const product = {
+  name,
+  description,
+  price,
+  image: imageUrl,
+  link,
+  featured,
+  category,
+};
       console.log("Saving product:", product);
 
       if (editingId) {
@@ -118,6 +120,7 @@ export default function Products() {
     setImage(product.image);
     setLink(product.link);
     setFeatured(product.featured);
+    setCategory(product.category);
     setImageFile(null);
 
     window.scrollTo({
@@ -159,6 +162,7 @@ export default function Products() {
     setImageFile(null);
     setLink("");
     setFeatured(false);
+    setCategory("Gaming Accessories");
   }
 
   return (
@@ -197,6 +201,10 @@ export default function Products() {
           }
         />
 
+        <p className="mt-2 text-sm uppercase tracking-wide text-cyan-300">
+  {category}
+</p>
+
         <input
           className="w-full rounded bg-[#1f2937] p-3"
           placeholder="Price"
@@ -205,6 +213,27 @@ export default function Products() {
             setPrice(e.target.value)
           }
         />
+
+        <select
+  className="w-full rounded bg-[#1f2937] p-3"
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+>
+  <option>Gaming Accessories</option>
+  <option>GPUs</option>
+  <option>CPUs</option>
+  <option>CPU Coolers</option>
+  <option>Motherboards</option>
+  <option>Memory (RAM)</option>
+  <option>Storage</option>
+  <option>Power Supplies</option>
+  <option>Cases</option>
+  <option>Monitors</option>
+  <option>Keyboards</option>
+  <option>Mice</option>
+  <option>Headsets</option>
+  <option>Streaming Gear</option>
+</select>
 
         <input
           type="file"

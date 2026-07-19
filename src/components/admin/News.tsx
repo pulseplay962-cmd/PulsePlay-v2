@@ -13,16 +13,18 @@ import { uploadImage } from "../../services/storage";
 type Article = {
   id: string;
   title: string;
+  slug: string;
+  excerpt: string;
   content: string;
   image: string;
   category: string;
   featured: boolean;
+  published: boolean;
+  author: string;
 };
 
 
-
 export default function News() {
-
 
   const [articles, setArticles] = useState<Article[]>([]);
 
@@ -43,6 +45,7 @@ export default function News() {
 
   const [featured, setFeatured] = useState(false);
 
+  const [published, setPublished] = useState(true);
 
 
 
@@ -54,7 +57,6 @@ export default function News() {
 
       setArticles(data || []);
 
-
     } catch(error) {
 
       console.error(error);
@@ -65,16 +67,11 @@ export default function News() {
 
 
 
-
-
   useEffect(() => {
 
     loadNews();
 
   }, []);
-
-
-
 
 
 
@@ -89,12 +86,9 @@ export default function News() {
     setSaving(true);
 
 
-
     try {
 
-
       let imageUrl = image;
-
 
 
       if(imageFile){
@@ -108,43 +102,46 @@ export default function News() {
 
 
 
-
       const article = {
-  title,
-  slug: title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-"),
-  excerpt: content.substring(0, 150),
-  content,
-  image: imageUrl,
-  category,
-  featured,
-  published: true,
-  author: "PulsePlay",
-};
+
+        title,
+
+        slug: title
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-"),
 
 
+        excerpt: content.substring(0, 150),
+
+        content,
+
+        image: imageUrl,
+
+        category,
+
+        featured,
+
+        published,
+
+        author: "PulsePlay",
+
+      };
 
 
 
       if(editingId){
-
 
         await updateNews(
           editingId,
           article
         );
 
-
       } else {
-
 
         await addNews(article);
 
-
       }
-
 
 
 
@@ -154,9 +151,7 @@ export default function News() {
 
 
 
-
     } catch(error){
-
 
       console.error(error);
 
@@ -165,19 +160,13 @@ export default function News() {
       );
 
 
-
     } finally {
-
 
       setSaving(false);
 
-
     }
 
-
   }
-
-
 
 
 
@@ -186,7 +175,6 @@ export default function News() {
   function editArticle(
     article: Article
   ){
-
 
     setEditingId(article.id);
 
@@ -200,19 +188,18 @@ export default function News() {
 
     setFeatured(article.featured);
 
+    setPublished(article.published);
+
     setImageFile(null);
 
 
 
     window.scrollTo({
-      top:0,
-      behavior:"smooth",
+      top: 0,
+      behavior: "smooth",
     });
 
-
   }
-
-
 
 
 
@@ -222,26 +209,20 @@ export default function News() {
     id:string
   ){
 
-
     const confirmed =
       window.confirm(
         "Delete this news article?"
       );
 
 
-
     if(!confirmed) return;
-
 
 
     await deleteNews(id);
 
     await loadNews();
 
-
   }
-
-
 
 
 
@@ -263,9 +244,9 @@ export default function News() {
 
     setFeatured(false);
 
+    setPublished(true);
+
   }
-
-
 
 
 
@@ -282,8 +263,6 @@ export default function News() {
 
 
 
-
-
       <form
 
         onSubmit={handleSubmit}
@@ -292,7 +271,6 @@ export default function News() {
 
       >
 
-
         <h2 className="text-xl font-bold">
 
           {editingId
@@ -300,9 +278,6 @@ export default function News() {
             : "Add News"}
 
         </h2>
-
-
-
 
 
 
@@ -322,9 +297,6 @@ export default function News() {
 
 
 
-
-
-
         <input
 
           className="w-full rounded bg-[#1f2937] p-3"
@@ -341,16 +313,13 @@ export default function News() {
 
 
 
-
-
-
         <textarea
 
           className="w-full rounded bg-[#1f2937] p-3"
 
           placeholder="Article content"
 
-          rows={5}
+          rows={6}
 
           value={content}
 
@@ -359,10 +328,6 @@ export default function News() {
           }
 
         />
-
-
-
-
 
 
 
@@ -386,9 +351,6 @@ export default function News() {
 
 
 
-
-
-
         {image && (
 
           <img
@@ -405,12 +367,7 @@ export default function News() {
 
 
 
-
-
-
-
         <label className="flex items-center gap-2">
-
 
           <input
 
@@ -426,15 +383,31 @@ export default function News() {
 
           />
 
-
           Featured Article
-
 
         </label>
 
 
 
+        <label className="flex items-center gap-2">
 
+          <input
+
+            type="checkbox"
+
+            checked={published}
+
+            onChange={(e)=>
+              setPublished(
+                e.target.checked
+              )
+            }
+
+          />
+
+          Published
+
+        </label>
 
 
 
@@ -447,7 +420,7 @@ export default function News() {
         >
 
           {saving
-            ? "Uploading..."
+            ? "Saving..."
             : editingId
             ? "Update Article"
             : "Add News"}
@@ -455,9 +428,7 @@ export default function News() {
         </button>
 
 
-
       </form>
-
 
 
 
@@ -468,7 +439,6 @@ export default function News() {
 
         {articles.map((article)=>(
 
-
           <div
 
             key={article.id}
@@ -476,7 +446,6 @@ export default function News() {
             className="rounded-xl bg-[#111827] p-5"
 
           >
-
 
 
             {article.image && (
@@ -495,38 +464,19 @@ export default function News() {
 
 
 
-
-
-
             <h2 className="text-2xl font-bold">
-
               {article.title}
-
             </h2>
 
 
-
-
-
-
             <p className="text-cyan-400">
-
               {article.category}
-
             </p>
-
-
-
-
 
 
             <p className="mt-3 text-gray-400">
-
               {article.content}
-
             </p>
-
-
 
 
 
@@ -542,12 +492,8 @@ export default function News() {
                 className="rounded bg-blue-600 px-4 py-2 font-bold"
 
               >
-
                 Edit
-
               </button>
-
-
 
 
 
@@ -560,25 +506,19 @@ export default function News() {
                 className="rounded bg-red-600 px-4 py-2 font-bold"
 
               >
-
                 Delete
-
               </button>
-
 
 
             </div>
 
 
-
           </div>
-
 
         ))}
 
 
       </div>
-
 
 
     </div>

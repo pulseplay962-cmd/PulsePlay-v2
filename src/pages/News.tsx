@@ -1,127 +1,226 @@
 import { useEffect, useState } from "react";
-import { getNews } from "../services/news";
+import { Link } from "react-router-dom";
 
-type Article = {
-  id: string;
-  title: string;
-  content: string;
-  image: string;
-  category: string;
-  featured: boolean;
-};
+import { getNews } from "../services/news";
+import type { NewsArticle } from "../services/news";
+
 
 export default function News() {
-  const [articles, setArticles] = useState<Article[]>([]);
+
+  const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
+
     async function loadNews() {
+
       try {
+
         const data = await getNews();
+
         setArticles(data || []);
+
       } catch (error) {
-        console.error("Failed to load news:", error);
+
+        console.error(
+          "Failed to load news:",
+          error
+        );
+
       } finally {
+
         setLoading(false);
+
       }
+
     }
 
+
     loadNews();
+
   }, []);
 
 
 
+
+
+  if (loading) {
+
+    return (
+
+      <div className="px-6 py-20 text-center">
+
+        <p className="text-xl text-gray-400">
+          Loading news...
+        </p>
+
+      </div>
+
+    );
+
+  }
+
+
+
+
+
   return (
-    <section className="bg-[#05070d] px-6 py-24 text-white">
 
-      <div className="mx-auto max-w-7xl">
+    <div className="mx-auto max-w-7xl px-6 py-12">
 
-        <div className="text-center">
 
-          <p className="text-sm font-bold uppercase tracking-[0.4em] text-cyan-400">
-            PulsePlay News
+      <div className="mb-10">
+
+        <h1 className="text-5xl font-black text-cyan-400">
+          PulsePlay News
+        </h1>
+
+        <p className="mt-3 text-gray-400">
+          Latest gaming news, updates, reviews, and announcements.
+        </p>
+
+      </div>
+
+
+
+
+
+      {articles.length === 0 ? (
+
+        <div className="rounded-xl bg-[#111827] p-8 text-center">
+
+          <p className="text-gray-400">
+            No news articles available yet.
           </p>
-
-
-          <h1 className="mt-4 text-5xl font-black">
-            Latest{" "}
-            <span className="text-cyan-400">
-              Updates
-            </span>
-          </h1>
 
         </div>
 
-
-        {loading && (
-          <p className="mt-16 text-center text-gray-400">
-            Loading news...
-          </p>
-        )}
+      ) : (
 
 
-        {!loading && articles.length === 0 && (
-          <p className="mt-16 text-center text-gray-400">
-            No news articles yet.
-          </p>
-        )}
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
 
+          {articles.map((article) => (
 
-        <div className="mt-16 grid gap-8 md:grid-cols-3">
 
-          {articles.map((article)=>(
+            <div
 
-            <article
               key={article.id}
-              className="overflow-hidden rounded-3xl border border-cyan-500/20 bg-white/5"
+
+              className="overflow-hidden rounded-xl bg-[#111827] shadow-lg"
+
             >
 
+
+
               {article.image && (
+
                 <img
+
                   src={article.image}
+
                   alt={article.title}
-                  className="h-48 w-full object-cover"
+
+                  className="h-56 w-full object-cover"
+
                 />
+
               )}
+
+
+
 
 
               <div className="p-6">
 
-                <p className="text-sm text-cyan-400">
-                  {article.category}
-                </p>
+
+                <div className="flex gap-2">
 
 
-                {article.featured && (
-                  <p className="mt-2 text-yellow-400">
-                    ⭐ Featured
-                  </p>
-                )}
+                  <span className="rounded bg-cyan-500 px-3 py-1 text-sm font-bold text-black">
+
+                    {article.category}
+
+                  </span>
 
 
-                <h2 className="mt-3 text-2xl font-bold">
+
+                  {article.featured && (
+
+                    <span className="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black">
+
+                      Featured
+
+                    </span>
+
+                  )}
+
+
+                </div>
+
+
+
+
+
+
+                <h2 className="mt-5 text-2xl font-black">
+
                   {article.title}
+
                 </h2>
 
 
-                <p className="mt-3 text-gray-400">
-                  {article.content}
-                </p>
+
+
+
+                {article.excerpt && (
+
+                  <p className="mt-3 text-gray-400">
+
+                    {article.excerpt}
+
+                  </p>
+
+                )}
+
+
+
+
+
+
+                <Link
+
+                  to={`/news/${article.slug}`}
+
+                  className="mt-6 inline-block rounded-lg bg-cyan-500 px-5 py-2 font-bold text-black transition hover:bg-cyan-400"
+
+                >
+
+                  Read More →
+
+                </Link>
+
 
 
               </div>
 
-            </article>
+
+            </div>
+
 
           ))}
+
 
         </div>
 
 
-      </div>
+      )}
 
-    </section>
+
+    </div>
+
   );
+
 }
