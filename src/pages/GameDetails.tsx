@@ -39,7 +39,9 @@ export default function GameDetails() {
 
         const data = await getGameBySlug(slug);
 
-        setGame(data);
+console.log("Game loaded:", data);
+
+setGame(data);
 
 
       } catch (error) {

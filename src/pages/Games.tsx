@@ -129,7 +129,7 @@ export default function Games() {
 
               key={game.id}
 
-              to={`/games/${game.slug}`}
+              to={`/games/${game.slug ?? game.id}`}
 
               className="overflow-hidden rounded-xl bg-[#111827] transition hover:scale-[1.02]"
 

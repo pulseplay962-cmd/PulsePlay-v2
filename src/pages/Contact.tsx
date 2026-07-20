@@ -46,14 +46,12 @@ export default function Contact() {
               content.
             </p>
 
-            <a
-              href="https://pulseplay-online.wegic.net/"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 inline-block rounded-lg bg-purple-600 px-6 py-3 font-bold transition hover:bg-purple-700"
-            >
-              Visit Website
-            </a>
+            <button
+  disabled
+  className="mt-6 inline-block cursor-not-allowed rounded-lg bg-gray-600 px-6 py-3 font-bold text-gray-300"
+>
+  Website Temporarily Unavailable
+</button>
           </article>
 
           <article className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8">
