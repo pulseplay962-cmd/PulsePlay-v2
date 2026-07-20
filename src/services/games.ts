@@ -177,3 +177,21 @@ export async function deleteGame(
   return true;
 
 }
+
+export async function getGameBySlug(slug:string){
+
+  const {data,error}=await supabase
+    .from("games")
+    .select("*")
+    .eq("slug",slug)
+    .single();
+
+
+  if(error){
+    throw error;
+  }
+
+
+  return data;
+
+}

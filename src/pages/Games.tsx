@@ -7,11 +7,10 @@ import { getGames } from "../services/games";
 type Game = {
   id: string;
   title: string;
+  slug?: string;
   description: string;
   image: string;
-  genre?: string;
-  platform?: string;
-  featured?: boolean;
+  featured: boolean;
 };
 
 
@@ -19,6 +18,7 @@ type Game = {
 export default function Games() {
 
   const [games, setGames] = useState<Game[]>([]);
+
   const [loading, setLoading] = useState(true);
 
 
@@ -34,7 +34,7 @@ export default function Games() {
         setGames(data || []);
 
 
-      } catch (error) {
+      } catch(error) {
 
         console.error(
           "Failed to load games:",
@@ -54,6 +54,7 @@ export default function Games() {
     loadGames();
 
   }, []);
+
 
 
 
@@ -79,6 +80,7 @@ export default function Games() {
 
 
 
+
   return (
 
     <div className="mx-auto max-w-7xl px-6 py-12">
@@ -92,10 +94,12 @@ export default function Games() {
 
 
         <p className="mt-3 text-gray-400">
-          Explore games featured on PulsePlay.
+          Explore featured games, releases, and gaming content.
         </p>
 
+
       </div>
+
 
 
 
@@ -115,16 +119,19 @@ export default function Games() {
       ) : (
 
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
 
-          {games.map((game) => (
+          {games.map((game)=>(
 
-            <div
+
+            <Link
 
               key={game.id}
 
-              className="overflow-hidden rounded-xl bg-[#111827] shadow-lg transition hover:scale-[1.02]"
+              to={`/games/${game.slug}`}
+
+              className="overflow-hidden rounded-xl bg-[#111827] transition hover:scale-[1.02]"
 
             >
 
@@ -138,7 +145,7 @@ export default function Games() {
 
                   alt={game.title}
 
-                  className="h-64 w-full object-cover"
+                  className="h-56 w-full object-cover"
 
                 />
 
@@ -152,11 +159,21 @@ export default function Games() {
               <div className="p-6">
 
 
+                <h2 className="text-2xl font-black text-white">
+
+                  {game.title}
+
+                </h2>
+
+
+
+
+
                 {game.featured && (
 
-                  <span className="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black">
+                  <span className="mt-3 inline-block rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black">
 
-                    Featured
+                    ⭐ Featured
 
                   </span>
 
@@ -167,48 +184,7 @@ export default function Games() {
 
 
 
-                <h2 className="mt-4 text-2xl font-black">
-
-                  {game.title}
-
-                </h2>
-
-
-
-
-
-
-                {game.genre && (
-
-                  <p className="mt-2 text-cyan-400">
-
-                    🎮 {game.genre}
-
-                  </p>
-
-                )}
-
-
-
-
-
-
-                {game.platform && (
-
-                  <p className="mt-1 text-gray-400">
-
-                    🖥️ {game.platform}
-
-                  </p>
-
-                )}
-
-
-
-
-
-
-                <p className="mt-4 line-clamp-3 text-gray-400">
+                <p className="mt-4 text-gray-400">
 
                   {game.description}
 
@@ -218,25 +194,17 @@ export default function Games() {
 
 
 
-
-                <Link
-
-                  to={`/games/${game.id}`}
-
-                  className="mt-6 inline-block rounded-lg bg-cyan-500 px-5 py-2 font-bold text-black transition hover:bg-cyan-400"
-
-                >
+                <div className="mt-5 text-cyan-400 font-bold">
 
                   View Game →
 
-                </Link>
-
+                </div>
 
 
               </div>
 
 
-            </div>
+            </Link>
 
 
           ))}

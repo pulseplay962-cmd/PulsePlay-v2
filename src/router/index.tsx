@@ -21,6 +21,7 @@ import Products from "../pages/admin/Products";
 import NewsAdmin from "../pages/admin/News";
 import Settings from "../pages/admin/Settings";
 import Login from "../pages/admin/Login";
+import GameDetails from "../pages/GameDetails";
 
 
 const router = createBrowserRouter([
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
         path: "games",
         element: <GamesPage />,
       },
+
+      {
+  path: "games/:slug",
+  element: <GameDetails />,
+},
 
       {
         path: "streams",
