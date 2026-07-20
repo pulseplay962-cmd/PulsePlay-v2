@@ -1,117 +1,81 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 export default function Navbar() {
 
-  const navLinks = [
-    {
-      name: "Home",
-      path: "/",
-    },
-    {
-      name: "Streams",
-      path: "/streams",
-    },
-    {
-      name: "News",
-      path: "/news",
-    },
-    {
-      name: "Store",
-      path: "/store",
-    },
-    {
-      name: "Community",
-      path: "/community",
-    },
-    {
-      name: "About",
-      path: "/about",
-    },
-    {
-      name: "Contact",
-      path: "/contact",
-    },
-  ];
-
-
   return (
 
-    <nav className="border-b border-gray-800 bg-[#050816] px-6 py-4">
+    <nav className="flex items-center justify-between bg-[#0b1120] px-6 py-4">
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
+      <Link
+        to="/"
+        className="text-2xl font-black text-cyan-400"
+      >
+        PulsePlay
+      </Link>
 
 
-        {/* Logo */}
+      <div className="flex items-center gap-6 font-bold text-white">
 
         <Link
           to="/"
-          className="text-3xl font-black text-cyan-400"
+          className="hover:text-cyan-400"
         >
-          PulsePlay
+          Home
         </Link>
 
 
+        <Link
+          to="/games"
+          className="hover:text-cyan-400"
+        >
+          🎮 Games
+        </Link>
 
 
-        {/* Navigation */}
-
-        <div className="flex items-center gap-5">
-
-
-          {navLinks.map((link) => (
-
-            <NavLink
-
-              key={link.path}
-
-              to={link.path}
-
-              className={({ isActive }) =>
-                `font-bold transition ${
-                  isActive
-                    ? "text-cyan-400"
-                    : "text-gray-300 hover:text-cyan-400"
-                }`
-              }
-
-            >
-
-              {link.name}
-
-            </NavLink>
-
-          ))}
+        <Link
+          to="/streams"
+          className="hover:text-cyan-400"
+        >
+          Streams
+        </Link>
 
 
+        <Link
+          to="/news"
+          className="hover:text-cyan-400"
+        >
+          News
+        </Link>
 
 
-
-          {/* Throne Support */}
-
-          <a
-
-            href="https://throne.com/veiltactician"
-
-            target="_blank"
-
-            rel="noopener noreferrer"
-
-            className="rounded-lg bg-purple-500 px-4 py-2 font-bold text-white transition hover:bg-purple-400"
-
-          >
-
-            🎁 Support
-
-          </a>
+        <Link
+          to="/store"
+          className="hover:text-cyan-400"
+        >
+          Store
+        </Link>
 
 
+        <Link
+          to="/community"
+          className="hover:text-cyan-400"
+        >
+          Community
+        </Link>
 
-        </div>
+
+        <a
+          href="https://throne.com/veiltactician"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-lg bg-purple-500 px-4 py-2 text-white hover:bg-purple-400"
+        >
+          🎁 Support
+        </a>
 
 
       </div>
-
 
     </nav>
 

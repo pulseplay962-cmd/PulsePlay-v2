@@ -15,25 +15,27 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 
 import Dashboard from "../pages/admin/Dashboard";
-import Games from "../pages/admin/Games";
+import AdminGames from "../pages/admin/Games";
 import Videos from "../pages/admin/Videos";
 import Products from "../pages/admin/Products";
 import NewsAdmin from "../pages/admin/News";
 import Settings from "../pages/admin/Settings";
 import Login from "../pages/admin/Login";
 
+
 const router = createBrowserRouter([
+
   // Public Website
   {
     path: "/",
     element: <MainLayout />,
     children: [
+
       {
         index: true,
         element: <Home />,
       },
 
-      // Public Games Page
       {
         path: "games",
         element: <GamesPage />,
@@ -54,13 +56,11 @@ const router = createBrowserRouter([
         element: <Community />,
       },
 
-      // News Listing
       {
         path: "news",
         element: <News />,
       },
 
-      // Individual News Article
       {
         path: "news/:slug",
         element: <NewsArticle />,
@@ -75,14 +75,17 @@ const router = createBrowserRouter([
         path: "contact",
         element: <Contact />,
       },
+
     ],
   },
+
 
   // Admin Login
   {
     path: "/admin/login",
     element: <Login />,
   },
+
 
   // Protected Admin Area
   {
@@ -92,7 +95,9 @@ const router = createBrowserRouter([
         <AdminLayout />
       </ProtectedRoute>
     ),
+
     children: [
+
       {
         index: true,
         element: <Dashboard />,
@@ -100,7 +105,7 @@ const router = createBrowserRouter([
 
       {
         path: "games",
-        element: <Games />,
+        element: <AdminGames />,
       },
 
       {
@@ -122,14 +127,18 @@ const router = createBrowserRouter([
         path: "settings",
         element: <Settings />,
       },
+
     ],
   },
+
 
   // Fallback
   {
     path: "*",
     element: <Home />,
   },
+
 ]);
+
 
 export default router;
