@@ -13,6 +13,10 @@ export default function Navbar() {
       path: "/",
     },
     {
+      name: "Games",
+      path: "/games",
+    },
+    {
       name: "Streams",
       path: "/streams",
     },
@@ -58,6 +62,7 @@ export default function Navbar() {
 
 
 
+
         {/* Desktop Menu */}
 
         <div className="hidden items-center gap-6 md:flex">
@@ -89,7 +94,29 @@ export default function Navbar() {
 
           ))}
 
+
+
+          {/* Throne Support */}
+
+          <a
+
+            href="https://throne.com/veiltactician"
+
+            target="_blank"
+
+            rel="noopener noreferrer"
+
+            className="rounded-lg bg-purple-500 px-4 py-2 font-bold text-white transition hover:bg-purple-400"
+
+          >
+
+            🎁 Support
+
+          </a>
+
+
         </div>
+
 
 
 
@@ -152,6 +179,26 @@ export default function Navbar() {
             </NavLink>
 
           ))}
+
+
+
+          <a
+
+            href="https://throne.com/veiltactician"
+
+            target="_blank"
+
+            rel="noopener noreferrer"
+
+            onClick={() => setOpen(false)}
+
+            className="rounded-lg bg-purple-500 px-4 py-3 text-center font-bold text-white transition hover:bg-purple-400"
+
+          >
+
+            🎁 Support
+
+          </a>
 
 
         </div>
