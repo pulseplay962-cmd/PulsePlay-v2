@@ -19,7 +19,12 @@ export default function News() {
 
         const data = await getNews();
 
-        setArticles(data || []);
+        setArticles(
+          (data || []).filter(
+            (article) => article.published !== false
+          )
+        );
+
 
       } catch (error) {
 
@@ -27,6 +32,7 @@ export default function News() {
           "Failed to load news:",
           error
         );
+
 
       } finally {
 
@@ -67,20 +73,27 @@ export default function News() {
 
   return (
 
-    <div className="mx-auto max-w-7xl px-6 py-12">
+    <div className="mx-auto max-w-7xl px-6 py-16">
 
 
-      <div className="mb-10">
+      <section className="mb-12">
 
         <h1 className="text-5xl font-black text-cyan-400">
+
           PulsePlay News
+
         </h1>
 
-        <p className="mt-3 text-gray-400">
-          Latest gaming news, updates, reviews, and announcements.
+
+        <p className="mt-4 max-w-2xl text-gray-400">
+
+          Stay updated with the latest gaming news,
+          esports updates, reviews, and announcements.
+
         </p>
 
-      </div>
+
+      </section>
 
 
 
@@ -88,13 +101,17 @@ export default function News() {
 
       {articles.length === 0 ? (
 
-        <div className="rounded-xl bg-[#111827] p-8 text-center">
+        <div className="rounded-xl bg-[#111827] p-10 text-center">
 
           <p className="text-gray-400">
+
             No news articles available yet.
+
           </p>
 
+
         </div>
+
 
       ) : (
 
@@ -104,28 +121,38 @@ export default function News() {
 
           {articles.map((article) => (
 
-
-            <div
+            <article
 
               key={article.id}
 
-              className="overflow-hidden rounded-xl bg-[#111827] shadow-lg"
+              className="overflow-hidden rounded-xl bg-[#111827] shadow-lg transition hover:-translate-y-1 hover:shadow-xl"
 
             >
 
 
-
               {article.image && (
 
-                <img
+                <Link
 
-                  src={article.image}
+                  to={
+                    article.slug
+                      ? `/news/${article.slug}`
+                      : "/news"
+                  }
 
-                  alt={article.title}
+                >
 
-                  className="h-56 w-full object-cover"
+                  <img
 
-                />
+                    src={article.image}
+
+                    alt={article.title}
+
+                    className="h-56 w-full object-cover transition hover:opacity-80"
+
+                  />
+
+                </Link>
 
               )}
 
@@ -136,20 +163,34 @@ export default function News() {
               <div className="p-6">
 
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
 
 
-                  <span className="rounded bg-cyan-500 px-3 py-1 text-sm font-bold text-black">
+                  {article.category && (
 
-                    {article.category}
+                    <span
 
-                  </span>
+                      className="rounded bg-cyan-500 px-3 py-1 text-sm font-bold text-black"
+
+                    >
+
+                      {article.category}
+
+                    </span>
+
+                  )}
+
+
 
 
 
                   {article.featured && (
 
-                    <span className="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black">
+                    <span
+
+                      className="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
+
+                    >
 
                       Featured
 
@@ -164,50 +205,61 @@ export default function News() {
 
 
 
-
-                <h2 className="mt-5 text-2xl font-black">
-
-                  {article.title}
-
-                </h2>
-
-
-
-
-
-                {article.excerpt && (
-
-                  <p className="mt-3 text-gray-400">
-
-                    {article.excerpt}
-
-                  </p>
-
-                )}
-
-
-
-
-
-
                 <Link
 
-                  to={`/news/${article.slug}`}
-
-                  className="mt-6 inline-block rounded-lg bg-cyan-500 px-5 py-2 font-bold text-black transition hover:bg-cyan-400"
+                  to={
+                    article.slug
+                      ? `/news/${article.slug}`
+                      : "/news"
+                  }
 
                 >
 
-                  Read More →
+                  <h2 className="mt-5 text-2xl font-black transition hover:text-cyan-400">
+
+                    {article.title}
+
+                  </h2>
+
 
                 </Link>
 
 
 
+
+
+                <p className="mt-3 line-clamp-3 text-gray-400">
+
+                  {article.excerpt ||
+                    article.content.substring(0, 150) + "..."}
+
+                </p>
+
+
+
+
+
+                {article.slug && (
+
+                  <Link
+
+                    to={`/news/${article.slug}`}
+
+                    className="mt-6 inline-block rounded-lg bg-cyan-500 px-5 py-2 font-bold text-black transition hover:bg-cyan-400"
+
+                  >
+
+                    Read More →
+
+                  </Link>
+
+                )}
+
+
               </div>
 
 
-            </div>
+            </article>
 
 
           ))}

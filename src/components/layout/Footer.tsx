@@ -65,13 +65,12 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://throne.com/ve"
-              target="_blank"
-              rel="noreferrer"
-              className="text-gray-400 hover:text-cyan-400"
-            >
-              Throne Wishlist
-            </a>
+  href="https://throne.com/veiltactician"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Support The Stream
+</a>
 
             <a
               href="https://amzn.to/4vmEtDy"
