@@ -39,11 +39,11 @@ export default function Community() {
       button: "Watch Live",
     },
     {
-      title: "🌐 PulsePlay Website",
-      description: "Explore the latest content, updates, and gaming news.",
-      url: "https://pulseplay-online.wegic.net/",
-      button: "Visit Website",
-    },
+  title: "🌐 PulsePlay Website",
+  description: "Website updates in progress. Check back soon!",
+  url: "",
+  button: "Coming Soon",
+},
     {
       title: "🎁 Throne Wishlist",
       description: "Support future streams and help improve the setup.",
