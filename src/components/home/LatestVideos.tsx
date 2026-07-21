@@ -1,108 +1,190 @@
-import { useEffect, useState } from "react";
-import { getVideos } from "../../services/videos";
+import BrandCard from "../ui/BrandCard";
+import BrandButton from "../ui/BrandButton";
 
 type Video = {
   id: string;
   title: string;
-  description: string;
-  thumbnail: string;
-  url: string;
-  featured: boolean;
+  description?: string;
+  thumbnail?: string;
+  url?: string;
+  platform?: string;
 };
 
-export default function LatestVideos() {
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function loadVideos() {
-      try {
-        const data = await getVideos();
+type LatestVideosProps = {
+  videos?: Video[];
+};
 
-        const featuredVideos = (data || []).filter(
-          (video) => video.featured
-        );
 
-        setVideos(featuredVideos);
-      } catch (error) {
-        console.error("Failed to load videos:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadVideos();
-  }, []);
+export default function LatestVideos({
+  videos = [],
+}: LatestVideosProps) {
 
   return (
-    <section className="bg-[#05070d] px-6 py-24 text-white">
-      <div className="mx-auto max-w-7xl">
+    <section className="mt-16">
 
-        <h2 className="mb-12 text-5xl font-black">
-          Latest <span className="text-purple-500">Videos</span>
+      <div className="mb-8">
+
+        <h2
+          className="
+            text-3xl
+            md:text-4xl
+            font-black
+            pp-gradient-text
+          "
+        >
+          Latest Videos
         </h2>
 
-        {loading && (
-          <p className="text-gray-400">
-            Loading videos...
-          </p>
-        )}
+        <p className="mt-2 text-slate-400">
+          Catch the latest gameplay, streams, and community highlights.
+        </p>
 
-        {!loading && videos.length === 0 && (
-          <p className="text-gray-400">
-            No featured videos yet.
-          </p>
-        )}
+      </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          {videos.map((video) => (
-            <article
-              key={video.id}
-              className="group overflow-hidden rounded-3xl border border-purple-500/20 bg-white/5 transition duration-300 hover:-translate-y-2 hover:border-purple-400 hover:shadow-[0_0_30px_#9333ea55]"
+
+      <div
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          lg:grid-cols-3
+          gap-6
+        "
+      >
+
+        {videos.length === 0 && (
+
+          <BrandCard>
+
+            <div
+              className="
+                flex
+                items-center
+                gap-3
+              "
             >
-              <div className="aspect-video overflow-hidden bg-gradient-to-br from-purple-500/20 to-cyan-500/20">
 
-                {video.thumbnail ? (
-                  <img
-                    src={video.thumbnail}
-                    alt={video.title}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-2xl transition group-hover:scale-110">
-                      ▶
-                    </div>
-                  </div>
-                )}
+              <span className="pp-live-dot" />
+
+              <h3 className="text-xl font-bold">
+                No videos available
+              </h3>
+
+            </div>
+
+
+            <p className="mt-3 text-slate-400">
+              Add videos through the PulsePlay admin dashboard.
+            </p>
+
+          </BrandCard>
+
+        )}
+
+
+
+        {videos.map((video) => (
+
+          <BrandCard key={video.id}>
+
+
+            {video.thumbnail && (
+
+              <img
+                src={video.thumbnail}
+                alt={video.title}
+                className="
+                  w-full
+                  h-48
+                  object-cover
+                  rounded-xl
+                  mb-5
+                "
+              />
+
+            )}
+
+
+
+            {video.platform && (
+
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  mb-3
+                  text-sm
+                  text-cyan-400
+                "
+              >
+
+                <span className="pp-live-dot" />
+
+                {video.platform}
 
               </div>
 
-              <div className="p-6">
+            )}
 
-                <h3 className="text-2xl font-bold group-hover:text-purple-300">
-                  {video.title}
-                </h3>
 
-                <p className="mt-3 text-gray-400">
-                  {video.description}
-                </p>
+
+            <h3
+              className="
+                text-xl
+                font-bold
+                text-white
+              "
+            >
+              {video.title}
+            </h3>
+
+
+
+            {video.description && (
+
+              <p
+                className="
+                  mt-3
+                  text-slate-400
+                  line-clamp-3
+                "
+              >
+                {video.description}
+              </p>
+
+            )}
+
+
+
+            {video.url && (
+
+              <div className="mt-6">
 
                 <a
                   href={video.url}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-block text-purple-400 hover:text-purple-300"
+                  rel="noreferrer"
                 >
-                  Watch Video →
+
+                  <BrandButton>
+                    Watch Now
+                  </BrandButton>
+
                 </a>
 
               </div>
-            </article>
-          ))}
-        </div>
+
+            )}
+
+
+          </BrandCard>
+
+        ))}
 
       </div>
+
     </section>
   );
 }

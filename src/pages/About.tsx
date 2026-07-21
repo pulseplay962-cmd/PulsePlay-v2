@@ -1,69 +1,187 @@
+import BrandCard from "../components/ui/BrandCard";
+import BrandButton from "../components/ui/BrandButton";
+
+
 export default function About() {
+
   return (
-    <section className="bg-[#05070d] px-6 py-24 text-white">
-      <div className="mx-auto max-w-5xl">
 
-        <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.4em] text-purple-400">
-            ABOUT PULSEPLAY
+    <main>
+
+
+      <section
+        className="
+          text-center
+          mb-12
+        "
+      >
+
+        <h1
+          className="
+            text-5xl
+            md:text-6xl
+            font-black
+            pp-gradient-text
+          "
+        >
+          About PulsePlay
+        </h1>
+
+
+        <p
+          className="
+            mt-4
+            text-slate-400
+            max-w-3xl
+            mx-auto
+            text-lg
+          "
+        >
+          A gaming platform built for players,
+          creators, and communities who want to
+          experience gaming together.
+        </p>
+
+
+      </section>
+
+
+
+
+      <section
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          gap-6
+        "
+      >
+
+
+        <BrandCard>
+
+          <h2
+            className="
+              text-3xl
+              font-bold
+            "
+          >
+            Our Mission
+          </h2>
+
+
+          <p
+            className="
+              mt-4
+              text-slate-400
+              leading-relaxed
+            "
+          >
+            PulsePlay was created to bring gamers
+            together through live streams, gaming
+            news, community discussions, and
+            carefully selected gaming products.
           </p>
 
-          <h1 className="mt-4 text-5xl font-black md:text-6xl">
-            Gaming. Community. <span className="text-cyan-400">Passion.</span>
-          </h1>
 
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-400">
-            PulsePlay is a gaming community built around live streaming,
-            exciting gameplay, and bringing players together. Whether you're
-            watching the latest adventure, checking out new gaming gear, or
-            hanging out with the community, there's always something happening.
-          </p>
-        </div>
+        </BrandCard>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-3">
 
-          <article className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8">
-            <div className="mb-4 text-5xl">🎮</div>
-            <h2 className="text-2xl font-bold">Play</h2>
-            <p className="mt-4 text-gray-400">
-              Explore new worlds, competitive games, and unforgettable gaming
-              moments.
-            </p>
-          </article>
 
-          <article className="rounded-3xl border border-purple-500/20 bg-white/5 p-8">
-            <div className="mb-4 text-5xl">📺</div>
-            <h2 className="text-2xl font-bold">Stream</h2>
-            <p className="mt-4 text-gray-400">
-              Live broadcasts, highlights, and interactive content for every
-              member of the community.
-            </p>
-          </article>
 
-          <article className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8">
-            <div className="mb-4 text-5xl">💜</div>
-            <h2 className="text-2xl font-bold">Connect</h2>
-            <p className="mt-4 text-gray-400">
-              Build friendships, support creators, and become part of the
-              PulsePlay community.
-            </p>
-          </article>
+        <BrandCard>
 
-        </div>
-
-        <div className="mt-20 rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/30 to-cyan-900/20 p-10 text-center">
-          <h2 className="text-4xl font-black">
+          <h2
+            className="
+              text-3xl
+              font-bold
+            "
+          >
             Level Up Together
           </h2>
 
-          <p className="mx-auto mt-6 max-w-3xl text-gray-300">
-            PulsePlay is more than a stream—it's a growing community of gamers
-            who enjoy sharing great experiences, discovering new games, and
-            supporting one another.
-          </p>
-        </div>
 
-      </div>
-    </section>
+          <p
+            className="
+              mt-4
+              text-slate-400
+              leading-relaxed
+            "
+          >
+            Whether you are a competitive player,
+            casual gamer, streamer, or someone
+            discovering your next favorite game,
+            PulsePlay is built for you.
+          </p>
+
+
+        </BrandCard>
+
+
+
+      </section>
+
+
+
+
+
+      <section className="mt-8">
+
+
+        <BrandCard>
+
+
+          <div
+            className="
+              text-center
+              max-w-3xl
+              mx-auto
+            "
+          >
+
+            <h2
+              className="
+                text-3xl
+                font-black
+                pp-gradient-text
+              "
+            >
+              Join the Community
+            </h2>
+
+
+            <p
+              className="
+                mt-4
+                text-slate-400
+              "
+            >
+              Follow the journey, watch streams,
+              discover games, and help shape the
+              future of PulsePlay.
+            </p>
+
+
+            <div className="mt-6">
+
+              <BrandButton>
+                Join PulsePlay
+              </BrandButton>
+
+            </div>
+
+
+          </div>
+
+
+        </BrandCard>
+
+
+      </section>
+
+
+
+    </main>
+
   );
 }

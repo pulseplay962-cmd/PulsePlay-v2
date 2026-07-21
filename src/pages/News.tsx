@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
-import { getNews } from "../services/news";
-import type { NewsArticle } from "../services/news";
+import BrandCard from "../components/ui/BrandCard";
+import BrandButton from "../components/ui/BrandButton";
+
+import {
+  getNews,
+} from "../services/news";
+
+
+type NewsItem = {
+  id: string;
+  title: string;
+  description?: string;
+  image?: string;
+  category?: string;
+  url?: string;
+  created_at?: string;
+};
 
 
 export default function News() {
 
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+
 
 
   useEffect(() => {
@@ -19,12 +34,7 @@ export default function News() {
 
         const data = await getNews();
 
-        setArticles(
-          (data || []).filter(
-            (article) => article.published !== false
-          )
-        );
-
+        setNews(data || []);
 
       } catch (error) {
 
@@ -32,7 +42,6 @@ export default function News() {
           "Failed to load news:",
           error
         );
-
 
       } finally {
 
@@ -49,47 +58,40 @@ export default function News() {
 
 
 
-
-
-  if (loading) {
-
-    return (
-
-      <div className="px-6 py-20 text-center">
-
-        <p className="text-xl text-gray-400">
-          Loading news...
-        </p>
-
-      </div>
-
-    );
-
-  }
-
-
-
-
-
   return (
 
-    <div className="mx-auto max-w-7xl px-6 py-16">
+    <main>
 
 
-      <section className="mb-12">
+      <section
+        className="
+          text-center
+          mb-12
+        "
+      >
 
-        <h1 className="text-5xl font-black text-cyan-400">
-
-          PulsePlay News
-
+        <h1
+          className="
+            text-5xl
+            md:text-6xl
+            font-black
+            pp-gradient-text
+          "
+        >
+          Gaming News
         </h1>
 
 
-        <p className="mt-4 max-w-2xl text-gray-400">
-
-          Stay updated with the latest gaming news,
-          esports updates, reviews, and announcements.
-
+        <p
+          className="
+            mt-4
+            text-slate-400
+            max-w-2xl
+            mx-auto
+          "
+        >
+          The latest gaming updates, releases,
+          announcements, and PulsePlay community news.
         </p>
 
 
@@ -97,182 +99,143 @@ export default function News() {
 
 
 
-
-
-      {articles.length === 0 ? (
-
-        <div className="rounded-xl bg-[#111827] p-10 text-center">
-
-          <p className="text-gray-400">
-
-            No news articles available yet.
-
-          </p>
-
-
-        </div>
-
-
-      ) : (
-
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
-
-          {articles.map((article) => (
-
-            <article
-
-              key={article.id}
-
-              className="overflow-hidden rounded-xl bg-[#111827] shadow-lg transition hover:-translate-y-1 hover:shadow-xl"
-
-            >
-
-
-              {article.image && (
-
-                <Link
-
-                  to={
-                    article.slug
-                      ? `/news/${article.slug}`
-                      : "/news"
-                  }
-
-                >
-
-                  <img
-
-                    src={article.image}
-
-                    alt={article.title}
-
-                    className="h-56 w-full object-cover transition hover:opacity-80"
-
-                  />
-
-                </Link>
-
-              )}
-
-
-
-
-
-              <div className="p-6">
-
-
-                <div className="flex flex-wrap gap-2">
-
-
-                  {article.category && (
-
-                    <span
-
-                      className="rounded bg-cyan-500 px-3 py-1 text-sm font-bold text-black"
-
-                    >
-
-                      {article.category}
-
-                    </span>
-
-                  )}
-
-
-
-
-
-                  {article.featured && (
-
-                    <span
-
-                      className="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
-
-                    >
-
-                      Featured
-
-                    </span>
-
-                  )}
-
-
-                </div>
-
-
-
-
-
-                <Link
-
-                  to={
-                    article.slug
-                      ? `/news/${article.slug}`
-                      : "/news"
-                  }
-
-                >
-
-                  <h2 className="mt-5 text-2xl font-black transition hover:text-cyan-400">
-
-                    {article.title}
-
-                  </h2>
-
-
-                </Link>
-
-
-
-
-
-                <p className="mt-3 line-clamp-3 text-gray-400">
-
-                  {article.excerpt ||
-                    article.content.substring(0, 150) + "..."}
-
-                </p>
-
-
-
-
-
-                {article.slug && (
-
-                  <Link
-
-                    to={`/news/${article.slug}`}
-
-                    className="mt-6 inline-block rounded-lg bg-cyan-500 px-5 py-2 font-bold text-black transition hover:bg-cyan-400"
-
-                  >
-
-                    Read More →
-
-                  </Link>
-
-                )}
-
-
-              </div>
-
-
-            </article>
-
-
-          ))}
-
-
-        </div>
-
+      {loading && (
+
+        <p className="text-center text-slate-400">
+          Loading news...
+        </p>
 
       )}
 
 
-    </div>
+
+      {!loading && news.length === 0 && (
+
+        <BrandCard>
+
+          <h2 className="text-2xl font-bold">
+            No News Available
+          </h2>
+
+
+          <p className="mt-3 text-slate-400">
+            Add articles through the PulsePlay Admin Dashboard.
+          </p>
+
+
+        </BrandCard>
+
+      )}
+
+
+
+      <section
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          lg:grid-cols-3
+          gap-6
+        "
+      >
+
+        {news.map((article) => (
+
+          <BrandCard key={article.id}>
+
+
+            {article.image && (
+
+              <img
+                src={article.image}
+                alt={article.title}
+                className="
+                  w-full
+                  h-48
+                  object-cover
+                  rounded-xl
+                  mb-5
+                "
+              />
+
+            )}
+
+
+
+            {article.category && (
+
+              <span
+                className="
+                  inline-block
+                  px-3
+                  py-1
+                  rounded-full
+                  bg-cyan-500/20
+                  text-cyan-300
+                  text-sm
+                  mb-4
+                "
+              >
+                {article.category}
+              </span>
+
+            )}
+
+
+
+            <h2
+              className="
+                text-2xl
+                font-bold
+              "
+            >
+              {article.title}
+            </h2>
+
+
+
+            <p
+              className="
+                mt-3
+                text-slate-400
+                line-clamp-3
+              "
+            >
+              {article.description}
+            </p>
+
+
+
+            {article.url && (
+
+              <div className="mt-6">
+
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+
+                  <BrandButton>
+                    Read More
+                  </BrandButton>
+
+                </a>
+
+              </div>
+
+            )}
+
+
+          </BrandCard>
+
+        ))}
+
+
+      </section>
+
+
+    </main>
 
   );
-
 }

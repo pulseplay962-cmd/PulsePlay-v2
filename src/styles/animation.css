@@ -1,0 +1,238 @@
+/* =========================
+   PulsePlay Animation
+   ========================= */
+
+
+/* Neon Glow Pulse */
+@keyframes ppGlowPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px rgba(139,92,246,.35),
+      0 0 25px rgba(34,211,238,.15);
+  }
+
+  50% {
+    box-shadow:
+      0 0 25px rgba(139,92,246,.75),
+      0 0 45px rgba(34,211,238,.35);
+  }
+}
+
+
+.pp-glow-pulse {
+  animation:
+    ppGlowPulse 2.5s ease-in-out infinite;
+}
+
+
+
+/* Floating Effect */
+@keyframes ppFloat {
+
+  0%,
+  100% {
+    transform:
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateY(-8px);
+  }
+}
+
+
+.pp-float {
+  animation:
+    ppFloat 4s ease-in-out infinite;
+}
+
+
+
+/* Card Hover Lift */
+.pp-hover-lift {
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+
+.pp-hover-lift:hover {
+  transform:
+    translateY(-8px);
+
+  box-shadow:
+    var(--pp-shadow-md),
+    var(--pp-shadow-glow);
+}
+
+
+
+/* Gradient Movement */
+@keyframes ppGradientMove {
+
+  0% {
+    background-position:
+      0% 50%;
+  }
+
+  50% {
+    background-position:
+      100% 50%;
+  }
+
+  100% {
+    background-position:
+      0% 50%;
+  }
+}
+
+
+.pp-gradient-animate {
+
+  background-size:
+    200% 200%;
+
+  animation:
+    ppGradientMove 6s ease infinite;
+}
+
+
+
+/* Button Shine */
+@keyframes ppShine {
+
+  0% {
+    left:
+      -100%;
+  }
+
+  50%,
+  100% {
+    left:
+      150%;
+  }
+}
+
+
+.pp-shine {
+  position:
+    relative;
+
+  overflow:
+    hidden;
+}
+
+
+.pp-shine::after {
+
+  content:
+    "";
+
+  position:
+    absolute;
+
+  top:
+    0;
+
+  left:
+    -100%;
+
+  width:
+    50%;
+
+  height:
+    100%;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent,
+      rgba(255,255,255,.35),
+      transparent
+    );
+
+  transform:
+    skewX(-20deg);
+
+  animation:
+    ppShine 3s infinite;
+}
+
+
+
+/* Live Stream Indicator */
+@keyframes ppLivePulse {
+
+  0% {
+    transform:
+      scale(1);
+
+    opacity:
+      1;
+  }
+
+  50% {
+    transform:
+      scale(1.4);
+
+    opacity:
+      .5;
+  }
+
+  100% {
+    transform:
+      scale(1);
+
+    opacity:
+      1;
+  }
+}
+
+
+.pp-live-dot {
+
+  width:
+    10px;
+
+  height:
+    10px;
+
+  border-radius:
+    50%;
+
+  background:
+    #ef4444;
+
+  animation:
+    ppLivePulse 1.5s infinite;
+}
+
+
+
+/* Fade In */
+@keyframes ppFadeIn {
+
+  from {
+    opacity:
+      0;
+
+    transform:
+      translateY(20px);
+  }
+
+  to {
+    opacity:
+      1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+
+.pp-fade-in {
+  animation:
+    ppFadeIn .6s ease forwards;
+}

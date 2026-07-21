@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
-import { getGames } from "../services/games";
+import BrandCard from "../components/ui/BrandCard";
+import BrandButton from "../components/ui/BrandButton";
+
+import {
+  getGames,
+} from "../services/games";
 
 
 type Game = {
   id: string;
   title: string;
-  slug?: string;
-  description: string;
-  image: string;
-  featured: boolean;
+  description?: string;
+  image?: string;
+  genre?: string;
+  release_date?: string;
 };
 
 
@@ -18,7 +22,6 @@ type Game = {
 export default function Games() {
 
   const [games, setGames] = useState<Game[]>([]);
-
   const [loading, setLoading] = useState(true);
 
 
@@ -33,14 +36,12 @@ export default function Games() {
 
         setGames(data || []);
 
-
-      } catch(error) {
+      } catch (error) {
 
         console.error(
           "Failed to load games:",
           error
         );
-
 
       } finally {
 
@@ -57,167 +58,190 @@ export default function Games() {
 
 
 
-
-
-
-  if (loading) {
-
-    return (
-
-      <div className="px-6 py-20 text-center">
-
-        <p className="text-xl text-gray-400">
-          Loading games...
-        </p>
-
-      </div>
-
-    );
-
-  }
-
-
-
-
-
-
   return (
 
-    <div className="mx-auto max-w-7xl px-6 py-12">
+    <main>
 
 
-      <div className="mb-10">
+      <section
+        className="
+          text-center
+          mb-12
+        "
+      >
 
-        <h1 className="text-5xl font-black text-cyan-400">
-          PulsePlay Games
+        <h1
+          className="
+            text-5xl
+            md:text-6xl
+            font-black
+            pp-gradient-text
+          "
+        >
+          Game Library
         </h1>
 
 
-        <p className="mt-3 text-gray-400">
-          Explore featured games, releases, and gaming content.
+        <p
+          className="
+            mt-4
+            text-slate-400
+            max-w-2xl
+            mx-auto
+          "
+        >
+          Explore featured games, upcoming releases,
+          and titles powering the PulsePlay community.
         </p>
 
 
-      </div>
+      </section>
 
 
 
+      {loading && (
 
-
-
-      {games.length === 0 ? (
-
-        <div className="rounded-xl bg-[#111827] p-8 text-center">
-
-          <p className="text-gray-400">
-            No games available yet.
-          </p>
-
-        </div>
-
-
-      ) : (
-
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
-
-          {games.map((game)=>(
-
-
-            <Link
-
-              key={game.id}
-
-              to={`/games/${game.slug ?? game.id}`}
-
-              className="overflow-hidden rounded-xl bg-[#111827] transition hover:scale-[1.02]"
-
-            >
-
-
-
-              {game.image && (
-
-                <img
-
-                  src={game.image}
-
-                  alt={game.title}
-
-                  className="h-56 w-full object-cover"
-
-                />
-
-              )}
-
-
-
-
-
-
-              <div className="p-6">
-
-
-                <h2 className="text-2xl font-black text-white">
-
-                  {game.title}
-
-                </h2>
-
-
-
-
-
-                {game.featured && (
-
-                  <span className="mt-3 inline-block rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black">
-
-                    ⭐ Featured
-
-                  </span>
-
-                )}
-
-
-
-
-
-
-                <p className="mt-4 text-gray-400">
-
-                  {game.description}
-
-                </p>
-
-
-
-
-
-                <div className="mt-5 text-cyan-400 font-bold">
-
-                  View Game →
-
-                </div>
-
-
-              </div>
-
-
-            </Link>
-
-
-          ))}
-
-
-        </div>
-
+        <p className="text-center text-slate-400">
+          Loading games...
+        </p>
 
       )}
 
 
-    </div>
+
+      {!loading && games.length === 0 && (
+
+        <BrandCard>
+
+          <h2 className="text-2xl font-bold">
+            No Games Available
+          </h2>
+
+
+          <p className="mt-3 text-slate-400">
+            Add games through the PulsePlay Admin Dashboard.
+          </p>
+
+
+        </BrandCard>
+
+      )}
+
+
+
+      <section
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          lg:grid-cols-3
+          gap-6
+        "
+      >
+
+        {games.map((game) => (
+
+          <BrandCard key={game.id}>
+
+
+            {game.image && (
+
+              <img
+                src={game.image}
+                alt={game.title}
+                className="
+                  w-full
+                  h-56
+                  object-cover
+                  rounded-xl
+                  mb-5
+                "
+              />
+
+            )}
+
+
+
+            {game.genre && (
+
+              <span
+                className="
+                  inline-block
+                  px-3
+                  py-1
+                  rounded-full
+                  bg-purple-500/20
+                  text-purple-300
+                  text-sm
+                  mb-4
+                "
+              >
+                {game.genre}
+              </span>
+
+            )}
+
+
+
+            <h2
+              className="
+                text-2xl
+                font-bold
+              "
+            >
+              {game.title}
+            </h2>
+
+
+
+            <p
+              className="
+                mt-3
+                text-slate-400
+                line-clamp-3
+              "
+            >
+              {game.description}
+            </p>
+
+
+
+            {game.release_date && (
+
+              <p
+                className="
+                  mt-3
+                  text-sm
+                  text-cyan-400
+                "
+              >
+                Release:
+                {" "}
+                {game.release_date}
+              </p>
+
+            )}
+
+
+
+            <div className="mt-6">
+
+              <BrandButton variant="secondary">
+                View Game
+              </BrandButton>
+
+            </div>
+
+
+          </BrandCard>
+
+        ))}
+
+
+      </section>
+
+
+    </main>
 
   );
-
 }

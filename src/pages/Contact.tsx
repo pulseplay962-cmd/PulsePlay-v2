@@ -1,102 +1,212 @@
+import BrandCard from "../components/ui/BrandCard";
+import BrandButton from "../components/ui/BrandButton";
+
+
 export default function Contact() {
+
   return (
-    <section className="bg-[#05070d] px-6 py-24 text-white">
-      <div className="mx-auto max-w-5xl">
 
-        <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.4em] text-cyan-400">
-            GET IN TOUCH
+    <main>
+
+
+      <section
+        className="
+          text-center
+          mb-12
+        "
+      >
+
+        <h1
+          className="
+            text-5xl
+            md:text-6xl
+            font-black
+            pp-gradient-text
+          "
+        >
+          Contact PulsePlay
+        </h1>
+
+
+        <p
+          className="
+            mt-4
+            text-slate-400
+            max-w-2xl
+            mx-auto
+            text-lg
+          "
+        >
+          Have questions, feedback, partnership ideas,
+          or want to join the community?
+          Reach out to us.
+        </p>
+
+
+      </section>
+
+
+
+
+      <section
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          gap-6
+        "
+      >
+
+
+        <BrandCard>
+
+
+          <h2
+            className="
+              text-3xl
+              font-bold
+            "
+          >
+            Community
+          </h2>
+
+
+          <p
+            className="
+              mt-4
+              text-slate-400
+            "
+          >
+            Connect with other gamers, follow streams,
+            and stay updated with everything happening
+            in the PulsePlay universe.
           </p>
 
-          <h1 className="mt-4 text-5xl font-black md:text-6xl">
-            Let's <span className="text-purple-400">Connect</span>
-          </h1>
 
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-400">
-            Interested in collaborating, sponsoring a stream, or just saying
-            hello? Reach out through one of the platforms below.
+          <div className="mt-6">
+
+            <BrandButton>
+              Join Community
+            </BrandButton>
+
+          </div>
+
+
+        </BrandCard>
+
+
+
+
+
+        <BrandCard>
+
+
+          <h2
+            className="
+              text-3xl
+              font-bold
+            "
+          >
+            Get In Touch
+          </h2>
+
+
+          <p
+            className="
+              mt-4
+              text-slate-400
+            "
+          >
+            For questions, partnerships, or support,
+            send us a message and we'll get back to you.
           </p>
-        </div>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-2">
 
-          <article className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8">
-            <h2 className="text-2xl font-bold">🎮 Twitch</h2>
 
-            <p className="mt-4 text-gray-400">
-              Catch live streams, chat with the community, and never miss new
-              content.
-            </p>
+          <div
+            className="
+              mt-6
+              space-y-3
+            "
+          >
 
-            <a
-              href="https://www.twitch.tv/Veiltactician"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 inline-block rounded-lg bg-cyan-400 px-6 py-3 font-bold text-black transition hover:bg-cyan-300"
+            <div
+              className="
+                rounded-xl
+                border
+                border-white/10
+                bg-black/20
+                p-4
+                text-slate-300
+              "
             >
-              Visit Twitch
-            </a>
-          </article>
-
-          <article className="rounded-3xl border border-purple-500/20 bg-white/5 p-8">
-            <h2 className="text-2xl font-bold">🌐 Website</h2>
-
-            <p className="mt-4 text-gray-400">
-              Visit the PulsePlay website for the latest updates and featured
-              content.
-            </p>
-
-            <button
-  disabled
-  className="mt-6 inline-block cursor-not-allowed rounded-lg bg-gray-600 px-6 py-3 font-bold text-gray-300"
->
-  Website Temporarily Unavailable
-</button>
-          </article>
-
-          <article className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8">
-            <h2 className="text-2xl font-bold">🎁 Support</h2>
-
-            <p className="mt-4 text-gray-400">
-              Support future content through the Throne wishlist or Amazon
-              recommendations.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-4">
-              <a
-                href="https://throne.com/ve"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg border border-purple-500 px-5 py-3 transition hover:bg-purple-500/10"
-              >
-                Throne
-              </a>
-
-              <a
-                href="https://amzn.to/4vmEtDy"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg border border-cyan-500 px-5 py-3 transition hover:bg-cyan-500/10"
-              >
-                Amazon Picks
-              </a>
+              Email: support@pulseplay.online
             </div>
-          </article>
 
-          <article className="rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/30 to-cyan-900/20 p-8">
-            <h2 className="text-2xl font-bold">
-              🚀 Collaboration
-            </h2>
 
-            <p className="mt-4 text-gray-300">
-              Business opportunities, creator collaborations, sponsorships,
-              and future partnerships are always welcome as PulsePlay grows.
-            </p>
-          </article>
+            <div
+              className="
+                rounded-xl
+                border
+                border-white/10
+                bg-black/20
+                p-4
+                text-slate-300
+              "
+            >
+              Social: @PulsePlay
+            </div>
 
-        </div>
 
-      </div>
-    </section>
+          </div>
+
+
+        </BrandCard>
+
+
+
+      </section>
+
+
+
+
+
+      <section className="mt-8">
+
+
+        <BrandCard>
+
+
+          <h2
+            className="
+              text-3xl
+              font-black
+              pp-gradient-text
+            "
+          >
+            Ready to Level Up?
+          </h2>
+
+
+          <p
+            className="
+              mt-4
+              text-slate-400
+            "
+          >
+            Follow PulsePlay and be part of a growing
+            gaming community built around streams,
+            games, and discovery.
+          </p>
+
+
+        </BrandCard>
+
+
+      </section>
+
+
+    </main>
+
   );
 }
