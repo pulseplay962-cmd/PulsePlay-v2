@@ -17,6 +17,7 @@ import News from "../pages/News";
 import NewsArticle from "../pages/NewsArticle";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
+import NotFound from "../pages/NotFound";
 
 
 // Admin Pages
@@ -231,6 +232,10 @@ const router = createBrowserRouter([
     element: <Home />,
   },
 
+  {
+  path: "*",
+  element: <NotFound />,
+}
 
 ]);
 
