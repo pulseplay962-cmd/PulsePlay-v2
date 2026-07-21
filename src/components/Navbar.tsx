@@ -5,34 +5,13 @@ import BrandButton from "./ui/BrandButton";
 
 
 const links = [
-  {
-    name: "Home",
-    path: "/",
-  },
-  {
-    name: "Games",
-    path: "/games",
-  },
-  {
-    name: "Streams",
-    path: "/streams",
-  },
-  {
-    name: "Store",
-    path: "/store",
-  },
-  {
-    name: "News",
-    path: "/news",
-  },
-  {
-    name: "About",
-    path: "/about",
-  },
-  {
-    name: "Contact",
-    path: "/contact",
-  },
+  { name: "Home", path: "/" },
+  { name: "Games", path: "/games" },
+  { name: "Streams", path: "/streams" },
+  { name: "Store", path: "/store" },
+  { name: "News", path: "/news" },
+  { name: "About", path: "/about" },
+  { name: "Contact", path: "/contact" },
 ];
 
 
@@ -72,6 +51,7 @@ export default function Navbar() {
 
         <NavLink
           to="/"
+          onClick={() => setMenuOpen(false)}
           className="
             flex
             items-center
@@ -86,6 +66,7 @@ export default function Navbar() {
               w-12
               h-12
               rounded-xl
+              shadow-[0_0_20px_rgba(34,211,238,.25)]
             "
           />
 
@@ -106,6 +87,7 @@ export default function Navbar() {
 
 
 
+
         {/* Desktop Navigation */}
 
         <div
@@ -122,11 +104,12 @@ export default function Navbar() {
             <NavLink
               key={link.path}
               to={link.path}
-              className={({ isActive }) =>
+              className={({isActive}) =>
 
                 `
                 transition
                 duration-300
+                hover:-translate-y-0.5
                 ${
                   isActive
                     ? "text-cyan-400 font-bold"
@@ -135,13 +118,10 @@ export default function Navbar() {
                 `
               }
             >
-
               {link.name}
-
             </NavLink>
 
           ))}
-
 
         </div>
 
@@ -149,7 +129,7 @@ export default function Navbar() {
 
 
 
-        {/* Desktop Store Button */}
+        {/* Desktop CTA */}
 
         <div
           className="
@@ -166,26 +146,57 @@ export default function Navbar() {
 
           </NavLink>
 
-
         </div>
 
 
 
 
 
-        {/* Mobile Menu Button */}
+
+        {/* Mobile Button */}
 
         <button
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
           className="
             lg:hidden
+            flex
+            flex-col
+            gap-1.5
             text-white
-            text-3xl
           "
-          aria-label="Toggle Menu"
         >
 
-          ☰
+          <span
+            className={`
+              h-0.5
+              w-7
+              bg-white
+              transition
+              ${menuOpen ? "rotate-45 translate-y-2" : ""}
+            `}
+          />
+
+          <span
+            className={`
+              h-0.5
+              w-7
+              bg-white
+              transition
+              ${menuOpen ? "opacity-0" : ""}
+            `}
+          />
+
+          <span
+            className={`
+              h-0.5
+              w-7
+              bg-white
+              transition
+              ${menuOpen ? "-rotate-45 -translate-y-2" : ""}
+            `}
+          />
 
         </button>
 
@@ -196,7 +207,8 @@ export default function Navbar() {
 
 
 
-      {/* Mobile Navigation */}
+
+      {/* Mobile Menu */}
 
       {menuOpen && (
 
@@ -205,20 +217,20 @@ export default function Navbar() {
             lg:hidden
             px-6
             pb-6
-            space-y-4
+            space-y-3
             bg-[#070b14]/95
             border-t
             border-white/10
           "
         >
 
-          {links.map((link) => (
+          {links.map((link)=> (
 
             <NavLink
               key={link.path}
               to={link.path}
               onClick={() => setMenuOpen(false)}
-              className={({ isActive }) =>
+              className={({isActive}) =>
 
                 `
                 block
@@ -240,10 +252,10 @@ export default function Navbar() {
           ))}
 
 
-
           <NavLink
             to="/store"
             onClick={() => setMenuOpen(false)}
+            className="block pt-3"
           >
 
             <BrandButton>
@@ -256,7 +268,6 @@ export default function Navbar() {
         </div>
 
       )}
-
 
 
     </header>

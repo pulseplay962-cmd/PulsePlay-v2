@@ -19,22 +19,29 @@ type Game = {
 
 
 
+
 export default function Games() {
+
 
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
 
 
 
+
+
   useEffect(() => {
 
+
     async function loadGames() {
+
 
       try {
 
         const data = await getGames();
 
         setGames(data || []);
+
 
       } catch (error) {
 
@@ -43,18 +50,26 @@ export default function Games() {
           error
         );
 
+
       } finally {
 
         setLoading(false);
 
       }
 
+
     }
 
 
     loadGames();
 
+
   }, []);
+
+
+
+
+
 
 
 
@@ -66,9 +81,10 @@ export default function Games() {
       <section
         className="
           text-center
-          mb-12
+          mb-16
         "
       >
+
 
         <h1
           className="
@@ -82,30 +98,56 @@ export default function Games() {
         </h1>
 
 
+
         <p
           className="
-            mt-4
-            text-slate-400
-            max-w-2xl
+            mt-5
             mx-auto
+            max-w-3xl
+            text-lg
+            text-slate-400
           "
         >
           Explore featured games, upcoming releases,
-          and titles powering the PulsePlay community.
+          and the titles powering the PulsePlay community.
         </p>
+
 
 
       </section>
 
 
 
+
+
+
+
+
       {loading && (
 
-        <p className="text-center text-slate-400">
-          Loading games...
-        </p>
+        <BrandCard>
+
+
+          <div className="flex items-center gap-3">
+
+            <span className="pp-live-dot" />
+
+            <p className="text-slate-400">
+              Loading games...
+            </p>
+
+
+          </div>
+
+
+        </BrandCard>
 
       )}
+
+
+
+
+
 
 
 
@@ -113,13 +155,27 @@ export default function Games() {
 
         <BrandCard>
 
-          <h2 className="text-2xl font-bold">
+
+          <h2
+            className="
+              text-2xl
+              font-bold
+              text-white
+            "
+          >
             No Games Available
           </h2>
 
 
-          <p className="mt-3 text-slate-400">
-            Add games through the PulsePlay Admin Dashboard.
+
+          <p
+            className="
+              mt-3
+              text-slate-400
+            "
+          >
+            Add games through the PulsePlay
+            Admin Dashboard.
           </p>
 
 
@@ -129,119 +185,203 @@ export default function Games() {
 
 
 
-      <section
-        className="
-          grid
-          grid-cols-1
-          md:grid-cols-2
-          lg:grid-cols-3
-          gap-6
-        "
-      >
-
-        {games.map((game) => (
-
-          <BrandCard key={game.id}>
 
 
-            {game.image && (
 
-              <img
-                src={game.image}
-                alt={game.title}
+
+
+      {!loading && games.length > 0 && (
+
+        <section
+          className="
+            grid
+            grid-cols-1
+            md:grid-cols-2
+            lg:grid-cols-3
+            gap-8
+          "
+        >
+
+
+
+          {games.map((game) => (
+
+
+            <BrandCard
+              key={game.id}
+              className="card-hover"
+            >
+
+
+
+              {game.image ? (
+
+                <img
+
+                  src={game.image}
+
+                  alt={game.title}
+
+                  className="
+                    h-56
+                    w-full
+                    rounded-xl
+                    object-cover
+                  "
+
+                />
+
+
+              ) : (
+
+                <div
+                  className="
+                    h-56
+                    rounded-xl
+                    flex
+                    items-center
+                    justify-center
+                    bg-black/40
+                    text-slate-500
+                  "
+                >
+                  No Cover Image
+                </div>
+
+              )}
+
+
+
+
+
+
+
+
+              {game.genre && (
+
+                <span
+                  className="
+                    inline-flex
+                    mt-5
+                    rounded-full
+                    border
+                    border-purple-500/30
+                    bg-purple-500/10
+                    px-3
+                    py-1
+                    text-sm
+                    font-bold
+                    text-purple-300
+                  "
+                >
+                  {game.genre}
+                </span>
+
+              )}
+
+
+
+
+
+
+
+
+              <h2
                 className="
-                  w-full
-                  h-56
-                  object-cover
-                  rounded-xl
-                  mb-5
-                "
-              />
-
-            )}
-
-
-
-            {game.genre && (
-
-              <span
-                className="
-                  inline-block
-                  px-3
-                  py-1
-                  rounded-full
-                  bg-purple-500/20
-                  text-purple-300
-                  text-sm
-                  mb-4
+                  mt-5
+                  text-2xl
+                  font-black
+                  text-white
                 "
               >
-                {game.genre}
-              </span>
-
-            )}
+                {game.title}
+              </h2>
 
 
 
-            <h2
-              className="
-                text-2xl
-                font-bold
-              "
-            >
-              {game.title}
-            </h2>
 
 
 
-            <p
-              className="
-                mt-3
-                text-slate-400
-                line-clamp-3
-              "
-            >
-              {game.description}
-            </p>
+
+
+              {game.description && (
+
+                <p
+                  className="
+                    mt-3
+                    text-slate-400
+                    line-clamp-3
+                  "
+                >
+                  {game.description}
+                </p>
+
+              )}
 
 
 
-            {game.release_date && (
-
-              <p
-                className="
-                  mt-3
-                  text-sm
-                  text-cyan-400
-                "
-              >
-                Release:
-                {" "}
-                {game.release_date}
-              </p>
-
-            )}
 
 
 
-            <div className="mt-6">
-
-              <BrandButton variant="secondary">
-                View Game
-              </BrandButton>
-
-            </div>
 
 
-          </BrandCard>
+              {game.release_date && (
 
-        ))}
+                <p
+                  className="
+                    mt-4
+                    text-sm
+                    font-bold
+                    text-cyan-400
+                  "
+                >
+                  Release:
+                  {" "}
+                  {game.release_date}
+                </p>
+
+              )}
 
 
-      </section>
+
+
+
+
+
+
+              <div className="mt-6">
+
+                <BrandButton
+                  variant="secondary"
+                >
+                  View Game
+                </BrandButton>
+
+
+              </div>
+
+
+
+
+
+            </BrandCard>
+
+
+          ))}
+
+
+
+        </section>
+
+      )}
+
+
+
+
 
 
     </main>
 
   );
+
 }

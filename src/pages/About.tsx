@@ -12,7 +12,7 @@ export default function About() {
       <section
         className="
           text-center
-          mb-12
+          mb-16
         "
       >
 
@@ -30,16 +30,16 @@ export default function About() {
 
         <p
           className="
-            mt-4
-            text-slate-400
-            max-w-3xl
+            mt-5
             mx-auto
+            max-w-3xl
             text-lg
+            text-slate-400
           "
         >
           A gaming platform built for players,
-          creators, and communities who want to
-          experience gaming together.
+          creators, and communities who believe
+          gaming is better together.
         </p>
 
 
@@ -53,17 +53,17 @@ export default function About() {
           grid
           grid-cols-1
           md:grid-cols-2
-          gap-6
+          gap-8
         "
       >
 
-
-        <BrandCard>
+        <BrandCard className="card-hover">
 
           <h2
             className="
               text-3xl
-              font-bold
+              font-black
+              text-cyan-400
             "
           >
             Our Mission
@@ -77,24 +77,25 @@ export default function About() {
               leading-relaxed
             "
           >
-            PulsePlay was created to bring gamers
-            together through live streams, gaming
-            news, community discussions, and
-            carefully selected gaming products.
+            PulsePlay brings gamers together
+            through live streams, gaming news,
+            community conversations, and
+            carefully selected gaming gear.
           </p>
-
 
         </BrandCard>
 
 
 
 
-        <BrandCard>
+
+        <BrandCard className="card-hover">
 
           <h2
             className="
               text-3xl
-              font-bold
+              font-black
+              text-purple-400
             "
           >
             Level Up Together
@@ -109,14 +110,12 @@ export default function About() {
             "
           >
             Whether you are a competitive player,
-            casual gamer, streamer, or someone
-            discovering your next favorite game,
+            casual gamer, content creator, or
+            discovering your next adventure,
             PulsePlay is built for you.
           </p>
 
-
         </BrandCard>
-
 
 
       </section>
@@ -125,17 +124,86 @@ export default function About() {
 
 
 
+
+      <section
+        className="
+          mt-8
+          grid
+          grid-cols-1
+          md:grid-cols-3
+          gap-8
+        "
+      >
+
+        <BrandCard className="card-hover">
+
+          <h3 className="text-xl font-black text-white">
+            🎮 Discover Games
+          </h3>
+
+
+          <p className="mt-3 text-slate-400">
+            Find new releases, upcoming titles,
+            and games worth playing.
+          </p>
+
+        </BrandCard>
+
+
+
+
+
+        <BrandCard className="card-hover">
+
+          <h3 className="text-xl font-black text-white">
+            📺 Watch & Connect
+          </h3>
+
+
+          <p className="mt-3 text-slate-400">
+            Follow streams, interact with creators,
+            and be part of the community.
+          </p>
+
+        </BrandCard>
+
+
+
+
+
+        <BrandCard className="card-hover">
+
+          <h3 className="text-xl font-black text-white">
+            🛒 Gear Up
+          </h3>
+
+
+          <p className="mt-3 text-slate-400">
+            Explore gaming accessories and gear
+            recommended by PulsePlay.
+          </p>
+
+        </BrandCard>
+
+
+      </section>
+
+
+
+
+
+
       <section className="mt-8">
 
 
-        <BrandCard>
+        <BrandCard className="card-hover">
 
 
           <div
             className="
               text-center
-              max-w-3xl
               mx-auto
+              max-w-3xl
             "
           >
 
@@ -180,8 +248,8 @@ export default function About() {
       </section>
 
 
-
     </main>
 
   );
+
 }

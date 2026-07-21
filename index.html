@@ -1,9 +1,22 @@
 <!doctype html>
 <html lang="en">
 
-  <head>
+<head>
 
   <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#070b14"
+  />
+
+
+  <!-- Favicon -->
 
   <link
     rel="icon"
@@ -11,11 +24,9 @@
     href="/pulseplay-logo.svg"
   />
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
 
+
+  <!-- SEO -->
 
   <title>
     PulsePlay | Level Up Your Gaming Experience
@@ -24,26 +35,42 @@
 
   <meta
     name="description"
-    content="PulsePlay is a gaming community platform featuring live streams, gaming news, game discoveries, and gamer gear."
+    content="PulsePlay is a gaming community platform featuring live streams, gaming news, game discoveries, community content, and gamer gear."
   />
 
 
   <meta
     name="keywords"
     content="
-      gaming,
-      livestreams,
-      Twitch,
-      video games,
-      gaming news,
+      PulsePlay,
       gaming community,
+      Twitch streams,
+      gaming news,
+      video games,
       PC gaming,
-      console gaming
+      console gaming,
+      esports,
+      gaming gear,
+      game reviews
     "
   />
 
 
-  <!-- Open Graph -->
+  <link
+    rel="canonical"
+    href="https://pulseplay.online"
+  />
+
+
+
+
+  <!-- Open Graph / Facebook / Discord -->
+
+  <meta
+    property="og:site_name"
+    content="PulsePlay"
+  />
+
 
   <meta
     property="og:title"
@@ -53,7 +80,7 @@
 
   <meta
     property="og:description"
-    content="Join PulsePlay for gaming streams, news, community content, and gamer gear."
+    content="Watch streams, discover games, follow gaming news, and connect with the PulsePlay community."
   />
 
 
@@ -75,7 +102,9 @@
   />
 
 
-  <!-- Twitter/X -->
+
+
+  <!-- Twitter / X -->
 
   <meta
     name="twitter:card"
@@ -91,22 +120,33 @@
 
   <meta
     name="twitter:description"
-    content="Gaming streams, news, community, and gear."
+    content="Gaming streams, news, community, and gamer gear built for players."
   />
+
+
+  <meta
+    name="twitter:image"
+    content="https://pulseplay.online/pulseplay-social.png"
+  />
+
 
 
 </head>
 
 
-  <body>
 
-    <div id="root"></div>
+<body>
 
-    <script
-      type="module"
-      src="/src/main.tsx"
-    ></script>
+  <div id="root"></div>
 
-  </body>
+
+  <script
+    type="module"
+    src="/src/main.tsx"
+  ></script>
+
+
+</body>
+
 
 </html>

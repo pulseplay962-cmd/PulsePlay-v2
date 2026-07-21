@@ -1,68 +1,231 @@
 import TwitchSection from "../components/home/TwitchSection";
 
-export default function Streams() {
-  return (
-    <section className="bg-[#05070d] text-white">
+import BrandCard from "../components/ui/BrandCard";
+import BrandButton from "../components/ui/BrandButton";
 
-      <div className="mx-auto max-w-7xl px-6 pt-24 text-center">
-        <p className="text-sm font-bold uppercase tracking-[0.4em] text-red-500">
+
+export default function Streams() {
+
+  return (
+
+    <main>
+
+
+      <section
+        className="
+          text-center
+          mb-16
+        "
+      >
+
+
+        <p
+          className="
+            text-sm
+            font-black
+            uppercase
+            tracking-[0.4em]
+            text-red-500
+          "
+        >
           LIVE CONTENT
         </p>
 
-        <h1 className="mt-4 text-5xl font-black md:text-6xl">
-          Watch <span className="text-cyan-400">PulsePlay</span> Live
+
+
+        <h1
+          className="
+            mt-5
+            text-5xl
+            md:text-6xl
+            font-black
+            pp-gradient-text
+          "
+        >
+          Watch PulsePlay Live
         </h1>
 
-        <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-400">
-          Join the stream, chat with the community, and watch gameplay live as
-          PulsePlay tackles new adventures, competitive matches, and community
-          events.
+
+
+        <p
+          className="
+            mx-auto
+            mt-6
+            max-w-3xl
+            text-lg
+            text-slate-400
+          "
+        >
+          Join the community, watch gameplay,
+          and experience PulsePlay adventures
+          live on Twitch.
         </p>
-      </div>
+
+
+
+      </section>
+
+
+
+
+
+
+
 
       <TwitchSection channel="Veiltactician" />
 
-      <section className="mx-auto max-w-7xl px-6 pb-24">
-        <div className="grid gap-8 md:grid-cols-3">
 
-          <div className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8">
-            <h2 className="text-2xl font-bold text-cyan-400">
-              🎮 Currently Playing
-            </h2>
 
-            <p className="mt-4 text-gray-300">
-              Horizon Forbidden West
-            </p>
-          </div>
 
-          <div className="rounded-3xl border border-purple-500/20 bg-white/5 p-8">
-            <h2 className="text-2xl font-bold text-purple-400">
-              🔴 Stream Schedule
-            </h2>
 
-            <p className="mt-4 text-gray-300">
-              New stream times will be posted here.
-            </p>
-          </div>
 
-          <div className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8">
-            <h2 className="text-2xl font-bold text-cyan-400">
-              💜 Follow
-            </h2>
+
+
+
+      <section
+        className="
+          grid
+          gap-8
+          md:grid-cols-3
+          mt-16
+        "
+      >
+
+
+
+        <BrandCard
+          className="card-hover"
+        >
+
+          <h2
+            className="
+              text-2xl
+              font-black
+              text-cyan-400
+            "
+          >
+            🎮 Currently Playing
+          </h2>
+
+
+          <p
+            className="
+              mt-4
+              text-slate-300
+            "
+          >
+            Horizon Forbidden West
+          </p>
+
+
+        </BrandCard>
+
+
+
+
+
+
+
+
+        <BrandCard
+          className="card-hover"
+        >
+
+          <h2
+            className="
+              text-2xl
+              font-black
+              text-purple-400
+            "
+          >
+            🔥 Community Streams
+          </h2>
+
+
+          <p
+            className="
+              mt-4
+              text-slate-300
+            "
+          >
+            Watch live gameplay, community events,
+            and future PulsePlay broadcasts.
+          </p>
+
+
+        </BrandCard>
+
+
+
+
+
+
+
+
+        <BrandCard
+          className="card-hover"
+        >
+
+          <h2
+            className="
+              text-2xl
+              font-black
+              text-cyan-400
+            "
+          >
+            💜 Follow PulsePlay
+          </h2>
+
+
+
+          <p
+            className="
+              mt-4
+              text-slate-300
+            "
+          >
+            Follow the channel and join the
+            PulsePlay gaming community.
+          </p>
+
+
+
+
+          <div className="mt-6">
 
             <a
               href="https://www.twitch.tv/Veiltactician"
               target="_blank"
               rel="noreferrer"
-              className="mt-4 inline-block rounded-lg bg-purple-600 px-6 py-3 font-bold transition hover:bg-purple-700 hover:shadow-[0_0_20px_#9333ea]"
             >
-              Follow on Twitch
+
+              <BrandButton>
+                Follow on Twitch
+              </BrandButton>
+
+
             </a>
+
+
           </div>
 
-        </div>
+
+
+        </BrandCard>
+
+
+
+
+
       </section>
 
-    </section>
+
+
+
+
+
+    </main>
+
   );
+
 }

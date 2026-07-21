@@ -28,8 +28,7 @@ export default function Footer() {
       >
 
 
-
-        {/* Brand Section */}
+        {/* Brand */}
 
         <div>
 
@@ -43,11 +42,12 @@ export default function Footer() {
 
             <img
               src="/pulseplay-logo.svg"
-              alt="PulsePlay"
+              alt="PulsePlay Logo"
               className="
                 w-12
                 h-12
                 rounded-xl
+                shadow-[0_0_20px_rgba(34,211,238,.25)]
               "
             />
 
@@ -66,7 +66,6 @@ export default function Footer() {
           </div>
 
 
-
           <p
             className="
               mt-5
@@ -81,7 +80,6 @@ export default function Footer() {
 
 
         </div>
-
 
 
 
@@ -109,59 +107,46 @@ export default function Footer() {
             "
           >
 
-            <NavLink
-              to="/games"
-              className="
-                block
-                text-slate-400
-                hover:text-cyan-400
-              "
-            >
-              Games
-            </NavLink>
+            {[
+              {
+                name:"Games",
+                path:"/games"
+              },
+              {
+                name:"Streams",
+                path:"/streams"
+              },
+              {
+                name:"News",
+                path:"/news"
+              },
+              {
+                name:"Store",
+                path:"/store"
+              },
+            ].map((item)=>(
+              
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className="
+                  block
+                  text-slate-400
+                  transition
+                  hover:text-cyan-400
+                  hover:translate-x-1
+                "
+              >
+                {item.name}
+              </NavLink>
 
-
-            <NavLink
-              to="/streams"
-              className="
-                block
-                text-slate-400
-                hover:text-cyan-400
-              "
-            >
-              Streams
-            </NavLink>
-
-
-            <NavLink
-              to="/news"
-              className="
-                block
-                text-slate-400
-                hover:text-cyan-400
-              "
-            >
-              News
-            </NavLink>
-
-
-            <NavLink
-              to="/store"
-              className="
-                block
-                text-slate-400
-                hover:text-cyan-400
-              "
-            >
-              Store
-            </NavLink>
+            ))}
 
 
           </div>
 
 
         </div>
-
 
 
 
@@ -202,28 +187,35 @@ export default function Footer() {
             className="
               mt-6
               flex
-              gap-4
+              gap-5
               flex-wrap
             "
           >
+
 
             <a
               href="https://www.twitch.tv/veiltactician"
               target="_blank"
               rel="noreferrer"
+              aria-label="PulsePlay Twitch"
               className="
                 text-slate-300
+                transition
                 hover:text-purple-400
+                hover:drop-shadow-[0_0_10px_#a855f7]
               "
             >
               Twitch
             </a>
 
 
+
             <a
               href="#"
+              aria-label="PulsePlay Discord"
               className="
                 text-slate-300
+                transition
                 hover:text-cyan-400
               "
             >
@@ -231,10 +223,13 @@ export default function Footer() {
             </a>
 
 
+
             <a
               href="#"
+              aria-label="PulsePlay X"
               className="
                 text-slate-300
+                transition
                 hover:text-pink-400
               "
             >
@@ -242,10 +237,13 @@ export default function Footer() {
             </a>
 
 
+
             <a
               href="#"
+              aria-label="PulsePlay Facebook"
               className="
                 text-slate-300
+                transition
                 hover:text-blue-400
               "
             >
@@ -266,7 +264,7 @@ export default function Footer() {
 
 
 
-      {/* Bottom Bar */}
+      {/* Bottom */}
 
       <div
         className="

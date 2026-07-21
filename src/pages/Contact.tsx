@@ -12,7 +12,7 @@ export default function Contact() {
       <section
         className="
           text-center
-          mb-12
+          mb-16
         "
       >
 
@@ -30,20 +30,22 @@ export default function Contact() {
 
         <p
           className="
-            mt-4
-            text-slate-400
-            max-w-2xl
+            mt-5
             mx-auto
+            max-w-3xl
             text-lg
+            text-slate-400
           "
         >
           Have questions, feedback, partnership ideas,
           or want to join the community?
-          Reach out to us.
+          Connect with PulsePlay.
         </p>
 
 
       </section>
+
+
 
 
 
@@ -53,21 +55,23 @@ export default function Contact() {
           grid
           grid-cols-1
           md:grid-cols-2
-          gap-6
+          gap-8
         "
       >
 
 
-        <BrandCard>
-
+        <BrandCard
+          className="card-hover"
+        >
 
           <h2
             className="
               text-3xl
-              font-bold
+              font-black
+              text-cyan-400
             "
           >
-            Community
+            🎮 Community
           </h2>
 
 
@@ -75,12 +79,15 @@ export default function Contact() {
             className="
               mt-4
               text-slate-400
+              leading-relaxed
             "
           >
-            Connect with other gamers, follow streams,
-            and stay updated with everything happening
-            in the PulsePlay universe.
+            Connect with gamers, follow streams,
+            discover new releases, and stay updated
+            with everything happening in the
+            PulsePlay universe.
           </p>
+
 
 
           <div className="mt-6">
@@ -98,28 +105,36 @@ export default function Contact() {
 
 
 
-        <BrandCard>
 
+
+        <BrandCard
+          className="card-hover"
+        >
 
           <h2
             className="
               text-3xl
-              font-bold
+              font-black
+              text-purple-400
             "
           >
-            Get In Touch
+            💬 Get In Touch
           </h2>
+
 
 
           <p
             className="
               mt-4
               text-slate-400
+              leading-relaxed
             "
           >
-            For questions, partnerships, or support,
-            send us a message and we'll get back to you.
+            For questions, partnerships,
+            feedback, or support, reach out
+            to the PulsePlay team.
           </p>
+
 
 
 
@@ -134,7 +149,7 @@ export default function Contact() {
               className="
                 rounded-xl
                 border
-                border-white/10
+                border-cyan-500/20
                 bg-black/20
                 p-4
                 text-slate-300
@@ -144,11 +159,12 @@ export default function Contact() {
             </div>
 
 
+
             <div
               className="
                 rounded-xl
                 border
-                border-white/10
+                border-purple-500/20
                 bg-black/20
                 p-4
                 text-slate-300
@@ -164,8 +180,9 @@ export default function Contact() {
         </BrandCard>
 
 
-
       </section>
+
+
 
 
 
@@ -174,30 +191,42 @@ export default function Contact() {
       <section className="mt-8">
 
 
-        <BrandCard>
+        <BrandCard
+          className="card-hover"
+        >
 
 
-          <h2
+          <div
             className="
-              text-3xl
-              font-black
-              pp-gradient-text
+              text-center
             "
           >
-            Ready to Level Up?
-          </h2>
+
+            <h2
+              className="
+                text-3xl
+                font-black
+                pp-gradient-text
+              "
+            >
+              Ready to Level Up?
+            </h2>
 
 
-          <p
-            className="
-              mt-4
-              text-slate-400
-            "
-          >
-            Follow PulsePlay and be part of a growing
-            gaming community built around streams,
-            games, and discovery.
-          </p>
+
+            <p
+              className="
+                mt-4
+                text-slate-400
+              "
+            >
+              Follow PulsePlay and become part
+              of a growing gaming community built
+              around streams, games, and discovery.
+            </p>
+
+
+          </div>
 
 
         </BrandCard>
@@ -209,4 +238,5 @@ export default function Contact() {
     </main>
 
   );
+
 }
