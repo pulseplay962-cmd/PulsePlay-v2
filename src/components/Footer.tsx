@@ -16,43 +16,67 @@ export default function Footer() {
 
       <div
         className="
-          max-w-1400
+          max-w-[1400px]
           mx-auto
           px-6
-          py-10
+          py-12
           grid
           grid-cols-1
           md:grid-cols-3
-          gap-8
+          gap-10
         "
       >
 
 
 
-        {/* Brand */}
+        {/* Brand Section */}
 
         <div>
 
-          <h2
+          <div
             className="
-              text-3xl
-              font-black
-              pp-gradient-text
+              flex
+              items-center
+              gap-3
             "
           >
-            PulsePlay
-          </h2>
+
+            <img
+              src="/pulseplay-logo.svg"
+              alt="PulsePlay"
+              className="
+                w-12
+                h-12
+                rounded-xl
+              "
+            />
+
+
+            <h2
+              className="
+                text-3xl
+                font-black
+                pp-gradient-text
+              "
+            >
+              PulsePlay
+            </h2>
+
+
+          </div>
+
 
 
           <p
             className="
-              mt-4
+              mt-5
               text-slate-400
+              leading-relaxed
             "
           >
             Level up your gaming experience with
-            live streams, gaming news, community,
-            and gear built for gamers.
+            live streams, gaming news, community
+            content, and gamer gear.
           </p>
 
 
@@ -62,7 +86,8 @@ export default function Footer() {
 
 
 
-        {/* Navigation */}
+
+        {/* Explore */}
 
         <div>
 
@@ -79,8 +104,8 @@ export default function Footer() {
 
           <div
             className="
-              mt-4
-              space-y-2
+              mt-5
+              space-y-3
             "
           >
 
@@ -109,18 +134,6 @@ export default function Footer() {
 
 
             <NavLink
-              to="/store"
-              className="
-                block
-                text-slate-400
-                hover:text-cyan-400
-              "
-            >
-              Store
-            </NavLink>
-
-
-            <NavLink
               to="/news"
               className="
                 block
@@ -132,10 +145,24 @@ export default function Footer() {
             </NavLink>
 
 
+            <NavLink
+              to="/store"
+              className="
+                block
+                text-slate-400
+                hover:text-cyan-400
+              "
+            >
+              Store
+            </NavLink>
+
+
           </div>
 
 
         </div>
+
+
 
 
 
@@ -153,35 +180,39 @@ export default function Footer() {
               text-white
             "
           >
-            Community
+            Join The Community
           </h3>
+
 
 
           <p
             className="
-              mt-4
+              mt-5
               text-slate-400
             "
           >
             Follow PulsePlay for streams,
             updates, gaming discussions,
-            and future events.
+            and new releases.
           </p>
 
 
 
           <div
             className="
-              mt-5
+              mt-6
               flex
               gap-4
+              flex-wrap
             "
           >
 
             <a
-              href="#"
+              href="https://www.twitch.tv/veiltactician"
+              target="_blank"
+              rel="noreferrer"
               className="
-                text-slate-400
+                text-slate-300
                 hover:text-purple-400
               "
             >
@@ -192,7 +223,7 @@ export default function Footer() {
             <a
               href="#"
               className="
-                text-slate-400
+                text-slate-300
                 hover:text-cyan-400
               "
             >
@@ -203,11 +234,22 @@ export default function Footer() {
             <a
               href="#"
               className="
-                text-slate-400
+                text-slate-300
                 hover:text-pink-400
               "
             >
               X
+            </a>
+
+
+            <a
+              href="#"
+              className="
+                text-slate-300
+                hover:text-blue-400
+              "
+            >
+              Facebook
             </a>
 
 
@@ -217,12 +259,14 @@ export default function Footer() {
         </div>
 
 
-
       </div>
 
 
 
 
+
+
+      {/* Bottom Bar */}
 
       <div
         className="
@@ -230,8 +274,8 @@ export default function Footer() {
           border-white/10
           py-5
           text-center
-          text-slate-500
           text-sm
+          text-slate-500
         "
       >
 
@@ -239,6 +283,7 @@ export default function Footer() {
         All rights reserved.
 
       </div>
+
 
 
     </footer>

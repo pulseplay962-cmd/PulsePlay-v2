@@ -1,6 +1,7 @@
 import BrandCard from "../ui/BrandCard";
 import BrandButton from "../ui/BrandButton";
 
+
 type Video = {
   id: string;
   title: string;
@@ -16,19 +17,34 @@ type LatestVideosProps = {
 };
 
 
+
 export default function LatestVideos({
   videos = [],
 }: LatestVideosProps) {
 
-  return (
-    <section className="mt-16">
 
-      <div className="mb-8">
+  return (
+
+    <section
+      className="
+        mt-20
+      "
+    >
+
+
+
+      {/* Header */}
+
+      <div
+        className="
+          mb-10
+        "
+      >
 
         <h2
           className="
             text-3xl
-            md:text-4xl
+            md:text-5xl
             font-black
             pp-gradient-text
           "
@@ -36,12 +52,28 @@ export default function LatestVideos({
           Latest Videos
         </h2>
 
-        <p className="mt-2 text-slate-400">
-          Catch the latest gameplay, streams, and community highlights.
+
+        <p
+          className="
+            mt-3
+            text-slate-400
+            max-w-2xl
+          "
+        >
+          Catch the latest gameplay,
+          streams, highlights, and
+          PulsePlay community moments.
         </p>
+
 
       </div>
 
+
+
+
+
+
+      {/* Video Grid */}
 
       <div
         className="
@@ -49,9 +81,14 @@ export default function LatestVideos({
           grid-cols-1
           md:grid-cols-2
           lg:grid-cols-3
-          gap-6
+          gap-8
         "
       >
+
+
+
+
+        {/* Empty State */}
 
         {videos.length === 0 && (
 
@@ -65,18 +102,37 @@ export default function LatestVideos({
               "
             >
 
-              <span className="pp-live-dot" />
+              <span
+                className="
+                  pp-live-dot
+                "
+              />
 
-              <h3 className="text-xl font-bold">
+
+              <h3
+                className="
+                  text-xl
+                  font-bold
+                "
+              >
                 No videos available
               </h3>
+
 
             </div>
 
 
-            <p className="mt-3 text-slate-400">
-              Add videos through the PulsePlay admin dashboard.
+
+            <p
+              className="
+                mt-4
+                text-slate-400
+              "
+            >
+              Upload videos through the
+              PulsePlay admin dashboard.
             </p>
+
 
           </BrandCard>
 
@@ -84,28 +140,70 @@ export default function LatestVideos({
 
 
 
+
+
+
+
         {videos.map((video) => (
 
-          <BrandCard key={video.id}>
+          <BrandCard
+            key={video.id}
+            className="
+              card-hover
+            "
+          >
 
 
-            {video.thumbnail && (
+            {/* Thumbnail */}
+
+            {video.thumbnail ? (
 
               <img
+
                 src={video.thumbnail}
+
                 alt={video.title}
+
                 className="
                   w-full
-                  h-48
+                  h-52
                   object-cover
                   rounded-xl
                   mb-5
                 "
+
               />
+
+            ) : (
+
+              <div
+                className="
+                  h-52
+                  rounded-xl
+                  mb-5
+                  flex
+                  items-center
+                  justify-center
+                  bg-black/40
+                  border
+                  border-white/10
+                  text-slate-500
+                "
+              >
+
+                No Thumbnail
+
+              </div>
 
             )}
 
 
+
+
+
+
+
+            {/* Platform */}
 
             {video.platform && (
 
@@ -117,6 +215,7 @@ export default function LatestVideos({
                   mb-3
                   text-sm
                   text-cyan-400
+                  font-bold
                 "
               >
 
@@ -130,6 +229,12 @@ export default function LatestVideos({
 
 
 
+
+
+
+
+            {/* Title */}
+
             <h3
               className="
                 text-xl
@@ -137,10 +242,18 @@ export default function LatestVideos({
                 text-white
               "
             >
+
               {video.title}
+
             </h3>
 
 
+
+
+
+
+
+            {/* Description */}
 
             {video.description && (
 
@@ -151,16 +264,28 @@ export default function LatestVideos({
                   line-clamp-3
                 "
               >
+
                 {video.description}
+
               </p>
 
             )}
 
 
 
+
+
+
+
+            {/* Button */}
+
             {video.url && (
 
-              <div className="mt-6">
+              <div
+                className="
+                  mt-6
+                "
+              >
 
                 <a
                   href={video.url}
@@ -172,19 +297,28 @@ export default function LatestVideos({
                     Watch Now
                   </BrandButton>
 
+
                 </a>
+
 
               </div>
 
             )}
 
 
+
           </BrandCard>
 
         ))}
 
+
+
       </div>
 
+
+
     </section>
+
   );
+
 }

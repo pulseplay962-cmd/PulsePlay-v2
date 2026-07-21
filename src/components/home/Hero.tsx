@@ -1,55 +1,236 @@
-export default function Hero() {
-  return (
-    <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden bg-[#05070d] px-6 text-center text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#7c3aed33,transparent_40%)]" />
+import { NavLink } from "react-router-dom";
 
-      <div className="relative z-10 max-w-5xl">
-        <p className="mb-4 text-sm font-bold uppercase tracking-[0.4em] text-purple-400">
-          Next Level Gaming Experience
+import BrandButton from "../ui/BrandButton";
+
+
+export default function Hero() {
+
+  return (
+
+    <section
+      className="
+        relative
+        overflow-hidden
+        py-20
+        md:py-32
+      "
+    >
+
+
+      {/* Background Glow */}
+
+      <div
+        className="
+          absolute
+          inset-0
+          -z-10
+          opacity-40
+          blur-3xl
+          bg-gradient-to-r
+          from-cyan-500
+          via-purple-600
+          to-pink-500
+        "
+      />
+
+
+
+
+      <div
+        className="
+          text-center
+          max-w-5xl
+          mx-auto
+        "
+      >
+
+
+        <p
+          className="
+            uppercase
+            tracking-[0.35em]
+            text-cyan-400
+            font-bold
+            mb-6
+          "
+        >
+          Gaming • Streaming • Community
         </p>
 
-        <h1 className="text-6xl font-black tracking-tight sm:text-7xl">
-          Pulse<span className="text-purple-500">Play</span>
+
+
+        <h1
+          className="
+            text-5xl
+            md:text-7xl
+            font-black
+            leading-tight
+            pp-gradient-text
+          "
+        >
+          Level Up Your
+          <br />
+          Gaming Experience
         </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-xl text-gray-300">
-          Watch live gaming streams, discover new content, join the community,
-          and power up your gaming experience.
+
+
+
+        <p
+          className="
+            mt-8
+            text-lg
+            md:text-xl
+            text-slate-400
+            max-w-3xl
+            mx-auto
+          "
+        >
+          Welcome to PulsePlay — a gaming hub built
+          for players, creators, and communities.
+          Discover games, watch live streams,
+          follow gaming news, and gear up.
         </p>
 
-        <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-          <a
-            href="/streams"
-            className="rounded-lg bg-purple-600 px-8 py-3 font-bold transition hover:bg-purple-700 hover:shadow-[0_0_25px_#9333ea]"
-          >
-            🎮 Watch Streams
-          </a>
 
-          <a
-            href="/store"
-            className="rounded-lg border border-purple-500/40 px-8 py-3 font-bold transition hover:bg-purple-500/10 hover:shadow-[0_0_25px_#9333ea]"
-          >
-            🛒 Visit Store
-          </a>
+
+
+
+        <div
+          className="
+            mt-10
+            flex
+            flex-col
+            sm:flex-row
+            justify-center
+            gap-5
+          "
+        >
+
+
+          <NavLink to="/streams">
+
+            <BrandButton>
+              Watch Streams
+            </BrandButton>
+
+          </NavLink>
+
+
+
+
+          <NavLink to="/store">
+
+            <BrandButton variant="secondary">
+              Visit Store
+            </BrandButton>
+
+          </NavLink>
+
+
         </div>
 
-        <div className="mt-12 flex justify-center gap-8 text-sm text-gray-400">
-          <div>
-            <span className="block text-2xl font-bold text-white">LIVE</span>
-            Gaming Streams
+
+
+
+        {/* Stats */}
+
+        <div
+          className="
+            mt-16
+            grid
+            grid-cols-1
+            sm:grid-cols-3
+            gap-6
+          "
+        >
+
+
+          <div
+            className="
+              glass
+              p-6
+            "
+          >
+
+            <h3
+              className="
+                text-3xl
+                font-black
+                text-cyan-400
+              "
+            >
+              Live
+            </h3>
+
+            <p className="text-slate-400">
+              Gaming Streams
+            </p>
+
           </div>
 
-          <div>
-            <span className="block text-2xl font-bold text-white">24/7</span>
-            Community
+
+
+
+          <div
+            className="
+              glass
+              p-6
+            "
+          >
+
+            <h3
+              className="
+                text-3xl
+                font-black
+                text-purple-400
+              "
+            >
+              New
+            </h3>
+
+            <p className="text-slate-400">
+              Gaming News
+            </p>
+
           </div>
 
-          <div>
-            <span className="block text-2xl font-bold text-white">∞</span>
-            Content
+
+
+
+          <div
+            className="
+              glass
+              p-6
+            "
+          >
+
+            <h3
+              className="
+                text-3xl
+                font-black
+                text-pink-400
+              "
+            >
+              Gear
+            </h3>
+
+            <p className="text-slate-400">
+              Gamer Essentials
+            </p>
+
           </div>
+
+
         </div>
+
+
+
       </div>
+
+
     </section>
+
   );
+
 }

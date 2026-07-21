@@ -1,118 +1,269 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getFeaturedProducts } from "../../services/products";
 
-type Product = {
+import BrandCard from "../ui/BrandCard";
+import BrandButton from "../ui/BrandButton";
+
+import { getGames } from "../../services/games";
+
+
+type Game = {
   id: string;
-  name: string;
-  description: string;
-  price: string;
-  image: string;
-  link: string;
-  featured: boolean;
+  title: string;
+  description?: string;
+  image?: string;
+  genre?: string;
 };
 
-export default function FeaturedProducts() {
-  const [products, setProducts] = useState<Product[]>([]);
+
+
+export default function FeaturedGames() {
+
+  const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function loadProducts() {
+
+
+  async function loadGames() {
+
     try {
-      const data = await getFeaturedProducts();
-      setProducts(data || []);
-    } catch (err) {
-      console.error("Failed to load featured products:", err);
+
+      const data = await getGames();
+
+      setGames(
+        (data || [])
+          .filter((game: any) => game.featured)
+          .slice(0, 6)
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Failed to load featured games:",
+        error
+      );
+
     } finally {
+
       setLoading(false);
+
     }
+
   }
+
+
 
   useEffect(() => {
-    loadProducts();
+
+    loadGames();
+
   }, []);
 
+
+
+
+
   if (loading) {
+
     return (
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <h2 className="text-4xl font-black text-white">
-          Featured Gear
+
+      <section className="max-w-7xl mx-auto px-6 py-16">
+
+        <h2 className="text-4xl font-black pp-gradient-text">
+          Featured Games
         </h2>
 
-        <p className="mt-4 text-gray-400">
-          Loading featured products...
+        <p className="mt-4 text-slate-400">
+          Loading featured games...
         </p>
+
       </section>
+
     );
+
   }
 
-  if (products.length === 0) {
-    return null;
-  }
+
+
+
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16">
-      <div className="flex items-center justify-between">
+
+    <section
+      className="
+        max-w-7xl
+        mx-auto
+        px-6
+        py-16
+      "
+    >
+
+
+      <div
+        className="
+          flex
+          flex-col
+          md:flex-row
+          justify-between
+          md:items-center
+          gap-6
+        "
+      >
 
         <div>
-          <h2 className="text-4xl font-black text-white">
-            Featured Gear
+
+          <h2
+            className="
+              text-4xl
+              font-black
+              pp-gradient-text
+            "
+          >
+            Featured Games
           </h2>
 
-          <p className="mt-2 text-gray-400">
-            Hand-picked gaming gear recommended by PulsePlay.
+
+          <p
+            className="
+              mt-3
+              text-slate-400
+            "
+          >
+            Discover the latest adventures,
+            releases, and games worth playing.
           </p>
+
+
         </div>
 
-        <Link
-          to="/store"
-          className="rounded-lg bg-cyan-500 px-5 py-3 font-bold text-black transition hover:bg-cyan-400"
-        >
-          View Store
+
+
+        <Link to="/games">
+
+          <BrandButton>
+            Browse Games
+          </BrandButton>
+
         </Link>
 
+
       </div>
 
-      <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="overflow-hidden rounded-2xl border border-cyan-500/20 bg-[#111827] shadow-lg transition hover:-translate-y-1 hover:border-cyan-400"
+
+
+
+      <div
+        className="
+          mt-10
+          grid
+          gap-8
+          md:grid-cols-2
+          lg:grid-cols-3
+        "
+      >
+
+
+        {games.map((game) => (
+
+          <BrandCard
+            key={game.id}
+            className="card-hover"
           >
-            <img
-              src={product.image}
-              alt={product.name}
-              className="h-64 w-full object-cover"
-            />
 
-            <div className="p-6">
 
-              <h3 className="text-2xl font-bold text-white">
-                {product.name}
-              </h3>
+            {game.image ? (
 
-              <p className="mt-3 text-sm text-gray-400">
-                {product.description}
-              </p>
+              <img
+                src={game.image}
+                alt={game.title}
+                className="
+                  h-64
+                  w-full
+                  object-cover
+                  rounded-xl
+                "
+              />
 
-              <p className="mt-4 text-xl font-bold text-cyan-400">
-                {product.price}
-              </p>
+            ) : (
 
-              <a
-                href={product.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-block w-full rounded-lg bg-cyan-500 py-3 text-center font-bold text-black transition hover:bg-cyan-400"
+              <div
+                className="
+                  h-64
+                  rounded-xl
+                  flex
+                  items-center
+                  justify-center
+                  bg-black/40
+                  text-slate-500
+                "
               >
-                View on Amazon
-              </a>
+                No Image
+              </div>
 
-            </div>
-          </div>
+            )}
+
+
+
+            {game.genre && (
+
+              <p
+                className="
+                  mt-5
+                  text-sm
+                  text-cyan-400
+                  font-bold
+                "
+              >
+                {game.genre}
+              </p>
+
+            )}
+
+
+
+
+            <h3
+              className="
+                mt-2
+                text-2xl
+                font-bold
+                text-white
+              "
+            >
+              {game.title}
+            </h3>
+
+
+
+            {game.description && (
+
+              <p
+                className="
+                  mt-3
+                  text-slate-400
+                  line-clamp-3
+                "
+              >
+                {game.description}
+              </p>
+
+            )}
+
+
+
+          </BrandCard>
+
         ))}
 
+
+
       </div>
+
+
     </section>
+
   );
+
 }
