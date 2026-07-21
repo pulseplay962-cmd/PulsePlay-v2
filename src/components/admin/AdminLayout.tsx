@@ -8,43 +8,61 @@ export default function AdminLayout() {
 
 
   const navigation = [
+
     {
       name: "Dashboard",
       path: "/admin",
       icon: "📊",
     },
+
     {
       name: "Games",
       path: "/admin/games",
       icon: "🎮",
     },
+
     {
       name: "Videos",
       path: "/admin/videos",
       icon: "🎥",
     },
+
     {
       name: "Products",
       path: "/admin/products",
       icon: "🛒",
     },
+
+    {
+      name: "Merchandise",
+      path: "/admin/merchandise",
+      icon: "👕",
+    },
+
     {
       name: "News",
       path: "/admin/news",
       icon: "📰",
     },
+
     {
       name: "Settings",
       path: "/admin/settings",
       icon: "⚙️",
     },
+
   ];
 
 
+
   async function handleLogout() {
+
     await supabase.auth.signOut();
+
     window.location.href = "/admin/login";
+
   }
+
 
 
 
@@ -55,57 +73,90 @@ export default function AdminLayout() {
 
       {/* Sidebar */}
 
-      <aside className="flex w-72 flex-col border-r border-cyan-500/20 bg-[#0b1120] p-6">
+      <aside className="
+        flex
+        w-72
+        flex-col
+        border-r
+        border-cyan-500/20
+        bg-[#0b1120]
+        p-6
+      ">
 
 
         <div>
 
-          <h1 className="text-3xl font-black text-cyan-400">
+          <h1 className="
+            text-3xl
+            font-black
+            text-cyan-400
+          ">
             PulsePlay
           </h1>
 
-          <p className="mt-1 text-sm text-gray-400">
+
+          <p className="
+            mt-1
+            text-sm
+            text-gray-400
+          ">
             Admin Control Center
           </p>
+
 
         </div>
 
 
 
-        <nav className="mt-10 flex-1 space-y-2">
+
+        <nav className="
+          mt-10
+          flex-1
+          space-y-2
+        ">
 
 
           {navigation.map((item) => {
+
 
             const active =
               location.pathname === item.path;
 
 
+
             return (
 
               <Link
+
                 key={item.path}
+
                 to={item.path}
+
                 className={`
                   flex items-center gap-3 rounded-xl px-4 py-3
                   font-bold transition
+
                   ${
                     active
                       ? "bg-cyan-500 text-black shadow-[0_0_25px_#22d3ee]"
                       : "text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400"
                   }
                 `}
+
               >
 
                 <span>
                   {item.icon}
                 </span>
 
+
                 {item.name}
+
 
               </Link>
 
             );
+
 
           })}
 
@@ -115,23 +166,57 @@ export default function AdminLayout() {
 
 
 
-        <div className="border-t border-white/10 pt-6">
+        <div className="
+          border-t
+          border-white/10
+          pt-6
+        ">
 
 
           <Link
+
             to="/"
-            className="block rounded-xl px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white"
+
+            className="
+              block
+              rounded-xl
+              px-4
+              py-3
+              text-gray-300
+              hover:bg-white/5
+              hover:text-white
+            "
+
           >
+
             🌐 View Website
+
           </Link>
 
 
 
+
           <button
+
             onClick={handleLogout}
-            className="mt-3 w-full rounded-xl bg-red-500/20 px-4 py-3 font-bold text-red-300 transition hover:bg-red-500/30"
+
+            className="
+              mt-3
+              w-full
+              rounded-xl
+              bg-red-500/20
+              px-4
+              py-3
+              font-bold
+              text-red-300
+              transition
+              hover:bg-red-500/30
+            "
+
           >
+
             🚪 Logout
+
           </button>
 
 
@@ -143,9 +228,14 @@ export default function AdminLayout() {
 
 
 
+
       {/* Main Content */}
 
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="
+        flex-1
+        overflow-y-auto
+        p-8
+      ">
 
         <Outlet />
 
@@ -155,4 +245,5 @@ export default function AdminLayout() {
     </div>
 
   );
+
 }

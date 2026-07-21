@@ -5,17 +5,45 @@ export default function Navbar() {
 
   return (
 
-    <nav className="flex items-center justify-between bg-[#0b1120] px-6 py-4">
+    <nav className="
+      flex
+      items-center
+      justify-between
+      bg-[#0b1120]
+      px-6
+      py-4
+      border-b
+      border-cyan-500/20
+    ">
+
+
+      {/* Logo */}
 
       <Link
         to="/"
-        className="text-2xl font-black text-cyan-400"
+        className="
+          text-2xl
+          font-black
+          text-cyan-400
+          hover:text-cyan-300
+        "
       >
         PulsePlay
       </Link>
 
 
-      <div className="flex items-center gap-6 font-bold text-white">
+
+
+      {/* Navigation */}
+
+      <div className="
+        flex
+        items-center
+        gap-6
+        font-bold
+        text-white
+      ">
+
 
         <Link
           to="/"
@@ -23,6 +51,7 @@ export default function Navbar() {
         >
           Home
         </Link>
+
 
 
         <Link
@@ -33,49 +62,77 @@ export default function Navbar() {
         </Link>
 
 
+
         <Link
           to="/streams"
           className="hover:text-cyan-400"
         >
-          Streams
+          📺 Streams
         </Link>
+
 
 
         <Link
           to="/news"
           className="hover:text-cyan-400"
         >
-          News
+          📰 News
         </Link>
+
+
 
 
         <Link
           to="/store"
           className="hover:text-cyan-400"
         >
-          Store
+          🖥 Store
         </Link>
+
+
+
+
+        <Link
+          to="/merchandise"
+          className="hover:text-cyan-400"
+        >
+          👕 Merchandise
+        </Link>
+
+
 
 
         <Link
           to="/community"
           className="hover:text-cyan-400"
         >
-          Community
+          🌐 Community
         </Link>
+
+
 
 
         <a
           href="https://throne.com/veiltactician"
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-lg bg-purple-500 px-4 py-2 text-white hover:bg-purple-400"
+          className="
+            rounded-lg
+            bg-purple-500
+            px-4
+            py-2
+            text-white
+            hover:bg-purple-400
+            transition
+          "
         >
           🎁 Support
         </a>
 
 
+
       </div>
+
 
     </nav>
 
