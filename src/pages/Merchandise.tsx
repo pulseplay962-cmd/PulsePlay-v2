@@ -1,351 +1,497 @@
-import { useEffect, useState } from "react";
+import { merchandise } from "../data/merchandise";
 
-import { getMerchandise } from "../services/merchandise";
-
-
-type MerchandiseItem = {
-
-  id: string;
-
-  name: string;
-
-  description?: string;
-
-  price: string;
-
-  category: string;
-
-  badge?: string;
-
-  image_url?: string;
-
-  checkout_url?: string;
-
-};
+import BrandCard from "../components/ui/BrandCard";
+import BrandButton from "../components/ui/BrandButton";
 
 
 
 export default function Merchandise() {
 
 
-  const [items, setItems] =
-    useState<MerchandiseItem[]>([]);
+return (
 
+<main>
 
-  const [loading, setLoading] =
-    useState(true);
 
 
 
-  useEffect(() => {
 
-    loadMerchandise();
+{/* Header */}
 
-  }, []);
 
+<section
 
+className="
+text-center
+mb-16
+"
 
+>
 
-  async function loadMerchandise() {
 
-    try {
+<div
 
-      const data =
-        await getMerchandise();
+className="
+inline-flex
+items-center
+gap-3
+px-5
+py-2
+rounded-full
+pp-hud
+text-pink-300
+text-sm
+font-black
+tracking-[0.35em]
+"
 
+>
 
-      setItems(data || []);
+👕 STYLE DATABASE ONLINE
 
+</div>
 
-    } catch(error) {
 
 
-      console.error(
-        "Failed loading merchandise:",
-        error
-      );
 
 
-    } finally {
+<h1
 
+className="
+mt-8
+text-5xl
+md:text-7xl
+font-black
+pp-gradient-text
+"
 
-      setLoading(false);
+>
 
+PULSEPLAY LOCKER
 
-    }
+</h1>
 
-  }
 
 
 
 
+<p
 
-  return (
+className="
+mt-5
+mx-auto
+max-w-3xl
+text-lg
+text-slate-400
+"
 
-    <div className="
-      min-h-screen
-      bg-[#050816]
-      px-6
-      py-12
-      text-white
-    ">
+>
 
+Customize your player identity with
+official PulsePlay apparel,
+creator gear, and gaming lifestyle items.
 
-      <section className="
-        mx-auto
-        max-w-6xl
-      ">
+</p>
 
 
+</section>
 
-        <div className="text-center">
 
 
-          <h1 className="
-            text-5xl
-            font-black
-            text-cyan-400
-          ">
-            👕 PulsePlay Merchandise
-          </h1>
 
 
 
-          <p className="
-            mx-auto
-            mt-4
-            max-w-2xl
-            text-lg
-            text-gray-400
-          ">
-            Official PulsePlay gaming apparel and gear.
-            Level up your setup and represent the community.
-          </p>
 
 
-        </div>
 
+{/* Inventory */}
 
 
+<section>
 
 
-        {loading && (
+<div
 
-          <p className="
-            mt-12
-            text-center
-            text-gray-400
-          ">
-            Loading merchandise...
-          </p>
+className="
+flex
+items-center
+justify-between
+mb-8
+"
 
-        )}
+>
 
 
+<h2
 
+className="
+text-3xl
+font-black
+"
 
+>
 
+AVAILABLE LOADOUTS
 
-        {!loading && items.length === 0 && (
+</h2>
 
-          <div className="
-            mt-12
-            rounded-xl
-            border
-            border-purple-500/30
-            bg-[#0b1120]
-            p-8
-            text-center
-          ">
 
-            <h2 className="
-              text-2xl
-              font-bold
-            ">
-              Coming Soon 🎮
-            </h2>
+<span
 
+className="
+text-green-400
+text-sm
+tracking-widest
+"
 
-            <p className="
-              mt-2
-              text-gray-400
-            ">
-              PulsePlay merchandise drops are being prepared.
-            </p>
+>
 
+● INVENTORY READY
 
-          </div>
+</span>
 
-        )}
 
+</div>
 
 
 
 
 
-        <div className="
-          mt-12
-          grid
-          gap-8
-          md:grid-cols-3
-        ">
 
 
+<div
 
-          {items.map((item) => (
+className="
+grid
+md:grid-cols-3
+gap-8
+"
 
+>
 
-            <div
 
-              key={item.id}
+{
 
-              className="
-                overflow-hidden
-                rounded-xl
-                border
-                border-purple-500/30
-                bg-[#0b1120]
-              "
+merchandise.map((item)=>(
 
-            >
 
 
+<BrandCard
 
-              {item.image_url && (
+key={item.id}
 
-                <img
+className="
+group
+card-hover
+"
 
-                  src={item.image_url}
+>
 
-                  alt={item.name}
 
-                  className="
-                    h-64
-                    w-full
-                    object-cover
-                  "
 
-                />
 
-              )}
 
 
+{/* Product Image */}
 
 
+<div
 
+className="
+overflow-hidden
+rounded-xl
+"
 
-              <div className="p-5">
+>
 
 
-                {item.badge && (
+<img
 
-                  <span className="
-                    rounded-full
-                    bg-purple-600
-                    px-3
-                    py-1
-                    text-sm
-                    font-bold
-                  ">
-                    {item.badge}
-                  </span>
+src={item.image}
 
-                )}
+alt={item.name}
 
+className="
+w-full
+h-72
+object-cover
+transition
+duration-500
+group-hover:scale-110
+"
 
+/>
 
 
+</div>
 
 
-                <h2 className="
-                  mt-4
-                  text-xl
-                  font-black
-                ">
-                  {item.name}
-                </h2>
 
 
 
 
 
-                <p className="
-                  mt-2
-                  text-gray-400
-                ">
-                  {item.description}
-                </p>
 
+{/* Item Badge */}
 
 
+<div
 
+className="
+mt-5
+flex
+justify-between
+items-center
+"
 
+>
 
-                <p className="
-                  mt-4
-                  text-xl
-                  font-bold
-                  text-cyan-400
-                ">
-                  ${item.price}
-                </p>
 
+<span
 
+className="
+px-3
+py-1
+rounded-full
+bg-pink-500/20
+border
+border-pink-400/30
+text-xs
+font-black
+tracking-widest
+text-pink-300
+"
 
+>
 
+LEGENDARY
 
+</span>
 
-                {item.checkout_url && (
 
-                  <a
 
-                    href={item.checkout_url}
+<span
 
-                    target="_blank"
+className="
+text-green-400
+text-xs
+font-bold
+"
 
-                    rel="noopener noreferrer"
+>
 
-                    className="
-                      mt-5
-                      block
-                      rounded-lg
-                      bg-purple-600
-                      px-5
-                      py-3
-                      text-center
-                      font-bold
-                      hover:bg-purple-500
-                    "
+AVAILABLE
 
-                  >
+</span>
 
-                    Buy Now
 
-                  </a>
+</div>
 
-                )}
 
 
 
-              </div>
 
 
-            </div>
 
 
-          ))}
 
+{/* Name */}
 
 
-        </div>
+<h2
 
+className="
+mt-5
+text-2xl
+font-black
+"
 
+>
 
-      </section>
+{item.name}
 
+</h2>
 
-    </div>
 
-  );
+
+
+
+
+
+<p
+
+className="
+mt-3
+text-slate-400
+"
+
+>
+
+{item.description}
+
+</p>
+
+
+
+
+
+
+
+
+{/* Stats */}
+
+
+<div
+
+className="
+mt-5
+grid
+grid-cols-2
+gap-3
+text-xs
+"
+
+>
+
+
+<div
+
+className="
+pp-card-surface
+p-3
+"
+
+>
+
+
+<p className="text-slate-400">
+
+CLASS
+
+</p>
+
+
+<p className="text-cyan-300 font-bold">
+
+APPAREL
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+<div
+
+className="
+pp-card-surface
+p-3
+"
+
+>
+
+
+<p className="text-slate-400">
+
+RARITY
+
+</p>
+
+
+<p className="text-yellow-300 font-bold">
+
+LEGENDARY
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div
+
+className="
+mt-6
+flex
+justify-between
+items-center
+"
+
+>
+
+
+<span
+
+className="
+font-black
+text-purple-400
+text-xl
+"
+
+>
+
+{item.price}
+
+</span>
+
+
+
+
+
+<BrandButton>
+
+EQUIP STYLE
+
+</BrandButton>
+
+
+
+</div>
+
+
+
+
+
+
+
+</BrandCard>
+
+
+
+))
+
+}
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+</main>
+
+);
+
 
 }

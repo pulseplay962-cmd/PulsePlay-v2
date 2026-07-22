@@ -1,170 +1,699 @@
 import { useEffect, useState } from "react";
+
+import BrandCard from "../components/ui/BrandCard";
+import BrandButton from "../components/ui/BrandButton";
+
 import { getNews } from "../services/news";
 
+
+
 type Article = {
-  id: string;
-  title: string;
-  content: string;
-  image: string;
-  category: string;
-  featured: boolean;
+
+  id:string;
+
+  title:string;
+
+  content:string;
+
+  image:string;
+
+  category:string;
+
+  featured:boolean;
+
 };
 
-export default function Community() {
-  const [news, setNews] = useState<Article[]>([]);
 
-  useEffect(() => {
-    async function loadNews() {
-      try {
-        const data = await getNews();
 
-        const featuredNews = (data || []).filter(
-          (article) => article.featured
-        );
 
-        setNews(featuredNews);
-      } catch (error) {
-        console.error("Failed to load news:", error);
-      }
-    }
 
-    loadNews();
-  }, []);
+export default function Community(){
 
-  const links = [
-    {
-      title: "🎮 Twitch",
-      description: "Watch live streams and chat during broadcasts.",
-      url: "https://www.twitch.tv/Veiltactician",
-      button: "Watch Live",
-    },
-    {
-  title: "🌐 PulsePlay Website",
-  description: "Website updates in progress. Check back soon!",
-  url: "",
-  button: "Coming Soon",
+
+
+const [news,setNews] = useState<Article[]>([]);
+
+
+
+
+
+useEffect(()=>{
+
+
+async function loadNews(){
+
+
+try{
+
+
+const data = await getNews();
+
+
+const featuredNews =
+(data || []).filter(
+(article)=>article.featured
+);
+
+
+setNews(featuredNews);
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+"Failed loading community intel:",
+error
+);
+
+
+}
+
+
+
+}
+
+
+
+loadNews();
+
+
+
+},[]);
+
+
+
+
+
+
+
+
+const links = [
+
+{
+title:"🎮 Twitch Network",
+description:
+"Join live broadcasts, chat with players, and follow PulsePlay missions.",
+url:
+"https://www.twitch.tv/Veiltactician",
+button:"ENTER STREAM",
 },
-    {
-      title: "🎁 Throne Wishlist",
-      description: "Support future streams and help improve the setup.",
-      url: "https://throne.com/ve",
-      button: "View Wishlist",
-    },
-    {
-      title: "🛒 Amazon Picks",
-      description: "Browse recommended gaming gear and creator favorites.",
-      url: "https://amzn.to/4vmEtDy",
-      button: "Shop Gear",
-    },
-  ];
-
-  return (
-    <section className="bg-[#05070d] px-6 py-24 text-white">
-      <div className="mx-auto max-w-7xl">
-
-        <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.4em] text-purple-400">
-            JOIN THE COMMUNITY
-          </p>
-
-          <h1 className="mt-4 text-5xl font-black md:text-6xl">
-            Welcome to the{" "}
-            <span className="text-cyan-400">
-              PulsePlay
-            </span>{" "}
-            Community
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-400">
-            Whether you're here for live gameplay, giveaways,
-            gaming discussions, or creator content, there's a place
-            for you in the PulsePlay community.
-          </p>
-        </div>
 
 
-        {/* News Section */}
-        {news.length > 0 && (
-          <div className="mt-20">
-            <h2 className="mb-8 text-4xl font-black">
-              Latest <span className="text-purple-400">Updates</span>
-            </h2>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              {news.map((article) => (
-                <article
-                  key={article.id}
-                  className="overflow-hidden rounded-3xl border border-purple-500/20 bg-white/5"
-                >
-                  {article.image && (
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="aspect-video w-full object-cover"
-                    />
-                  )}
-
-                  <div className="p-6">
-                    <p className="text-sm text-purple-400">
-                      {article.category}
-                    </p>
-
-                    <h3 className="mt-3 text-2xl font-bold">
-                      {article.title}
-                    </h3>
-
-                    <p className="mt-3 text-gray-400">
-                      {article.content}
-                    </p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        )}
+{
+title:"🌐 PulsePlay Hub",
+description:
+"Access the main PulsePlay gaming network.",
+url:"",
+button:"SYSTEM LOCKED",
+},
 
 
-        {/* Community Links */}
-        <div className="mt-16 grid gap-8 md:grid-cols-2">
-          {links.map((item) => (
-            <article
-              key={item.title}
-              className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8 transition hover:-translate-y-1 hover:border-cyan-400 hover:shadow-[0_0_25px_#22d3ee55]"
-            >
-              <h2 className="text-2xl font-bold">
-                {item.title}
-              </h2>
-
-              <p className="mt-4 text-gray-400">
-                {item.description}
-              </p>
-
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-6 inline-block rounded-lg bg-cyan-400 px-6 py-3 font-bold text-black transition hover:bg-cyan-300"
-              >
-                {item.button}
-              </a>
-            </article>
-          ))}
-        </div>
+{
+title:"🎁 Creator Support",
+description:
+"Support future broadcasts and help upgrade the command center.",
+url:
+"https://throne.com/ve",
+button:"VIEW WISHLIST",
+},
 
 
-        <div className="mt-20 rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/30 to-cyan-900/20 p-10 text-center">
-          <h2 className="text-4xl font-black">
-            Game Together. Grow Together.
-          </h2>
+{
+title:"🛒 Gear Network",
+description:
+"Explore recommended gaming equipment and creator setups.",
+url:
+"https://amzn.to/4vmEtDy",
+button:"ACCESS ARMORY",
+},
 
-          <p className="mx-auto mt-6 max-w-3xl text-gray-300">
-            PulsePlay is built around creating an engaging,
-            welcoming gaming community. Every follow, share,
-            and conversation helps make the experience even better.
-          </p>
-        </div>
 
-      </div>
-    </section>
-  );
+];
+
+
+
+
+
+
+
+
+
+return (
+
+<main>
+
+
+
+
+
+
+{/* Header */}
+
+
+<section
+
+className="
+text-center
+mb-16
+"
+
+>
+
+
+<div
+
+className="
+inline-flex
+items-center
+gap-3
+px-5
+py-2
+rounded-full
+pp-hud
+text-cyan-300
+text-sm
+font-black
+tracking-[0.35em]
+"
+
+>
+
+👥 PLAYER NETWORK ONLINE
+
+</div>
+
+
+
+
+
+
+<h1
+
+className="
+mt-8
+text-5xl
+md:text-7xl
+font-black
+pp-gradient-text
+"
+
+>
+
+PULSEPLAY COMMUNITY
+
+</h1>
+
+
+
+
+
+
+<p
+
+className="
+mt-5
+mx-auto
+max-w-3xl
+text-lg
+text-slate-400
+"
+
+>
+
+Connect with players, creators,
+and the PulsePlay gaming network.
+
+Join the squad and level up together.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+{/* Network Status */}
+
+
+<section
+
+className="
+grid
+md:grid-cols-3
+gap-6
+mb-16
+"
+
+>
+
+
+<div className="pp-card-surface p-6">
+
+
+<h3 className="text-3xl font-black text-cyan-400">
+
+ACTIVE
+
+</h3>
+
+
+<p className="text-slate-400 mt-2">
+
+Community Status
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div className="pp-card-surface p-6">
+
+
+<h3 className="text-3xl font-black text-purple-400">
+
+ONLINE
+
+</h3>
+
+
+<p className="text-slate-400 mt-2">
+
+Player Network
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div className="pp-card-surface p-6">
+
+
+<h3 className="text-3xl font-black text-pink-400">
+
+XP+
+
+</h3>
+
+
+<p className="text-slate-400 mt-2">
+
+Community Growth
+
+</p>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+{/* Community Intel */}
+
+
+{
+
+news.length > 0 &&
+
+(
+
+<section>
+
+
+<h2
+
+className="
+text-4xl
+font-black
+mb-8
+"
+
+>
+
+COMMUNITY <span className="text-purple-400">
+
+INTEL
+
+</span>
+
+</h2>
+
+
+
+
+
+<div
+
+className="
+grid
+md:grid-cols-3
+gap-8
+"
+
+>
+
+
+{
+
+news.map((article)=>(
+
+
+<BrandCard
+
+key={article.id}
+
+className="card-hover"
+
+>
+
+
+
+{
+
+article.image &&
+
+(
+
+<img
+
+src={article.image}
+
+alt={article.title}
+
+className="
+w-full
+h-52
+rounded-xl
+object-cover
+"
+
+/>
+
+)
+
+}
+
+
+
+
+<p
+
+className="
+mt-5
+text-purple-400
+text-sm
+font-bold
+tracking-widest
+"
+
+>
+
+{article.category}
+
+</p>
+
+
+
+
+<h3
+
+className="
+mt-3
+text-2xl
+font-black
+"
+
+>
+
+{article.title}
+
+</h3>
+
+
+
+
+<p
+
+className="
+mt-3
+text-slate-400
+"
+
+>
+
+{article.content}
+
+</p>
+
+
+
+</BrandCard>
+
+
+))
+
+}
+
+
+
+</div>
+
+
+</section>
+
+)
+
+}
+
+
+
+
+
+
+
+
+
+{/* Network Terminals */}
+
+
+<section
+
+className="
+mt-16
+grid
+md:grid-cols-2
+gap-8
+"
+
+>
+
+
+{
+
+links.map((item)=>(
+
+
+<BrandCard
+
+key={item.title}
+
+className="card-hover"
+
+>
+
+
+<h2
+
+className="
+text-2xl
+font-black
+"
+
+>
+
+{item.title}
+
+</h2>
+
+
+
+
+<p
+
+className="
+mt-4
+text-slate-400
+"
+
+>
+
+{item.description}
+
+</p>
+
+
+
+
+
+
+<div className="mt-6">
+
+
+{
+
+item.url ?
+
+(
+
+<a
+
+href={item.url}
+
+target="_blank"
+
+rel="noreferrer"
+
+>
+
+
+<BrandButton>
+
+{item.button}
+
+</BrandButton>
+
+
+</a>
+
+)
+
+:
+
+(
+
+<BrandButton variant="secondary">
+
+{item.button}
+
+</BrandButton>
+
+)
+
+}
+
+
+
+</div>
+
+
+
+</BrandCard>
+
+
+
+))
+
+}
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+{/* Final CTA */}
+
+
+<section
+
+className="
+mt-20
+pp-card-surface
+rounded-3xl
+p-10
+text-center
+"
+
+>
+
+
+<h2
+
+className="
+text-4xl
+font-black
+"
+
+>
+
+JOIN THE SQUAD
+
+</h2>
+
+
+
+<p
+
+className="
+mt-5
+max-w-3xl
+mx-auto
+text-slate-300
+"
+
+>
+
+PulsePlay is built around gamers,
+creators, and communities.
+Every player helps expand the network.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+</main>
+
+);
+
+
 }

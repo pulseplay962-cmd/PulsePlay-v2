@@ -1,8 +1,13 @@
 @import "tailwindcss";
+
 @import "./styles/theme.css";
 @import "./styles/globals.css";
 @import "./styles/animation.css";
 
+
+/* =========================
+   PulsePlay Global Reset
+========================= */
 
 * {
   margin: 0;
@@ -13,18 +18,130 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--pp-bg-primary);
 }
 
 
 body {
+
   font-family: var(--font-main);
-  background: var(--pp-bg-primary);
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(124, 58, 237, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      180deg,
+      #050510 0%,
+      #070b18 50%,
+      #02030a 100%
+    );
+
   color: var(--pp-text-primary);
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
+
 }
 
 
+
+/* =========================
+   Gaming Grid Overlay
+========================= */
+
+body::before {
+
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(124,58,237,0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(124,58,237,0.08) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    50px 50px;
+
+  pointer-events: none;
+
+  z-index: -1;
+
+}
+
+
+
+/* =========================
+   Main Content Container
+========================= */
+
 main {
+
   max-width: 1400px;
+
   margin: auto;
+
   padding: 2rem;
+
+}
+
+
+
+/* =========================
+   PulsePlay Scrollbar
+========================= */
+
+
+::-webkit-scrollbar {
+
+  width: 10px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+  background: #050510;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    linear-gradient(
+      purple,
+      #7c3aed
+    );
+
+  border-radius: 10px;
+
+}
+
+
+
+/* =========================
+   Gaming Selection Glow
+========================= */
+
+
+::selection {
+
+  background:
+    rgba(124,58,237,0.6);
+
+  color:white;
+
 }

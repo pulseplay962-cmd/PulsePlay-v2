@@ -1,146 +1,354 @@
 :root {
-  /* =========================
-     PulsePlay Brand Colors
-     ========================= */
 
-  --pp-bg-primary: #070b14;
-  --pp-bg-secondary: #0d1324;
-  --pp-bg-card: #111827;
+  /* =========================
+     PulsePlay v2.0 Core Colors
+  ========================= */
+
+
+  --pp-bg-primary: #050510;
+  --pp-bg-secondary: #080d1c;
+  --pp-bg-card: #101827;
+  --pp-bg-panel: rgba(15,23,42,.75);
+S
+
+  /* Neon Brand Colors */
 
   --pp-purple: #8b5cf6;
   --pp-purple-dark: #6d28d9;
-  --pp-purple-glow: rgba(139, 92, 246, 0.45);
+  --pp-purple-bright: #a855f7;
 
   --pp-cyan: #22d3ee;
-  --pp-cyan-glow: rgba(34, 211, 238, 0.35);
+  --pp-blue: #2563eb;
 
   --pp-pink: #ec4899;
 
-  --pp-text-primary: #ffffff;
-  --pp-text-secondary: #cbd5e1;
-  --pp-text-muted: #94a3b8;
+  --pp-green: #22c55e;
+  --pp-yellow: #facc15;
+  --pp-red: #ef4444;
+
+
+
+  /* Glow Effects */
+
+  --pp-purple-glow:
+    rgba(139,92,246,.55);
+
+  --pp-cyan-glow:
+    rgba(34,211,238,.45);
+
+  --pp-pink-glow:
+    rgba(236,72,153,.45);
+
 
 
   /* =========================
-     Borders & Effects
-     ========================= */
+     Text System
+  ========================= */
 
-  --pp-border: rgba(255, 255, 255, 0.08);
+
+  --pp-text-primary:
+    #ffffff;
+
+  --pp-text-secondary:
+    #cbd5e1;
+
+  --pp-text-muted:
+    #94a3b8;
+
+
+
+  /* =========================
+     HUD Borders
+  ========================= */
+
+
+  --pp-border:
+    rgba(255,255,255,.08);
+
+
+  --pp-border-neon:
+    rgba(139,92,246,.55);
+
+
+
+  /* =========================
+     Shadows
+  ========================= */
+
 
   --pp-shadow-sm:
-    0 4px 12px rgba(0, 0, 0, 0.25);
+    0 4px 15px rgba(0,0,0,.35);
+
 
   --pp-shadow-md:
-    0 10px 30px rgba(0, 0, 0, 0.35);
+    0 15px 40px rgba(0,0,0,.45);
+
 
   --pp-shadow-glow:
-    0 0 25px var(--pp-purple-glow);
+    0 0 30px var(--pp-purple-glow);
+
+
+  --pp-shadow-cyan:
+    0 0 30px var(--pp-cyan-glow);
+
 
 
   /* =========================
-     Gradients
-     ========================= */
+     Gaming Gradients
+  ========================= */
+
 
   --pp-gradient-main:
+
     linear-gradient(
       135deg,
       var(--pp-purple),
       var(--pp-cyan)
     );
 
-  --pp-gradient-dark:
+
+  --pp-gradient-neon:
+
     linear-gradient(
-      180deg,
-      #0d1324,
-      #070b14
+      90deg,
+      #a855f7,
+      #22d3ee
     );
 
+
+  --pp-gradient-dark:
+
+    linear-gradient(
+      180deg,
+      #101827,
+      #050510
+    );
+
+
   --pp-gradient-card:
+
     linear-gradient(
       145deg,
-      rgba(139,92,246,0.15),
-      rgba(34,211,238,0.08)
+      rgba(139,92,246,.18),
+      rgba(34,211,238,.08)
     );
+
+
+
+  /* =========================
+     Game Rarity System
+  ========================= */
+
+
+  --rarity-common:
+    #94a3b8;
+
+
+  --rarity-rare:
+    #3b82f6;
+
+
+  --rarity-epic:
+    #a855f7;
+
+
+  --rarity-legendary:
+    #facc15;
+
 
 
   /* =========================
      Typography
-     ========================= */
+  ========================= */
+
 
   --font-main:
     "Inter",
     Arial,
     sans-serif;
 
+
   --font-heading:
+
+    "Orbitron",
     "Inter",
     Arial,
     sans-serif;
 
 
-  /* =========================
-     Spacing
-     ========================= */
-
-  --space-xs: .5rem;
-  --space-sm: 1rem;
-  --space-md: 1.5rem;
-  --space-lg: 2rem;
-  --space-xl: 4rem;
-
 
   /* =========================
-     Border Radius
-     ========================= */
+     Layout
+  ========================= */
 
-  --radius-sm: .5rem;
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
-  --radius-xl: 2rem;
+
+  --space-xs:.5rem;
+  --space-sm:1rem;
+  --space-md:1.5rem;
+  --space-lg:2rem;
+  --space-xl:4rem;
+
 
 
   /* =========================
-     Transitions
-     ========================= */
+     Radius
+  ========================= */
+
+
+  --radius-sm:.5rem;
+  --radius-md:1rem;
+  --radius-lg:1.5rem;
+  --radius-xl:2rem;
+
+
+
+  /* =========================
+     Animation Speed
+  ========================= */
+
 
   --transition-fast:
     150ms ease;
 
+
   --transition-normal:
     300ms ease;
 
+
   --transition-slow:
     500ms ease;
+
 }
 
 
-/* =========================
-   Global Brand Utilities
-   ========================= */
+
+/* =================================
+   PulsePlay Utility Classes
+================================= */
+
 
 .pp-gradient-text {
-  background: var(--pp-gradient-main);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+
+  background:
+    var(--pp-gradient-main);
+
+
+  -webkit-background-clip:text;
+
+  background-clip:text;
+
+
+  color:transparent;
+
 }
+
 
 
 .pp-glow {
-  box-shadow: var(--pp-shadow-glow);
+
+  box-shadow:
+
+    var(--pp-shadow-glow);
+
 }
 
 
+
+.pp-cyan-glow {
+
+  box-shadow:
+
+    var(--pp-shadow-cyan);
+
+}
+
+
+
 .pp-card-surface {
+
+
   background:
+
     var(--pp-gradient-card);
 
+
   border:
+
     1px solid var(--pp-border);
 
+
   backdrop-filter:
-    blur(12px);
+
+    blur(14px);
+
 
   border-radius:
+
     var(--radius-lg);
+
+}
+
+
+
+/* =========================
+   HUD Panel
+========================= */
+
+
+.pp-hud {
+
+
+  background:
+
+    var(--pp-bg-panel);
+
+
+  border:
+
+    1px solid var(--pp-border-neon);
+
+
+  box-shadow:
+
+    var(--pp-shadow-glow);
+
+
+  backdrop-filter:
+
+    blur(20px);
+
+
+}
+
+
+
+/* =========================
+   Status Colors
+========================= */
+
+
+.status-online {
+
+  color:
+
+  var(--pp-green);
+
+}
+
+
+.status-live {
+
+  color:
+
+  var(--pp-red);
+
+}
+
+
+.status-warning {
+
+  color:
+
+  var(--pp-yellow);
+
 }

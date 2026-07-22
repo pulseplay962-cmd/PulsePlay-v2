@@ -5,7 +5,10 @@ import AdminLayout from "../components/admin/AdminLayout";
 import ProtectedRoute from "../components/admin/ProtectedRoute";
 
 
+// =========================
 // Public Pages
+// =========================
+
 import Home from "../pages/Home";
 import GamesPage from "../pages/Games";
 import GameDetails from "../pages/GameDetails";
@@ -20,7 +23,10 @@ import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 
 
+// =========================
 // Admin Pages
+// =========================
+
 import Dashboard from "../pages/admin/Dashboard";
 import AdminGames from "../pages/admin/Games";
 import Videos from "../pages/admin/Videos";
@@ -41,93 +47,67 @@ const router = createBrowserRouter([
 
   {
     path: "/",
-
     element: <MainLayout />,
 
     children: [
 
       {
         index: true,
-
         element: <Home />,
       },
 
-
       {
         path: "games",
-
         element: <GamesPage />,
       },
 
-
       {
         path: "games/:slug",
-
         element: <GameDetails />,
       },
 
-
       {
         path: "streams",
-
         element: <Streams />,
       },
 
-
       {
         path: "store",
-
         element: <Store />,
       },
 
-
       {
         path: "merchandise",
-
         element: <Merchandise />,
       },
 
-
       {
         path: "community",
-
         element: <Community />,
       },
 
-
       {
         path: "news",
-
         element: <News />,
       },
 
-
       {
         path: "news/:slug",
-
         element: <NewsArticle />,
       },
 
-
       {
         path: "about",
-
         element: <About />,
       },
 
-
       {
         path: "contact",
-
         element: <Contact />,
       },
 
-
     ],
-
   },
-
-
 
 
 
@@ -137,11 +117,8 @@ const router = createBrowserRouter([
 
   {
     path: "/admin/login",
-
     element: <Login />,
   },
-
-
 
 
 
@@ -153,13 +130,9 @@ const router = createBrowserRouter([
     path: "/admin",
 
     element: (
-
       <ProtectedRoute>
-
         <AdminLayout />
-
       </ProtectedRoute>
-
     ),
 
 
@@ -167,52 +140,38 @@ const router = createBrowserRouter([
 
       {
         index: true,
-
         element: <Dashboard />,
       },
 
-
       {
         path: "games",
-
         element: <AdminGames />,
       },
 
-
       {
         path: "videos",
-
         element: <Videos />,
       },
 
-
       {
         path: "products",
-
         element: <Products />,
       },
 
-
       {
         path: "merchandise",
-
         element: <MerchandiseAdmin />,
       },
 
-
       {
         path: "news",
-
         element: <NewsAdmin />,
       },
 
-
       {
         path: "settings",
-
         element: <Settings />,
       },
-
 
     ],
 
@@ -220,25 +179,17 @@ const router = createBrowserRouter([
 
 
 
-
-
   // =========================
-  // Fallback
+  // 404 Fallback
   // =========================
 
   {
     path: "*",
-
-    element: <Home />,
+    element: <NotFound />,
   },
 
-  {
-  path: "*",
-  element: <NotFound />,
-}
 
 ]);
-
 
 
 export default router;

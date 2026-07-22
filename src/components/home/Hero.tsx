@@ -1,25 +1,31 @@
 import { NavLink } from "react-router-dom";
 
 import BrandButton from "../ui/BrandButton";
+import BrandCard from "../ui/BrandCard";
 
 
 export default function Hero() {
 
+
   return (
 
     <section
+
       className="
         relative
         overflow-hidden
         py-20
         md:py-32
       "
+
     >
 
 
-      {/* Background Glow */}
+
+      {/* Background Energy Core */}
 
       <div
+
         className="
           absolute
           inset-0
@@ -27,76 +33,309 @@ export default function Hero() {
           opacity-40
           blur-3xl
           bg-gradient-to-r
-          from-cyan-500
-          via-purple-600
+          from-purple-600
+          via-cyan-500
           to-pink-500
+          animate-pulse
         "
+
       />
 
 
 
 
+
+      {/* Cyber Scan */}
+
       <div
+
         className="
-          text-center
-          max-w-5xl
-          mx-auto
+          absolute
+          inset-0
+          -z-10
+          pp-scan
         "
+
+      />
+
+
+
+
+
+
+
+
+      <div
+
+        className="
+          mx-auto
+          max-w-7xl
+          px-6
+          text-center
+        "
+
       >
 
 
-        <p
+
+
+
+        {/* System Status */}
+
+        <div
+
           className="
-            uppercase
-            tracking-[0.35em]
-            text-cyan-400
-            font-bold
-            mb-6
+            inline-flex
+            items-center
+            gap-3
+            rounded-full
+            pp-panel
+            px-6
+            py-3
+            mb-10
+            text-xs
+            md:text-sm
+            font-black
+            tracking-[0.25em]
+            text-cyan-300
           "
+
         >
-          Gaming • Streaming • Community
-        </p>
 
 
+          <span className="pp-live-dot" />
+
+          SYSTEM ONLINE
+
+
+          <span className="text-slate-500">
+            //
+          </span>
+
+
+          PLAYER NETWORK CONNECTED
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+        {/* Main Logo */}
 
         <h1
+
           className="
-            text-5xl
-            md:text-7xl
+            text-6xl
+            md:text-9xl
             font-black
-            leading-tight
+            leading-none
+            tracking-tight
             pp-gradient-text
           "
+
         >
-          Level Up Your
-          <br />
-          Gaming Experience
+
+          PULSEPLAY
+
+
         </h1>
 
 
 
 
+
         <p
+
           className="
-            mt-8
-            text-lg
-            md:text-xl
-            text-slate-400
-            max-w-3xl
-            mx-auto
+            mt-5
+            text-xl
+            md:text-3xl
+            font-black
+            uppercase
+            tracking-[0.2em]
+            text-white
           "
+
         >
-          Welcome to PulsePlay — a gaming hub built
-          for players, creators, and communities.
-          Discover games, watch live streams,
-          follow gaming news, and gear up.
+
+          Gaming Command Center
+
+
         </p>
 
 
 
 
 
+
+
+
+
+        <p
+
+          className="
+            mx-auto
+            mt-8
+            max-w-3xl
+            text-lg
+            text-slate-300
+            leading-relaxed
+          "
+
+        >
+
+          Enter the ultimate gaming network.
+          Watch live streams, discover new worlds,
+          follow gaming intel, and upgrade your setup.
+
+
+        </p>
+
+
+
+
+
+
+
+
+
+        {/* Mission HUD */}
+
+
+        <BrandCard
+
+          className="
+            mx-auto
+            mt-14
+            max-w-4xl
+            text-left
+          "
+
+          scan
+
+        >
+
+
+
+          <div
+
+            className="
+              flex
+              items-center
+              justify-between
+              mb-5
+            "
+
+          >
+
+
+            <span
+
+              className="
+                text-purple-300
+                text-sm
+                font-black
+                tracking-[0.3em]
+              "
+
+            >
+
+              PRIMARY OBJECTIVE
+
+
+            </span>
+
+
+
+
+
+            <span
+
+              className="
+                flex
+                items-center
+                gap-2
+                text-green-400
+                text-sm
+                font-black
+              "
+
+            >
+
+              <span className="pp-live-dot" />
+
+              ACTIVE
+
+
+            </span>
+
+
+          </div>
+
+
+
+
+
+
+          <h2
+
+            className="
+              text-3xl
+              font-black
+              text-white
+            "
+
+          >
+
+            Explore The Gaming Universe
+
+
+          </h2>
+
+
+
+
+
+
+          <p
+
+            className="
+              mt-3
+              text-slate-400
+            "
+
+          >
+
+            Access streams, gaming news,
+            community events, featured games,
+            and premium gamer equipment.
+
+
+          </p>
+
+
+
+        </BrandCard>
+
+
+
+
+
+
+
+
+
+        {/* Launch Controls */}
+
+
         <div
+
           className="
             mt-10
             flex
@@ -105,124 +344,175 @@ export default function Hero() {
             justify-center
             gap-5
           "
+
         >
+
 
 
           <NavLink to="/streams">
 
             <BrandButton>
-              Watch Streams
+
+              🔴 Launch Stream
+
+
             </BrandButton>
 
+
           </NavLink>
+
 
 
 
 
           <NavLink to="/store">
 
+
             <BrandButton variant="secondary">
-              Visit Store
+
+
+              ⚙ Enter Armory
+
+
             </BrandButton>
+
 
           </NavLink>
 
 
+
         </div>
 
 
 
 
-        {/* Stats */}
+
+
+
+
+
+        {/* Player Data */}
+
 
         <div
+
           className="
             mt-16
             grid
             grid-cols-1
-            sm:grid-cols-3
+            md:grid-cols-3
             gap-6
           "
+
         >
 
 
-          <div
-            className="
-              glass
-              p-6
-            "
-          >
+
+
+
+          <BrandCard>
+
 
             <h3
+
               className="
-                text-3xl
+                text-4xl
                 font-black
                 text-cyan-400
               "
+
             >
-              Live
+
+              LIVE
+
+
             </h3>
 
-            <p className="text-slate-400">
-              Gaming Streams
+
+            <p className="text-slate-400 mt-2">
+
+              Broadcast Center
+
             </p>
 
-          </div>
+
+          </BrandCard>
 
 
 
 
-          <div
-            className="
-              glass
-              p-6
-            "
-          >
+
+
+          <BrandCard>
+
 
             <h3
+
               className="
-                text-3xl
+                text-4xl
                 font-black
                 text-purple-400
               "
+
             >
-              New
+
+              XP+
+
+
             </h3>
 
-            <p className="text-slate-400">
-              Gaming News
+
+            <p className="text-slate-400 mt-2">
+
+              Gaming Intelligence
+
             </p>
 
-          </div>
+
+          </BrandCard>
 
 
 
 
-          <div
-            className="
-              glass
-              p-6
-            "
-          >
+
+
+          <BrandCard>
+
 
             <h3
+
               className="
-                text-3xl
+                text-4xl
                 font-black
                 text-pink-400
               "
+
             >
-              Gear
+
+              ONLINE
+
+
             </h3>
 
-            <p className="text-slate-400">
-              Gamer Essentials
+
+            <p className="text-slate-400 mt-2">
+
+              Player Community
+
             </p>
 
-          </div>
+
+          </BrandCard>
+
+
+
 
 
         </div>
+
+
+
+
 
 
 

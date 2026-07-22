@@ -8,386 +8,672 @@ import {
 } from "../services/news";
 
 
+
 type NewsItem = {
-  id: string;
-  title: string;
-  description?: string;
-  image?: string;
-  category?: string;
-  url?: string;
-  created_at?: string;
+
+  id:string;
+
+  title:string;
+
+  description?:string;
+
+  image?:string;
+
+  category?:string;
+
+  url?:string;
+
+  created_at?:string;
+
 };
 
 
 
 
-export default function News() {
 
 
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function News(){
 
 
 
+const [news,setNews] = useState<NewsItem[]>([]);
 
+const [loading,setLoading] = useState(true);
 
-  useEffect(() => {
 
 
-    async function loadNews() {
 
 
-      try {
 
-        const data = await getNews();
+useEffect(()=>{
 
-        setNews(data || []);
 
+async function loadNews(){
 
-      } catch (error) {
 
-        console.error(
-          "Failed to load news:",
-          error
-        );
+try{
 
 
-      } finally {
+const data = await getNews();
 
-        setLoading(false);
+setNews(data || []);
 
-      }
 
+}
 
-    }
+catch(error){
 
 
-    loadNews();
+console.error(
+"Failed loading intel:",
+error
+);
 
 
-  }, []);
+}
 
+finally{
 
 
+setLoading(false);
 
 
+}
 
 
+}
 
-  return (
 
-    <main>
 
+loadNews();
 
-      <section
-        className="
-          text-center
-          mb-16
-        "
-      >
 
+},[]);
 
-        <h1
-          className="
-            text-5xl
-            md:text-6xl
-            font-black
-            pp-gradient-text
-          "
-        >
-          Gaming News
-        </h1>
 
 
 
-        <p
-          className="
-            mt-5
-            mx-auto
-            max-w-3xl
-            text-lg
-            text-slate-400
-          "
-        >
-          Gaming updates, announcements,
-          releases, and stories from the
-          PulsePlay community.
-        </p>
 
 
-      </section>
 
 
+return (
 
+<main>
 
 
 
 
 
-      {loading && (
 
-        <BrandCard>
 
+{/* Header */}
 
-          <div className="flex items-center gap-3">
 
-            <span className="pp-live-dot" />
+<section
 
-            <p className="text-slate-400">
-              Loading latest news...
-            </p>
+className="
+text-center
+mb-16
+"
 
-          </div>
+>
 
 
-        </BrandCard>
+<div
 
-      )}
+className="
+inline-flex
+items-center
+gap-3
+px-5
+py-2
+rounded-full
+pp-hud
+text-cyan-300
+text-sm
+font-black
+tracking-[0.35em]
+"
 
+>
 
+🛰️ INTEL DATABASE ONLINE
 
+</div>
 
 
 
 
 
-      {!loading && news.length === 0 && (
 
-        <BrandCard>
+<h1
 
+className="
+mt-8
+text-5xl
+md:text-7xl
+font-black
+pp-gradient-text
+"
 
-          <h2
-            className="
-              text-2xl
-              font-bold
-              text-white
-            "
-          >
-            No News Available
-          </h2>
+>
 
+PULSEPLAY INTEL HUB
 
+</h1>
 
-          <p
-            className="
-              mt-3
-              text-slate-400
-            "
-          >
-            Add articles through the PulsePlay
-            Admin Dashboard.
-          </p>
 
 
-        </BrandCard>
 
-      )}
 
+<p
 
+className="
+mt-5
+max-w-3xl
+mx-auto
+text-lg
+text-slate-400
+"
 
+>
 
+Gaming announcements, industry updates,
+release information, and community
+transmissions from across the gaming universe.
 
+</p>
 
 
 
-      {!loading && news.length > 0 && (
+</section>
 
-        <section
-          className="
-            grid
-            grid-cols-1
-            md:grid-cols-2
-            lg:grid-cols-3
-            gap-8
-          "
-        >
 
 
 
-          {news.map((article) => (
 
 
-            <BrandCard
-              key={article.id}
-              className="card-hover"
-            >
 
 
 
-              {article.image ? (
+{/* Loading */}
 
-                <img
 
-                  src={article.image}
+{
 
-                  alt={article.title}
+loading &&
 
-                  className="
-                    h-52
-                    w-full
-                    rounded-xl
-                    object-cover
-                  "
+(
 
-                />
+<BrandCard>
 
 
-              ) : (
+<div className="flex items-center gap-3">
 
-                <div
-                  className="
-                    h-52
-                    rounded-xl
-                    flex
-                    items-center
-                    justify-center
-                    bg-black/40
-                    text-slate-500
-                  "
-                >
-                  No Image Available
-                </div>
 
-              )}
+<span className="pp-live-dot"/>
 
 
+<p className="text-slate-400">
 
+Scanning incoming transmissions...
 
+</p>
 
 
+</div>
 
 
-              <div className="mt-5 flex items-center gap-3">
+</BrandCard>
 
+)
 
-                {article.category && (
+}
 
-                  <span
-                    className="
-                      rounded-full
-                      border
-                      border-cyan-500/30
-                      bg-cyan-500/10
-                      px-3
-                      py-1
-                      text-xs
-                      font-bold
-                      text-cyan-300
-                    "
-                  >
-                    {article.category}
-                  </span>
 
-                )}
 
 
 
-                {article.created_at && (
 
-                  <span
-                    className="
-                      text-xs
-                      text-slate-500
-                    "
-                  >
-                    {new Date(
-                      article.created_at
-                    ).toLocaleDateString()}
-                  </span>
 
-                )}
 
 
-              </div>
+{/* Empty */}
 
 
+{
 
+!loading && news.length===0 &&
 
+(
 
+<BrandCard>
 
 
+<h2
 
-              <h2
-                className="
-                  mt-5
-                  text-2xl
-                  font-black
-                  text-white
-                "
-              >
-                {article.title}
-              </h2>
+className="
+text-2xl
+font-black
+"
 
+>
 
+NO INTEL AVAILABLE
 
+</h2>
 
 
 
+<p
 
+className="
+mt-3
+text-slate-400
+"
 
-              {article.description && (
+>
 
-                <p
-                  className="
-                    mt-3
-                    text-slate-400
-                    line-clamp-3
-                  "
-                >
-                  {article.description}
-                </p>
+Add reports through the
+PulsePlay Admin Dashboard.
 
-              )}
+</p>
 
 
+</BrandCard>
 
+)
 
+}
 
 
 
 
-              {article.url && (
 
-                <div className="mt-6">
 
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
 
-                    <BrandButton>
-                      Read More
-                    </BrandButton>
 
-                  </a>
 
+{/* News Grid */}
 
-                </div>
 
-              )}
+{
 
+!loading && news.length>0 &&
 
+(
 
 
-            </BrandCard>
+<section>
 
 
-          ))}
+<div
 
+className="
+flex
+justify-between
+items-center
+mb-8
+"
 
+>
 
-        </section>
 
-      )}
+<h2
 
+className="
+text-3xl
+font-black
+"
 
+>
 
+LATEST REPORTS
 
+</h2>
 
 
-    </main>
 
-  );
+<span
+
+className="
+text-green-400
+text-sm
+tracking-widest
+"
+
+>
+
+● LIVE FEED
+
+</span>
+
+
+</div>
+
+
+
+
+
+
+
+<div
+
+className="
+grid
+grid-cols-1
+md:grid-cols-2
+lg:grid-cols-3
+gap-8
+"
+
+>
+
+
+{
+
+
+news.map((article)=>(
+
+
+
+<BrandCard
+
+key={article.id}
+
+className="
+group
+card-hover
+"
+
+>
+
+
+
+
+
+
+{/* Image */}
+
+
+{
+
+article.image ?
+
+(
+
+<img
+
+src={article.image}
+
+alt={article.title}
+
+className="
+h-52
+w-full
+rounded-xl
+object-cover
+transition
+duration-500
+group-hover:scale-105
+"
+
+/>
+
+)
+
+:
+
+(
+
+<div
+
+className="
+h-52
+rounded-xl
+bg-black/40
+flex
+items-center
+justify-center
+text-slate-500
+"
+
+>
+
+NO IMAGE
+
+</div>
+
+)
+
+}
+
+
+
+
+
+
+
+
+{/* Metadata */}
+
+
+
+<div
+
+className="
+mt-5
+flex
+items-center
+gap-3
+"
+
+>
+
+
+
+{
+
+article.category &&
+
+(
+
+<span
+
+className="
+rounded-full
+border
+border-purple-400/30
+bg-purple-500/20
+px-3
+py-1
+text-xs
+font-black
+tracking-widest
+text-purple-300
+"
+
+>
+
+{article.category.toUpperCase()}
+
+</span>
+
+)
+
+}
+
+
+
+
+
+{
+
+article.created_at &&
+
+(
+
+<span
+
+className="
+text-xs
+text-slate-500
+"
+
+>
+
+TRANSMITTED:
+
+{" "}
+
+{
+
+new Date(
+article.created_at
+).toLocaleDateString()
+
+}
+
+</span>
+
+)
+
+}
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<h2
+
+className="
+mt-5
+text-2xl
+font-black
+"
+
+>
+
+{article.title}
+
+</h2>
+
+
+
+
+
+
+
+
+
+{
+
+article.description &&
+
+(
+
+<p
+
+className="
+mt-3
+text-slate-400
+line-clamp-3
+"
+
+>
+
+{article.description}
+
+</p>
+
+)
+
+}
+
+
+
+
+
+
+
+
+
+{
+
+article.url &&
+
+(
+
+<div className="mt-6">
+
+
+<a
+
+href={article.url}
+
+target="_blank"
+
+rel="noopener noreferrer"
+
+>
+
+
+<BrandButton>
+
+OPEN REPORT
+
+</BrandButton>
+
+
+</a>
+
+
+</div>
+
+
+)
+
+}
+
+
+
+
+
+</BrandCard>
+
+
+
+))
+
+}
+
+
+
+</div>
+
+
+</section>
+
+
+)
+
+}
+
+
+
+
+</main>
+
+);
+
 
 }

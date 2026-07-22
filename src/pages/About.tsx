@@ -4,252 +4,464 @@ import BrandButton from "../components/ui/BrandButton";
 
 export default function About() {
 
-  return (
-
-    <main>
-
-
-      <section
-        className="
-          text-center
-          mb-16
-        "
-      >
-
-        <h1
-          className="
-            text-5xl
-            md:text-6xl
-            font-black
-            pp-gradient-text
-          "
-        >
-          About PulsePlay
-        </h1>
 
+return (
 
-        <p
-          className="
-            mt-5
-            mx-auto
-            max-w-3xl
-            text-lg
-            text-slate-400
-          "
-        >
-          A gaming platform built for players,
-          creators, and communities who believe
-          gaming is better together.
-        </p>
+<main>
 
 
-      </section>
 
 
 
 
-      <section
-        className="
-          grid
-          grid-cols-1
-          md:grid-cols-2
-          gap-8
-        "
-      >
+{/* Header */}
 
-        <BrandCard className="card-hover">
 
-          <h2
-            className="
-              text-3xl
-              font-black
-              text-cyan-400
-            "
-          >
-            Our Mission
-          </h2>
+<section
 
+className="
+text-center
+mb-16
+"
 
-          <p
-            className="
-              mt-4
-              text-slate-400
-              leading-relaxed
-            "
-          >
-            PulsePlay brings gamers together
-            through live streams, gaming news,
-            community conversations, and
-            carefully selected gaming gear.
-          </p>
+>
 
-        </BrandCard>
 
+<div
 
+className="
+inline-flex
+items-center
+gap-3
+px-5
+py-2
+rounded-full
+pp-hud
+text-purple-300
+text-sm
+font-black
+tracking-[0.35em]
+"
 
+>
 
+🌌 SYSTEM ORIGIN FOUND
 
-        <BrandCard className="card-hover">
+</div>
 
-          <h2
-            className="
-              text-3xl
-              font-black
-              text-purple-400
-            "
-          >
-            Level Up Together
-          </h2>
 
 
-          <p
-            className="
-              mt-4
-              text-slate-400
-              leading-relaxed
-            "
-          >
-            Whether you are a competitive player,
-            casual gamer, content creator, or
-            discovering your next adventure,
-            PulsePlay is built for you.
-          </p>
 
-        </BrandCard>
 
 
-      </section>
 
+<h1
 
+className="
+mt-8
+text-5xl
+md:text-7xl
+font-black
+pp-gradient-text
+"
 
+>
 
+PULSEPLAY ORIGIN
 
+</h1>
 
-      <section
-        className="
-          mt-8
-          grid
-          grid-cols-1
-          md:grid-cols-3
-          gap-8
-        "
-      >
 
-        <BrandCard className="card-hover">
 
-          <h3 className="text-xl font-black text-white">
-            🎮 Discover Games
-          </h3>
 
 
-          <p className="mt-3 text-slate-400">
-            Find new releases, upcoming titles,
-            and games worth playing.
-          </p>
 
-        </BrandCard>
 
+<p
 
+className="
+mt-5
+mx-auto
+max-w-3xl
+text-lg
+text-slate-400
+"
 
+>
 
+A gaming network created for players,
+creators, and communities who believe
+every adventure is better together.
 
-        <BrandCard className="card-hover">
+</p>
 
-          <h3 className="text-xl font-black text-white">
-            📺 Watch & Connect
-          </h3>
 
+</section>
 
-          <p className="mt-3 text-slate-400">
-            Follow streams, interact with creators,
-            and be part of the community.
-          </p>
 
-        </BrandCard>
 
 
 
 
 
-        <BrandCard className="card-hover">
 
-          <h3 className="text-xl font-black text-white">
-            🛒 Gear Up
-          </h3>
 
+{/* Origin Cards */}
 
-          <p className="mt-3 text-slate-400">
-            Explore gaming accessories and gear
-            recommended by PulsePlay.
-          </p>
 
-        </BrandCard>
+<section
 
+className="
+grid
+md:grid-cols-2
+gap-8
+"
 
-      </section>
+>
 
 
 
 
 
+<BrandCard className="card-hover">
 
-      <section className="mt-8">
 
+<h2
 
-        <BrandCard className="card-hover">
+className="
+text-3xl
+font-black
+text-cyan-400
+"
 
+>
 
-          <div
-            className="
-              text-center
-              mx-auto
-              max-w-3xl
-            "
-          >
+MISSION PROTOCOL
 
-            <h2
-              className="
-                text-3xl
-                font-black
-                pp-gradient-text
-              "
-            >
-              Join the Community
-            </h2>
+</h2>
 
 
-            <p
-              className="
-                mt-4
-                text-slate-400
-              "
-            >
-              Follow the journey, watch streams,
-              discover games, and help shape the
-              future of PulsePlay.
-            </p>
 
+<p
 
-            <div className="mt-6">
+className="
+mt-4
+text-slate-400
+leading-relaxed
+"
 
-              <BrandButton>
-                Join PulsePlay
-              </BrandButton>
+>
 
-            </div>
+PulsePlay was created to connect gamers
+through live broadcasts, gaming intelligence,
+community interaction, and premium gaming
+experiences.
 
+</p>
 
-          </div>
 
+</BrandCard>
 
-        </BrandCard>
 
 
-      </section>
 
 
-    </main>
 
-  );
+
+<BrandCard className="card-hover">
+
+
+<h2
+
+className="
+text-3xl
+font-black
+text-purple-400
+"
+
+>
+
+PLAYER PHILOSOPHY
+
+</h2>
+
+
+
+<p
+
+className="
+mt-4
+text-slate-400
+leading-relaxed
+"
+
+>
+
+Every player has a story.
+
+Whether you compete,
+create content, or explore worlds,
+PulsePlay exists to help gamers level up
+together.
+
+</p>
+
+
+</BrandCard>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+{/* Core Systems */}
+
+
+<section
+
+className="
+mt-8
+grid
+md:grid-cols-3
+gap-8
+"
+
+>
+
+
+
+<BrandCard className="card-hover">
+
+
+<h3
+
+className="
+text-xl
+font-black
+"
+
+>
+
+🎮 GAME DATABASE
+
+</h3>
+
+
+<p
+
+className="
+mt-3
+text-slate-400
+"
+
+>
+
+Discover new releases,
+hidden gems, and adventures
+worth playing.
+
+</p>
+
+
+</BrandCard>
+
+
+
+
+
+
+
+<BrandCard className="card-hover">
+
+
+<h3
+
+className="
+text-xl
+font-black
+"
+
+>
+
+📡 BROADCAST NETWORK
+
+</h3>
+
+
+<p
+
+className="
+mt-3
+text-slate-400
+"
+
+>
+
+Watch streams,
+follow creators,
+and experience gaming live.
+
+</p>
+
+
+</BrandCard>
+
+
+
+
+
+
+
+<BrandCard className="card-hover">
+
+
+<h3
+
+className="
+text-xl
+font-black
+"
+
+>
+
+⚙️ PLAYER ARMORY
+
+</h3>
+
+
+<p
+
+className="
+mt-3
+text-slate-400
+"
+
+>
+
+Explore gaming gear,
+accessories, and setups
+built for players.
+
+</p>
+
+
+</BrandCard>
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+{/* Vision */}
+
+
+<section className="mt-8">
+
+
+<BrandCard className="card-hover">
+
+
+<div
+
+className="
+text-center
+max-w-3xl
+mx-auto
+"
+
+>
+
+
+<h2
+
+className="
+text-4xl
+font-black
+pp-gradient-text
+"
+
+>
+
+THE FUTURE OF PULSEPLAY
+
+</h2>
+
+
+
+
+
+<p
+
+className="
+mt-5
+text-slate-300
+leading-relaxed
+"
+
+>
+
+Our mission is to build more than a website.
+
+PulsePlay is becoming a home for gaming
+news, live content, creators, communities,
+and players around the world.
+
+</p>
+
+
+
+
+
+
+<div className="mt-8">
+
+
+<BrandButton>
+
+JOIN THE NETWORK
+
+</BrandButton>
+
+
+</div>
+
+
+
+</div>
+
+
+</BrandCard>
+
+
+</section>
+
+
+
+
+
+
+
+</main>
+
+
+);
+
 
 }
