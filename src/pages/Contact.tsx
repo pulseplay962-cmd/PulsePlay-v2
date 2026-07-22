@@ -155,7 +155,7 @@ export default function Contact() {
                 text-slate-300
               "
             >
-              Email: support@pulseplay.online
+              Email: pulseplay962@gmail.com
             </div>
 
 
