@@ -1,4 +1,4 @@
-import BrandButton from "../ui/BrandButton";
+import BrandButton from "./ui/BrandButton";
 
 type TwitchSectionProps = {
   channel?: string;

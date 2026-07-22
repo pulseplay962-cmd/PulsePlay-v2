@@ -1,10 +1,11 @@
 type MerchandiseItem = {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: string;
   image: string;
-  badge: string;
+  badge?: string;
+  category?: string;
   checkoutUrl?: string;
 };
 
@@ -73,24 +74,26 @@ export default function MerchandiseCard({ item }: Props) {
 
 
         {/* Badge */}
-        <span
-          className="
-            absolute
-            left-4
-            top-4
-            rounded-full
-            bg-purple-600
-            px-4
-            py-1
-            text-xs
-            font-black
-            uppercase
-            tracking-wide
-            text-white
-          "
-        >
-          {item.badge}
-        </span>
+        {item.badge && (
+          <span
+            className="
+              absolute
+              left-4
+              top-4
+              rounded-full
+              bg-purple-600
+              px-4
+              py-1
+              text-xs
+              font-black
+              uppercase
+              tracking-wide
+              text-white
+            "
+          >
+            {item.badge}
+          </span>
+        )}
 
 
       </div>
@@ -98,6 +101,22 @@ export default function MerchandiseCard({ item }: Props) {
 
       {/* Content */}
       <div className="p-6">
+
+
+        {item.category && (
+          <p
+            className="
+              mb-3
+              text-xs
+              font-bold
+              uppercase
+              tracking-widest
+              text-cyan-400
+            "
+          >
+            {item.category}
+          </p>
+        )}
 
 
         <h2

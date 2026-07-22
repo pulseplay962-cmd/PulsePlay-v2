@@ -4,7 +4,7 @@ import BrandButton from "../ui/BrandButton";
 
 
 type TwitchSectionProps = {
-  channel: string;
+  channel?: string;
 };
 
 
@@ -17,29 +17,55 @@ type StreamData = {
 
 
 export default function TwitchSection({
-  channel,
+  channel = "Veiltactician",
 }: TwitchSectionProps) {
 
 
   const [stream, setStream] = useState<StreamData | null>(null);
 
 
-
   useEffect(() => {
+
 
     async function checkStream() {
 
       try {
 
+        const api =
+          import.meta.env.VITE_API_URL;
+
+
+        if (!api) {
+
+          console.warn(
+            "VITE_API_URL is missing"
+          );
+
+          return;
+
+        }
+
+
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/twitch/status?channel=${channel}`
+          `${api}/api/twitch/status?channel=${channel}`
         );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Twitch API error: ${response.status}`
+          );
+
+        }
 
 
         const data = await response.json();
 
 
-        setStream(data.stream);
+        setStream(
+          data?.stream || null
+        );
 
 
       } catch (error) {
@@ -48,6 +74,9 @@ export default function TwitchSection({
           "Failed to load Twitch status:",
           error
         );
+
+
+        setStream(null);
 
       }
 
@@ -62,10 +91,12 @@ export default function TwitchSection({
 
 
 
+
   const parent =
     window.location.hostname === "localhost"
       ? "localhost"
       : window.location.hostname;
+
 
 
 
@@ -79,24 +110,22 @@ export default function TwitchSection({
       "
     >
 
-
       <div
         className="
-          max-w-7xl
           mx-auto
+          max-w-7xl
         "
       >
-
 
 
         {/* Header */}
 
         <div
           className="
+            mb-10
             flex
             items-center
             gap-4
-            mb-10
           "
         >
 
@@ -107,8 +136,8 @@ export default function TwitchSection({
               rounded-full
               ${
                 stream
-                ? "bg-red-500 pp-live-dot"
-                : "bg-slate-600"
+                  ? "bg-red-500 pp-live-dot"
+                  : "bg-slate-600"
               }
             `}
           />
@@ -137,17 +166,19 @@ export default function TwitchSection({
 
 
 
-        {/* Stream Information */}
+        {/* Stream Info */}
 
         {stream && (
 
           <div
             className="
-              glass
+              mb-8
+              rounded-3xl
               border
               border-red-500/30
+              bg-white/5
               p-6
-              mb-8
+              backdrop-blur-xl
             "
           >
 
@@ -157,32 +188,31 @@ export default function TwitchSection({
                 font-bold
               "
             >
+
               {stream.title}
+
             </h3>
 
 
+            <p className="mt-3 text-slate-300">
 
-            <p
-              className="
-                mt-3
-                text-slate-300
-              "
-            >
               Playing:
               {" "}
               {stream.game_name}
-            </p>
 
+            </p>
 
 
             <p
               className="
                 mt-3
-                text-purple-400
                 font-bold
+                text-purple-400
               "
             >
+
               👀 {stream.viewer_count} viewers
+
             </p>
 
 
@@ -195,14 +225,13 @@ export default function TwitchSection({
 
 
 
-
-        {/* Twitch Player */}
+        {/* Twitch Player + Chat */}
 
         <div
           className="
             grid
-            lg:grid-cols-[2fr_1fr]
             gap-8
+            lg:grid-cols-[2fr_1fr]
           "
         >
 
@@ -221,9 +250,7 @@ export default function TwitchSection({
 
             <iframe
 
-              src={
-                `https://player.twitch.tv/?channel=${channel}&parent=${parent}`
-              }
+              src={`https://player.twitch.tv/?channel=${channel}&parent=${parent}`}
 
               height="600"
 
@@ -231,15 +258,19 @@ export default function TwitchSection({
 
               allowFullScreen
 
+              scrolling="no"
+
               title="PulsePlay Twitch Stream"
 
               className="
                 aspect-video
+                w-full
               "
 
             />
 
           </div>
+
 
 
 
@@ -257,20 +288,19 @@ export default function TwitchSection({
 
             <iframe
 
-              src={
-                `https://www.twitch.tv/embed/${channel}/chat?parent=${parent}`
-              }
+              src={`https://www.twitch.tv/embed/${channel}/chat?parent=${parent}`}
 
               height="600"
 
               width="100%"
 
-              title="Twitch Chat"
+              scrolling="no"
+
+              title="PulsePlay Twitch Chat"
 
             />
 
           </div>
-
 
 
         </div>
@@ -281,7 +311,7 @@ export default function TwitchSection({
 
 
 
-        {/* Twitch Button */}
+        {/* Twitch CTA */}
 
         <div
           className="
@@ -298,15 +328,16 @@ export default function TwitchSection({
           >
 
             <BrandButton>
+
               Watch on Twitch
+
             </BrandButton>
+
 
           </a>
 
 
         </div>
-
-
 
 
       </div>
