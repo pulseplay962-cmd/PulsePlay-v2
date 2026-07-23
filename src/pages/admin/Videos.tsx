@@ -10,14 +10,13 @@ import {
 import { uploadImage } from "../../services/storage";
 
 
-type Video = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  url: string;
-  featured: boolean;
-};
+import {
+  addVideo,
+  getVideos,
+  updateVideo,
+  deleteVideo,
+  type Video,
+} from "../../services/videos";
 
 
 
