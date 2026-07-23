@@ -3,7 +3,6 @@ import BrandCard from "../ui/BrandCard";
 import BrandButton from "../ui/BrandButton";
 import { getVideos } from "../../services/videos";
 
-import { getVideos, type Video } from "../../services/videos";
 
 export default function LatestVideos() {
   const [videos, setVideos] = useState<Video[]>([]);

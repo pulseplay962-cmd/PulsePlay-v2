@@ -9,17 +9,6 @@ import {
 
 import { uploadImage } from "../../services/storage";
 
-
-import {
-  addVideo,
-  getVideos,
-  updateVideo,
-  deleteVideo,
-  type Video,
-} from "../../services/videos";
-
-
-
 export default function Videos() {
 
   const [videos, setVideos] = useState<Video[]>([]);
