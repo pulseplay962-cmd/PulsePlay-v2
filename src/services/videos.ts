@@ -1,6 +1,16 @@
 import { supabase } from "../lib/supabase";
 
-export async function getVideos() {
+export type Video = {
+  id: string;
+  title: string;
+  description?: string | null;
+  thumbnail?: string | null;
+  url?: string | null;
+  platform?: string | null;
+  created_at?: string;
+};
+
+export async function getVideos(): Promise<Video[]> {
   const { data, error } = await supabase
     .from("videos")
     .select("*")
@@ -8,31 +18,31 @@ export async function getVideos() {
     .limit(12);
 
   if (error) {
-    throw error;
+    console.error("Error loading videos:", error);
+    return [];
   }
 
-  return data;
+  return (data as Video[]) ?? [];
 }
 
-
-export async function addVideo(video: any) {
+export async function addVideo(video: Omit<Video, "id" | "created_at">) {
   const { data, error } = await supabase
     .from("videos")
-    .insert([video])
+    .insert(video)
     .select()
     .single();
 
   if (error) {
+    console.error("Error adding video:", error);
     throw error;
   }
 
-  return data;
+  return data as Video;
 }
-
 
 export async function updateVideo(
   id: string,
-  video: any
+  video: Partial<Omit<Video, "id" | "created_at">>
 ) {
   const { data, error } = await supabase
     .from("videos")
@@ -42,12 +52,12 @@ export async function updateVideo(
     .single();
 
   if (error) {
+    console.error("Error updating video:", error);
     throw error;
   }
 
-  return data;
+  return data as Video;
 }
-
 
 export async function deleteVideo(id: string) {
   const { error } = await supabase
@@ -56,6 +66,7 @@ export async function deleteVideo(id: string) {
     .eq("id", id);
 
   if (error) {
+    console.error("Error deleting video:", error);
     throw error;
   }
 
