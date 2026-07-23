@@ -24,11 +24,6 @@ export default function LatestVideos() {
     try {
       const data = await getVideos();
 
-      console.log("================================");
-      console.log("VIDEOS RETURNED");
-      console.table(data);
-      console.log(data);
-      console.log("================================");
 
       setVideos(data ?? []);
 

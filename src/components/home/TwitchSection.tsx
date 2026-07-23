@@ -21,7 +21,14 @@ export default function TwitchSection({
 }: TwitchSectionProps) {
 
 
-  const [stream, setStream] = useState<StreamData | null>(null);
+  const [stream, setStream] =
+    useState<StreamData | null>(null);
+
+
+  const [loading, setLoading] =
+    useState(true);
+
+
 
 
   useEffect(() => {
@@ -29,26 +36,38 @@ export default function TwitchSection({
 
     async function checkStream() {
 
+
       try {
+
 
         const api =
           import.meta.env.VITE_API_URL;
 
 
+
         if (!api) {
 
           console.warn(
-            "VITE_API_URL is missing"
+            "VITE_API_URL is missing. Twitch status disabled."
           );
+
+          setStream(null);
 
           return;
 
         }
 
 
+
         const response = await fetch(
-          `${api}/api/twitch/status?channel=${channel}`
+          `${api}/api/twitch/status?channel=${channel}`,
+          {
+            headers: {
+              Accept: "application/json",
+            },
+          }
         );
+
 
 
         if (!response.ok) {
@@ -60,15 +79,19 @@ export default function TwitchSection({
         }
 
 
+
         const data = await response.json();
 
 
+
         setStream(
-          data?.stream || null
+          data?.stream ?? null
         );
 
 
+
       } catch (error) {
+
 
         console.error(
           "Failed to load Twitch status:",
@@ -78,12 +101,23 @@ export default function TwitchSection({
 
         setStream(null);
 
+
+
+      } finally {
+
+
+        setLoading(false);
+
+
       }
+
 
     }
 
 
+
     checkStream();
+
 
 
   }, [channel]);
@@ -93,9 +127,8 @@ export default function TwitchSection({
 
 
   const parent =
-    window.location.hostname === "localhost"
-      ? "localhost"
-      : window.location.hostname;
+    window.location.hostname;
+
 
 
 
@@ -116,6 +149,7 @@ export default function TwitchSection({
           max-w-7xl
         "
       >
+
 
 
         {/* Header */}
@@ -152,7 +186,9 @@ export default function TwitchSection({
             "
           >
 
-            {stream
+            {loading
+              ? "CHECKING STREAM..."
+              : stream
               ? "LIVE NOW"
               : "STREAM OFFLINE"
             }
@@ -161,6 +197,7 @@ export default function TwitchSection({
 
 
         </div>
+
 
 
 
@@ -194,6 +231,7 @@ export default function TwitchSection({
             </h3>
 
 
+
             <p className="mt-3 text-slate-300">
 
               Playing:
@@ -201,6 +239,7 @@ export default function TwitchSection({
               {stream.game_name}
 
             </p>
+
 
 
             <p
@@ -225,6 +264,7 @@ export default function TwitchSection({
 
 
 
+
         {/* Twitch Player + Chat */}
 
         <div
@@ -236,6 +276,8 @@ export default function TwitchSection({
         >
 
 
+
+          {/* Player */}
 
           <div
             className="
@@ -275,6 +317,8 @@ export default function TwitchSection({
 
 
 
+
+          {/* Chat */}
 
           <div
             className="
@@ -338,6 +382,7 @@ export default function TwitchSection({
 
 
         </div>
+
 
 
       </div>
