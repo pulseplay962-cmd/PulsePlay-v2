@@ -5,9 +5,11 @@ import {
   getVideos,
   updateVideo,
   deleteVideo,
+  type Video,
 } from "../../services/videos";
 
 import { uploadImage } from "../../services/storage";
+
 
 export default function Videos() {
 
@@ -33,7 +35,7 @@ export default function Videos() {
 
       const data = await getVideos();
 
-      setVideos(data || []);
+      setVideos(data ?? []);
 
     } catch (error) {
 
@@ -68,9 +70,7 @@ export default function Videos() {
     setSaving(true);
 
 
-
     try {
-
 
       let thumbnailUrl = thumbnail;
 
@@ -103,22 +103,16 @@ export default function Videos() {
 
 
 
-
-
       if (editingId) {
-
 
         await updateVideo(
           editingId,
           video
         );
 
-
       } else {
 
-
         await addVideo(video);
-
 
       }
 
@@ -131,7 +125,6 @@ export default function Videos() {
 
 
     } catch (error) {
-
 
       console.error(
         "Save video error:",
@@ -146,9 +139,7 @@ export default function Videos() {
 
     } finally {
 
-
       setSaving(false);
-
 
     }
 
@@ -159,28 +150,40 @@ export default function Videos() {
 
 
 
-  function editVideo(video: Video) {
+  function editVideo(
+    video: Video
+  ) {
 
 
-    setEditingId(video.id);
+    setEditingId(
+      video.id
+    );
 
-    setTitle(video.title || "");
+
+    setTitle(
+      video.title ?? ""
+    );
+
 
     setDescription(
-      video.description || ""
+      video.description ?? ""
     );
+
 
     setThumbnail(
-      video.thumbnail || ""
+      video.thumbnail ?? ""
     );
+
 
     setUrl(
-      video.url || ""
+      video.url ?? ""
     );
 
+
     setFeatured(
-      video.featured || false
+      video.featured ?? false
     );
+
 
     setThumbnailFile(null);
 
@@ -217,17 +220,19 @@ export default function Videos() {
 
     try {
 
-
       await deleteVideo(id);
 
       await loadVideos();
 
 
-
     } catch(error) {
 
 
-      console.error(error);
+      console.error(
+        "Delete video error:",
+        error
+      );
+
 
       alert(
         "Failed to delete video"
@@ -235,7 +240,6 @@ export default function Videos() {
 
 
     }
-
 
   }
 
@@ -246,7 +250,6 @@ export default function Videos() {
 
 
   function clearForm() {
-
 
     setEditingId(null);
 
@@ -261,7 +264,6 @@ export default function Videos() {
     setUrl("");
 
     setFeatured(false);
-
 
   }
 
@@ -288,7 +290,14 @@ export default function Videos() {
 
         onSubmit={handleSubmit}
 
-        className="mt-8 max-w-xl space-y-4 rounded-xl bg-[#111827] p-6"
+        className="
+          mt-8
+          max-w-xl
+          space-y-4
+          rounded-xl
+          bg-[#111827]
+          p-6
+        "
 
       >
 
@@ -307,14 +316,21 @@ export default function Videos() {
 
         <input
 
-          className="w-full rounded bg-[#1f2937] p-3"
+          className="
+            w-full
+            rounded
+            bg-[#1f2937]
+            p-3
+          "
 
           placeholder="Video title"
 
           value={title}
 
           onChange={(e)=>
-            setTitle(e.target.value)
+            setTitle(
+              e.target.value
+            )
           }
 
         />
@@ -325,14 +341,21 @@ export default function Videos() {
 
         <textarea
 
-          className="w-full rounded bg-[#1f2937] p-3"
+          className="
+            w-full
+            rounded
+            bg-[#1f2937]
+            p-3
+          "
 
           placeholder="Description"
 
           value={description}
 
           onChange={(e)=>
-            setDescription(e.target.value)
+            setDescription(
+              e.target.value
+            )
           }
 
         />
@@ -347,12 +370,17 @@ export default function Videos() {
 
           accept="image/*"
 
-          className="w-full rounded bg-[#1f2937] p-3"
+          className="
+            w-full
+            rounded
+            bg-[#1f2937]
+            p-3
+          "
 
           onChange={(e)=>{
 
             setThumbnailFile(
-              e.target.files?.[0] || null
+              e.target.files?.[0] ?? null
             );
 
           }}
@@ -371,7 +399,12 @@ export default function Videos() {
 
             alt="Preview"
 
-            className="h-40 w-full rounded object-cover"
+            className="
+              h-40
+              w-full
+              rounded
+              object-cover
+            "
 
           />
 
@@ -384,14 +417,21 @@ export default function Videos() {
 
         <input
 
-          className="w-full rounded bg-[#1f2937] p-3"
+          className="
+            w-full
+            rounded
+            bg-[#1f2937]
+            p-3
+          "
 
           placeholder="Video URL"
 
           value={url}
 
           onChange={(e)=>
-            setUrl(e.target.value)
+            setUrl(
+              e.target.value
+            )
           }
 
         />
@@ -435,7 +475,15 @@ export default function Videos() {
 
           disabled={saving}
 
-          className="rounded-lg bg-cyan-500 px-6 py-3 font-bold text-black disabled:opacity-50"
+          className="
+            rounded-lg
+            bg-cyan-500
+            px-6
+            py-3
+            font-bold
+            text-black
+            disabled:opacity-50
+          "
 
         >
 
@@ -467,7 +515,11 @@ export default function Videos() {
 
             key={video.id}
 
-            className="rounded-xl bg-[#111827] p-5"
+            className="
+              rounded-xl
+              bg-[#111827]
+              p-5
+            "
 
           >
 
@@ -481,7 +533,13 @@ export default function Videos() {
 
                 alt={video.title}
 
-                className="mb-4 h-40 w-full rounded object-cover"
+                className="
+                  mb-4
+                  h-40
+                  w-full
+                  rounded
+                  object-cover
+                "
 
               />
 
@@ -537,7 +595,13 @@ export default function Videos() {
                   editVideo(video)
                 }
 
-                className="rounded bg-blue-600 px-4 py-2 font-bold"
+                className="
+                  rounded
+                  bg-blue-600
+                  px-4
+                  py-2
+                  font-bold
+                "
 
               >
 
@@ -555,7 +619,13 @@ export default function Videos() {
                   handleDelete(video.id)
                 }
 
-                className="rounded bg-red-600 px-4 py-2 font-bold"
+                className="
+                  rounded
+                  bg-red-600
+                  px-4
+                  py-2
+                  font-bold
+                "
 
               >
 
