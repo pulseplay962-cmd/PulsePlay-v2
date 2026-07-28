@@ -181,15 +181,18 @@ export async function deleteAIContent(
 
 
 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://pulseplay-api-yubf.onrender.com";
+
+
+
 export async function generateWeeklyContent(){
 
 
   const response = await fetch(
 
-    `${
-      import.meta.env.VITE_API_URL ||
-      "http://localhost:5000"
-    }/api/ai/generate-weekly`,
+    `${API_URL}/api/ai/generate-weekly`,
 
     {
 
