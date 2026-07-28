@@ -1,12 +1,14 @@
 import { supabase } from "../lib/supabase";
 
 
+
 export async function uploadMerchandiseImage(
   file: File
 ) {
 
   const fileName =
-    `${Date.now()}-${file.name}`;
+    `merchandise/${Date.now()}-${file.name}`;
+
 
 
   const { data, error } =
@@ -22,9 +24,13 @@ export async function uploadMerchandiseImage(
       );
 
 
+
   if (error) {
+
     throw error;
+
   }
+
 
 
   const { data: urlData } =
@@ -35,6 +41,46 @@ export async function uploadMerchandiseImage(
       );
 
 
+
   return urlData.publicUrl;
+
+}
+
+
+
+
+
+
+
+// Upload multiple merchandise images
+
+export async function uploadMerchandiseGallery(
+  files: File[]
+) {
+
+
+  const uploadedImages:string[] = [];
+
+
+
+  for (const file of files) {
+
+
+    const imageUrl =
+      await uploadMerchandiseImage(file);
+
+
+
+    uploadedImages.push(
+      imageUrl
+    );
+
+
+  }
+
+
+
+  return uploadedImages;
+
 
 }

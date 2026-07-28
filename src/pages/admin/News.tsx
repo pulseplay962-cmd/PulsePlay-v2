@@ -5,57 +5,83 @@ import {
   getNews,
   updateNews,
   deleteNews,
+  type NewsArticle,
 } from "../../services/news";
 
 import { uploadImage } from "../../services/storage";
-
-
-type Article = {
-  id: string;
-  title: string;
-  content: string;
-  image: string;
-  category: string;
-  featured: boolean;
-};
 
 
 
 export default function News() {
 
 
-  const [articles, setArticles] = useState<Article[]>([]);
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  const [saving, setSaving] = useState(false);
+  const [articles,setArticles] =
+    useState<NewsArticle[]>([]);
 
 
-  const [title, setTitle] = useState("");
+  const [editingId,setEditingId] =
+    useState<string | null>(null);
 
-  const [content, setContent] = useState("");
 
-  const [image, setImage] = useState("");
-
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
-  const [category, setCategory] = useState("");
-
-  const [featured, setFeatured] = useState(false);
+  const [saving,setSaving] =
+    useState(false);
 
 
 
+  const [title,setTitle] =
+    useState("");
 
-  async function loadNews() {
+  const [content,setContent] =
+    useState("");
 
-    try {
+  const [image,setImage] =
+    useState("");
+
+  const [imageFile,setImageFile] =
+    useState<File | null>(null);
+
+
+  const [category,setCategory] =
+    useState("");
+
+
+  const [featured,setFeatured] =
+    useState(false);
+
+
+  const [published,setPublished] =
+    useState(false);
+
+
+
+  const [metaDescription,setMetaDescription] =
+    useState("");
+
+
+  const [facebookPost,setFacebookPost] =
+    useState("");
+
+
+  const [imagePrompt,setImagePrompt] =
+    useState("");
+
+
+  const [hashtags,setHashtags] =
+    useState("");
+
+
+
+
+
+  async function loadNews(){
+
+    try{
 
       const data = await getNews();
 
       setArticles(data || []);
 
-
-    } catch(error) {
+    }catch(error){
 
       console.error(error);
 
@@ -67,11 +93,11 @@ export default function News() {
 
 
 
-  useEffect(() => {
+  useEffect(()=>{
 
     loadNews();
 
-  }, []);
+  },[]);
 
 
 
@@ -81,8 +107,8 @@ export default function News() {
 
 
   async function handleSubmit(
-    e: React.FormEvent
-  ) {
+    e:React.FormEvent
+  ){
 
     e.preventDefault();
 
@@ -90,7 +116,7 @@ export default function News() {
 
 
 
-    try {
+    try{
 
 
       let imageUrl = image;
@@ -109,20 +135,65 @@ export default function News() {
 
 
 
+
       const article = {
-  title,
-  slug: title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-"),
-  excerpt: content.substring(0, 150),
-  content,
-  image: imageUrl,
-  category,
-  featured,
-  published: true,
-  author: "PulsePlay",
-};
+
+
+        title,
+
+
+        slug:title
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g,"-")
+          .replace(/^-|-$/g,""),
+
+
+
+        excerpt:
+          metaDescription ||
+          content.substring(0,150),
+
+
+
+        content,
+
+
+        image:imageUrl,
+
+
+        category,
+
+
+        featured,
+
+
+        published,
+
+
+        author:"PulsePlay",
+
+
+
+        meta_description:
+          metaDescription,
+
+
+        facebook_post:
+          facebookPost,
+
+
+        image_prompt:
+          imagePrompt,
+
+
+        hashtags:
+          hashtags
+          .split(" ")
+          .filter(Boolean),
+
+
+      };
 
 
 
@@ -137,7 +208,7 @@ export default function News() {
         );
 
 
-      } else {
+      }else{
 
 
         await addNews(article);
@@ -147,30 +218,26 @@ export default function News() {
 
 
 
-
       clearForm();
 
       await loadNews();
 
 
 
-
-    } catch(error){
+    }catch(error){
 
 
       console.error(error);
 
       alert(
-        "Failed to save news article"
+        "Failed saving article"
       );
 
 
-
-    } finally {
+    }finally{
 
 
       setSaving(false);
-
 
     }
 
@@ -183,34 +250,63 @@ export default function News() {
 
 
 
+
   function editArticle(
-    article: Article
+    article:NewsArticle
   ){
 
 
     setEditingId(article.id);
 
+
     setTitle(article.title);
+
 
     setContent(article.content);
 
+
     setImage(article.image);
+
 
     setCategory(article.category);
 
+
     setFeatured(article.featured);
 
-    setImageFile(null);
+
+    setPublished(article.published);
+
+
+    setMetaDescription(
+      article.meta_description || ""
+    );
+
+
+    setFacebookPost(
+      article.facebook_post || ""
+    );
+
+
+    setImagePrompt(
+      article.image_prompt || ""
+    );
+
+
+    setHashtags(
+      article.hashtags?.join(" ") || ""
+    );
 
 
 
     window.scrollTo({
       top:0,
-      behavior:"smooth",
+      behavior:"smooth"
     });
 
 
   }
+
+
 
 
 
@@ -223,14 +319,11 @@ export default function News() {
   ){
 
 
-    const confirmed =
-      window.confirm(
-        "Delete this news article?"
-      );
-
-
-
-    if(!confirmed) return;
+    if(
+      !window.confirm(
+        "Delete this article?"
+      )
+    ) return;
 
 
 
@@ -247,21 +340,27 @@ export default function News() {
 
 
 
-  function clearForm(){
 
-    setEditingId(null);
 
-    setTitle("");
+  async function togglePublish(
+    article:NewsArticle
+  ){
 
-    setContent("");
 
-    setImage("");
+    await updateNews(
 
-    setImageFile(null);
+      article.id,
 
-    setCategory("");
+      {
+        published:
+          !article.published
+      }
 
-    setFeatured(false);
+    );
+
+
+    await loadNews();
+
 
   }
 
@@ -271,317 +370,470 @@ export default function News() {
 
 
 
+
+
+  function clearForm(){
+
+
+    setEditingId(null);
+
+    setTitle("");
+
+    setContent("");
+
+    setImage("");
+
+    setCategory("");
+
+    setFeatured(false);
+
+    setPublished(false);
+
+    setMetaDescription("");
+
+    setFacebookPost("");
+
+    setImagePrompt("");
+
+    setHashtags("");
+
+    setImageFile(null);
+
+
+  }
+
+
+
+
+
+
+
+
   return (
 
-    <div>
+<div>
 
 
-      <h1 className="text-4xl font-black">
-        Manage News
-      </h1>
+<h1 className="text-4xl font-black">
+Manage News
+</h1>
 
 
 
 
 
-      <form
+<form
 
-        onSubmit={handleSubmit}
+onSubmit={handleSubmit}
 
-        className="mt-8 max-w-xl space-y-4 rounded-xl bg-[#111827] p-6"
+className="
+mt-8
+max-w-xl
+space-y-4
+rounded-xl
+bg-[#111827]
+p-6
+"
 
-      >
+>
 
 
-        <h2 className="text-xl font-bold">
 
-          {editingId
-            ? "Edit Article"
-            : "Add News"}
+<h2 className="text-xl font-bold">
 
-        </h2>
+{editingId
+?"Edit Article"
+:"Add News"}
 
+</h2>
 
 
 
 
 
-        <input
 
-          className="w-full rounded bg-[#1f2937] p-3"
+<input
 
-          placeholder="Title"
+className="w-full rounded bg-[#1f2937] p-3"
 
-          value={title}
+placeholder="Title"
 
-          onChange={(e)=>
-            setTitle(e.target.value)
-          }
+value={title}
 
-        />
+onChange={
+e=>setTitle(e.target.value)
+}
 
+/>
 
 
 
 
 
-        <input
 
-          className="w-full rounded bg-[#1f2937] p-3"
+<input
 
-          placeholder="Category"
+className="w-full rounded bg-[#1f2937] p-3"
 
-          value={category}
+placeholder="Category"
 
-          onChange={(e)=>
-            setCategory(e.target.value)
-          }
+value={category}
 
-        />
+onChange={
+e=>setCategory(e.target.value)
+}
 
+/>
 
 
 
 
 
-        <textarea
 
-          className="w-full rounded bg-[#1f2937] p-3"
+<textarea
 
-          placeholder="Article content"
+className="w-full rounded bg-[#1f2937] p-3"
 
-          rows={5}
+placeholder="Meta Description"
 
-          value={content}
+value={metaDescription}
 
-          onChange={(e)=>
-            setContent(e.target.value)
-          }
+onChange={
+e=>setMetaDescription(e.target.value)
+}
 
-        />
+/>
 
 
 
 
 
 
+<textarea
 
-        <input
+className="w-full rounded bg-[#1f2937] p-3"
 
-          type="file"
+rows={8}
 
-          accept="image/*"
+placeholder="Article Content"
 
-          className="w-full rounded bg-[#1f2937] p-3"
+value={content}
 
-          onChange={(e)=>{
+onChange={
+e=>setContent(e.target.value)
+}
 
-            setImageFile(
-              e.target.files?.[0] || null
-            );
+/>
 
-          }}
 
-        />
 
 
 
 
+<textarea
 
+className="w-full rounded bg-[#1f2937] p-3"
 
-        {image && (
+placeholder="Facebook Post"
 
-          <img
+value={facebookPost}
 
-            src={image}
+onChange={
+e=>setFacebookPost(e.target.value)
+}
 
-            alt="Preview"
+/>
 
-            className="h-40 w-full rounded object-cover"
 
-          />
 
-        )}
 
 
 
+<textarea
 
+className="w-full rounded bg-[#1f2937] p-3"
 
+placeholder="Image Prompt"
 
+value={imagePrompt}
 
-        <label className="flex items-center gap-2">
+onChange={
+e=>setImagePrompt(e.target.value)
+}
 
+/>
 
-          <input
 
-            type="checkbox"
 
-            checked={featured}
 
-            onChange={(e)=>
-              setFeatured(
-                e.target.checked
-              )
-            }
 
-          />
 
+<input
 
-          Featured Article
+className="w-full rounded bg-[#1f2937] p-3"
 
+placeholder="Hashtags"
 
-        </label>
+value={hashtags}
 
+onChange={
+e=>setHashtags(e.target.value)
+}
 
+/>
 
 
 
 
 
-        <button
 
-          disabled={saving}
+<input
 
-          className="rounded-lg bg-cyan-500 px-6 py-3 font-bold text-black disabled:opacity-50"
+type="file"
 
-        >
+accept="image/*"
 
-          {saving
-            ? "Uploading..."
-            : editingId
-            ? "Update Article"
-            : "Add News"}
+onChange={
+e=>
+setImageFile(
+e.target.files?.[0] || null
+)
+}
 
-        </button>
+/>
 
 
 
-      </form>
 
 
+<label>
 
+<input
 
+type="checkbox"
 
+checked={featured}
 
-      <div className="mt-10 space-y-4">
+onChange={
+e=>setFeatured(e.target.checked)
+}
 
+/>
 
-        {articles.map((article)=>(
+ Featured
 
+</label>
 
-          <div
 
-            key={article.id}
 
-            className="rounded-xl bg-[#111827] p-5"
 
-          >
 
+<label>
 
+<input
 
-            {article.image && (
+type="checkbox"
 
-              <img
+checked={published}
 
-                src={article.image}
+onChange={
+e=>setPublished(e.target.checked)
+}
 
-                alt={article.title}
+/>
 
-                className="mb-4 h-40 w-full rounded object-cover"
+ Published
 
-              />
+</label>
 
-            )}
 
 
 
 
 
+<button
 
-            <h2 className="text-2xl font-bold">
+disabled={saving}
 
-              {article.title}
+className="
+rounded-lg
+bg-cyan-500
+px-6
+py-3
+font-bold
+text-black
+"
 
-            </h2>
+>
 
+{
+saving
+?"Saving..."
+:"Save Article"
+}
 
+</button>
 
 
+</form>
 
 
-            <p className="text-cyan-400">
 
-              {article.category}
 
-            </p>
 
 
 
 
 
+<div className="mt-10 space-y-5">
 
-            <p className="mt-3 text-gray-400">
 
-              {article.content}
+{articles.map(article=>(
 
-            </p>
 
+<div
 
+key={article.id}
 
+className="
+rounded-xl
+bg-[#111827]
+p-5
+"
 
+>
 
-            <div className="mt-4 flex gap-3">
 
 
-              <button
+<img
 
-                onClick={() =>
-                  editArticle(article)
-                }
+src={article.image}
 
-                className="rounded bg-blue-600 px-4 py-2 font-bold"
+className="
+h-40
+w-full
+rounded
+object-cover
+"
 
-              >
+/>
 
-                Edit
 
-              </button>
 
 
 
+<h2 className="text-2xl font-bold">
 
+{article.title}
 
-              <button
+</h2>
 
-                onClick={() =>
-                  handleDelete(article.id)
-                }
 
-                className="rounded bg-red-600 px-4 py-2 font-bold"
 
-              >
 
-                Delete
+<p className="text-cyan-400">
 
-              </button>
+{article.category}
 
+</p>
 
 
-            </div>
 
 
+<p className="text-gray-400">
 
-          </div>
+{article.published
+?"🟢 Published"
+:"🟡 Draft"}
 
+</p>
 
-        ))}
 
 
-      </div>
 
 
+<p className="mt-3">
 
-    </div>
+{article.content.substring(0,300)}...
+
+</p>
+
+
+
+
+
+<div className="flex gap-3 mt-4">
+
+
+<button
+
+onClick={()=>
+editArticle(article)
+}
+
+className="rounded bg-blue-600 px-4 py-2"
+
+>
+
+Edit
+
+</button>
+
+
+
+
+
+<button
+
+onClick={()=>
+togglePublish(article)
+}
+
+className="rounded bg-green-600 px-4 py-2"
+
+>
+
+{
+article.published
+?"Unpublish"
+:"Publish"
+}
+
+</button>
+
+
+
+
+
+<button
+
+onClick={()=>
+handleDelete(article.id)
+}
+
+className="rounded bg-red-600 px-4 py-2"
+
+>
+
+Delete
+
+</button>
+
+
+
+</div>
+
+
+</div>
+
+
+))}
+
+
+</div>
+
+
+</div>
 
   );
 

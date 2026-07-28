@@ -1,19 +1,8 @@
-type MerchandiseItem = {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  image: string;
-  badge?: string;
-  category?: string;
-  checkoutUrl?: string;
-};
-
+import type { MerchandiseItem } from "../services/merchandise";
 
 type Props = {
   item: MerchandiseItem;
 };
-
 
 export default function MerchandiseCard({ item }: Props) {
   return (
@@ -33,7 +22,6 @@ export default function MerchandiseCard({ item }: Props) {
         hover:shadow-cyan-400/20
       "
     >
-
       {/* Image Area */}
       <div
         className="
@@ -43,9 +31,8 @@ export default function MerchandiseCard({ item }: Props) {
           bg-black
         "
       >
-
         <img
-          src={item.image}
+          src={item.image_url}
           alt={item.name}
           className="
             h-full
@@ -57,8 +44,6 @@ export default function MerchandiseCard({ item }: Props) {
           "
         />
 
-
-        {/* Neon Overlay */}
         <div
           className="
             absolute
@@ -72,9 +57,7 @@ export default function MerchandiseCard({ item }: Props) {
           "
         />
 
-
-        {/* Badge */}
-        {item.badge && (
+        {item.collection && (
           <span
             className="
               absolute
@@ -91,18 +74,13 @@ export default function MerchandiseCard({ item }: Props) {
               text-white
             "
           >
-            {item.badge}
+            {item.collection}
           </span>
         )}
-
-
       </div>
-
 
       {/* Content */}
       <div className="p-6">
-
-
         {item.category && (
           <p
             className="
@@ -118,7 +96,6 @@ export default function MerchandiseCard({ item }: Props) {
           </p>
         )}
 
-
         <h2
           className="
             text-xl
@@ -131,7 +108,6 @@ export default function MerchandiseCard({ item }: Props) {
           {item.name}
         </h2>
 
-
         <p
           className="
             mt-3
@@ -143,7 +119,6 @@ export default function MerchandiseCard({ item }: Props) {
           {item.description}
         </p>
 
-
         <div
           className="
             mt-6
@@ -152,7 +127,6 @@ export default function MerchandiseCard({ item }: Props) {
             justify-between
           "
         >
-
           <span
             className="
               text-2xl
@@ -160,12 +134,11 @@ export default function MerchandiseCard({ item }: Props) {
               text-cyan-400
             "
           >
-            {item.price}
+            ${Number(item.price).toFixed(2)}
           </span>
 
-
           <a
-            href={item.checkoutUrl || "#"}
+            href={item.product_url || "#"}
             target="_blank"
             rel="noopener noreferrer"
             className="
@@ -181,14 +154,8 @@ export default function MerchandiseCard({ item }: Props) {
           >
             Shop Merch
           </a>
-
-
         </div>
-
-
       </div>
-
-
     </div>
   );
 }

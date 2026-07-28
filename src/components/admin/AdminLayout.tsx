@@ -46,6 +46,12 @@ export default function AdminLayout() {
     },
 
     {
+      name: "AI Content Studio",
+      path: "/admin/ai-content",
+      icon: "🤖",
+    },
+
+    {
       name: "Settings",
       path: "/admin/settings",
       icon: "⚙️",
@@ -66,9 +72,15 @@ export default function AdminLayout() {
 
 
 
+
   return (
 
-    <div className="min-h-screen bg-[#05070d] text-white flex">
+    <div className="
+      min-h-screen
+      bg-[#05070d]
+      text-white
+      flex
+    ">
 
 
       {/* Sidebar */}
@@ -103,8 +115,8 @@ export default function AdminLayout() {
             Admin Control Center
           </p>
 
-
         </div>
+
 
 
 
@@ -120,7 +132,10 @@ export default function AdminLayout() {
 
 
             const active =
-              location.pathname === item.path;
+              location.pathname === item.path ||
+              location.pathname.startsWith(
+                `${item.path}/`
+              );
 
 
 
@@ -133,8 +148,14 @@ export default function AdminLayout() {
                 to={item.path}
 
                 className={`
-                  flex items-center gap-3 rounded-xl px-4 py-3
-                  font-bold transition
+                  flex
+                  items-center
+                  gap-3
+                  rounded-xl
+                  px-4
+                  py-3
+                  font-bold
+                  transition
 
                   ${
                     active
@@ -162,6 +183,7 @@ export default function AdminLayout() {
 
 
         </nav>
+
 
 
 
@@ -196,6 +218,7 @@ export default function AdminLayout() {
 
 
 
+
           <button
 
             onClick={handleLogout}
@@ -224,6 +247,7 @@ export default function AdminLayout() {
 
 
       </aside>
+
 
 
 

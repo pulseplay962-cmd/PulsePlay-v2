@@ -1,8 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import MainLayout from "../layout/MainLayout";
+
 import AdminLayout from "../components/admin/AdminLayout";
 import ProtectedRoute from "../components/admin/ProtectedRoute";
+
+import AIContentStudio from "../pages/admin/AIContentStudio";
 
 
 // =========================
@@ -15,6 +18,7 @@ import GameDetails from "../pages/GameDetails";
 import Streams from "../pages/Streams";
 import Store from "../pages/Store";
 import Merchandise from "../pages/Merchandise";
+import MerchandiseDetail from "../pages/MerchandiseDetail";
 import Community from "../pages/Community";
 import News from "../pages/News";
 import NewsArticle from "../pages/NewsArticle";
@@ -38,140 +42,214 @@ import Login from "../pages/admin/Login";
 
 
 
+
+
 const router = createBrowserRouter([
 
 
   // =========================
-  // Public Website
+  // MAIN WEBSITE
   // =========================
 
   {
     path: "/",
+
     element: <MainLayout />,
 
     children: [
 
       {
-        index: true,
-        element: <Home />,
+        index:true,
+        element:<Home />,
       },
 
-      {
-        path: "games",
-        element: <GamesPage />,
-      },
 
       {
-        path: "games/:slug",
-        element: <GameDetails />,
+        path:"games",
+        element:<GamesPage />,
       },
 
-      {
-        path: "streams",
-        element: <Streams />,
-      },
 
       {
-        path: "store",
-        element: <Store />,
+        path:"games/:slug",
+        element:<GameDetails />,
       },
 
-      {
-        path: "merchandise",
-        element: <Merchandise />,
-      },
 
       {
-        path: "community",
-        element: <Community />,
+        path:"streams",
+        element:<Streams />,
       },
 
-      {
-        path: "news",
-        element: <News />,
-      },
 
       {
-        path: "news/:slug",
-        element: <NewsArticle />,
+        path:"store",
+        element:<Store />,
       },
 
-      {
-        path: "about",
-        element: <About />,
-      },
 
       {
-        path: "contact",
-        element: <Contact />,
+        path:"merchandise",
+        element:<Merchandise />,
       },
+
+
+      {
+        path:"merchandise/:id",
+        element:<MerchandiseDetail />,
+      },
+
+
+      {
+        path:"community",
+        element:<Community />,
+      },
+
+
+      {
+        path:"news",
+        element:<News />,
+      },
+
+
+      {
+        path:"news/:slug",
+        element:<NewsArticle />,
+      },
+
+
+      {
+        path:"about",
+        element:<About />,
+      },
+
+
+      {
+        path:"contact",
+        element:<Contact />,
+      },
+
 
     ],
+
   },
 
 
 
+
+
+
   // =========================
-  // Admin Login
+  // ADMIN LOGIN
   // =========================
 
   {
-    path: "/admin/login",
-    element: <Login />,
+    path:"/admin/login",
+
+    element:<Login />,
+
   },
 
 
 
+
+
+
+
   // =========================
-  // Protected Admin Area
+  // ADMIN DASHBOARD
   // =========================
 
   {
-    path: "/admin",
+    path:"/admin",
 
-    element: (
+    element:(
+
       <ProtectedRoute>
+
         <AdminLayout />
+
       </ProtectedRoute>
+
     ),
 
 
-    children: [
+
+    children:[
+
 
       {
-        index: true,
-        element: <Dashboard />,
+        index:true,
+
+        element:<Dashboard />,
+
       },
 
-      {
-        path: "games",
-        element: <AdminGames />,
-      },
+
 
       {
-        path: "videos",
-        element: <Videos />,
+        path:"games",
+
+        element:<AdminGames />,
+
       },
 
-      {
-        path: "products",
-        element: <Products />,
-      },
+
 
       {
-        path: "merchandise",
-        element: <MerchandiseAdmin />,
+        path:"videos",
+
+        element:<Videos />,
+
       },
 
-      {
-        path: "news",
-        element: <NewsAdmin />,
-      },
+
 
       {
-        path: "settings",
-        element: <Settings />,
+        path:"products",
+
+        element:<Products />,
+
       },
+
+
+
+      {
+        path:"merchandise",
+
+        element:<MerchandiseAdmin />,
+
+      },
+
+
+
+      {
+        path:"news",
+
+        element:<NewsAdmin />,
+
+      },
+
+
+
+      // 🤖 AI CONTENT STUDIO
+
+      {
+        path:"ai-content",
+
+        element:<AIContentStudio />,
+
+      },
+
+
+
+      {
+        path:"settings",
+
+        element:<Settings />,
+
+      },
+
 
     ],
 
@@ -179,17 +257,23 @@ const router = createBrowserRouter([
 
 
 
+
+
+
   // =========================
-  // 404 Fallback
+  // FALLBACK
   // =========================
 
   {
-    path: "*",
-    element: <NotFound />,
+    path:"*",
+
+    element:<NotFound />,
+
   },
 
 
 ]);
+
 
 
 export default router;
