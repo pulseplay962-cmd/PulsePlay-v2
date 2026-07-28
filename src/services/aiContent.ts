@@ -3,25 +3,35 @@ import { supabase } from "../lib/supabase";
 
 
 export type AIContentItem = {
-  id: string;
+
+  id?: string;
+
   title: string;
+
   content_type: string;
+
   category: string;
+
   body: string;
+
   social_caption: string;
+
   image_prompt: string;
+
   scheduled_date: string;
+
   status: string;
+
 };
 
 
 
 
 
-export async function getAIContent(): Promise<AIContentItem[]>{
+export async function getAIContent(){
 
 
-  const { data,error } = await supabase
+  const { data, error } = await supabase
 
     .from("ai_content_queue")
 
@@ -44,50 +54,9 @@ export async function getAIContent(): Promise<AIContentItem[]>{
 
 
 
-  return (data || []) as AIContentItem[];
+  return data || [];
 
 }
-
-
-
-
-
-
-
-
-
-export async function addAIContent(
-
-  content:AIContentItem
-
-){
-
-
-  const { data,error } = await supabase
-
-    .from("ai_content_queue")
-
-    .insert(content)
-
-    .select()
-
-    .single();
-
-
-
-  if(error){
-
-    throw error;
-
-  }
-
-
-
-  return data;
-
-}
-
-
 
 
 
@@ -99,7 +68,7 @@ export async function updateAIContent(
 
   id:string,
 
-  updates:Partial<AIContentItem>
+  updates:any
 
 ){
 
@@ -115,9 +84,7 @@ export async function updateAIContent(
       id
     )
 
-    .select()
-
-    .single();
+    .select();
 
 
 
@@ -139,12 +106,8 @@ export async function updateAIContent(
 
 
 
-
-
 export async function deleteAIContent(
-
   id:string
-
 ){
 
 
@@ -168,9 +131,6 @@ export async function deleteAIContent(
   }
 
 
-
-  return true;
-
 }
 
 
@@ -180,19 +140,15 @@ export async function deleteAIContent(
 
 
 
-
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://pulseplay-api-yubf.onrender.com";
-
-
-
 export async function generateWeeklyContent(){
 
 
   const response = await fetch(
 
-    `${API_URL}/api/ai/generate-weekly`,
+    `${
+      import.meta.env.VITE_API_URL ||
+      "http://localhost:5000"
+    }/api/ai/generate-weekly`,
 
     {
 
@@ -211,23 +167,13 @@ export async function generateWeeklyContent(){
 
 
 
-
-
   if(!response.ok){
 
-
     throw new Error(
-
       "Failed generating weekly content"
-
     );
 
-
   }
-
-
-
-
 
 
 
@@ -236,77 +182,8 @@ export async function generateWeeklyContent(){
 
 
 
-
-
   const posts =
     result.posts || [];
-
-
-
-
-
-  if(posts.length === 0){
-
-
-    throw new Error(
-
-      "AI returned no content"
-
-    );
-
-
-  }
-
-
-
-
-
-
-
-
-  const formattedPosts =
-
-    posts.map((item:any)=>({
-
-
-      title:
-        item.title,
-
-
-      content_type:
-        item.content_type,
-
-
-      category:
-        item.category,
-
-
-      body:
-        item.body,
-
-
-      social_caption:
-        item.social_caption,
-
-
-      image_prompt:
-        item.image_prompt,
-
-
-      scheduled_date:
-        item.scheduled_date,
-
-
-      status:
-        "pending"
-
-
-    }));
-
-
-
-
-
 
 
 
@@ -315,12 +192,30 @@ export async function generateWeeklyContent(){
     .from("ai_content_queue")
 
     .insert(
-      formattedPosts
+
+      posts.map((item:any)=>({
+
+        title:item.title,
+
+        content_type:item.content_type,
+
+        category:item.category,
+
+        body:item.body,
+
+        social_caption:item.social_caption,
+
+        image_prompt:item.image_prompt,
+
+        scheduled_date:item.scheduled_date,
+
+        status:"pending"
+
+      }))
+
     )
 
     .select();
-
-
 
 
 
@@ -344,8 +239,9 @@ export async function generateWeeklyContent(){
 
 
 
-// Future Publishing Workflow
-// AI Queue -> News Table -> Website
+// ==================================
+// Publish AI Content To News
+// ==================================
 
 export async function publishAIContent(
 
@@ -354,43 +250,86 @@ export async function publishAIContent(
 ){
 
 
-  const { data,error } = await supabase
 
-    .from("news")
+  const slug =
 
-    .insert({
+    item.title
 
-      title:item.title,
+    .toLowerCase()
 
-      content:item.body,
+    .trim()
 
-      excerpt:item.social_caption,
+    .replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )
 
-      category:item.category,
-
-      featured:false,
-
-      published:true,
-
-      author:"PulsePlay",
-
-      meta_description:item.title,
-
-      image_prompt:item.image_prompt,
-
-    })
-
-    .select()
-
-    .single();
+    .replace(
+      /^-|-$/g,
+      ""
+    );
 
 
 
 
 
-  if(error){
+  const { data:news,error:newsError } =
 
-    throw error;
+    await supabase
+
+      .from("news")
+
+      .insert({
+
+        title:item.title,
+
+        slug,
+
+        excerpt:
+          item.social_caption,
+
+        content:
+          item.body,
+
+        image:"",
+
+        category:
+          item.category,
+
+        featured:false,
+
+        published:true,
+
+        author:
+          "PulsePlay AI",
+
+        meta_description:
+          item.body.substring(
+            0,
+            160
+          ),
+
+        facebook_post:
+          item.social_caption,
+
+        image_prompt:
+          item.image_prompt,
+
+        hashtags:[]
+
+      })
+
+      .select()
+
+      .single();
+
+
+
+
+
+  if(newsError){
+
+    throw newsError;
 
   }
 
@@ -399,20 +338,41 @@ export async function publishAIContent(
 
 
 
-  await updateAIContent(
 
-    item.id!,
+  const { error:updateError } =
 
-    {
-      status:"published"
-    }
+    await supabase
 
-  );
+      .from("ai_content_queue")
+
+      .update({
+
+        status:"published"
+
+      })
+
+      .eq(
+
+        "id",
+
+        item.id
+
+      );
 
 
 
 
 
-  return data;
+  if(updateError){
+
+    throw updateError;
+
+  }
+
+
+
+
+
+  return news;
 
 }

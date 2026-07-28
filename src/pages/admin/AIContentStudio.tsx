@@ -55,19 +55,16 @@ export default function AIContentStudio() {
 
 
 
-
   async function loadContent(){
-
 
     try{
 
-
       setLoading(true);
 
+      setError("");
 
       const data =
         await getAIContent();
-
 
 
       setContent(
@@ -75,9 +72,7 @@ export default function AIContentStudio() {
       );
 
 
-
     }catch(error:any){
-
 
       console.error(
         "Loading AI content failed",
@@ -86,20 +81,16 @@ export default function AIContentStudio() {
 
 
       setError(
-        error.message ||
+        error?.message ||
         "Failed loading AI content"
       );
 
 
-
     }finally{
-
 
       setLoading(false);
 
-
     }
-
 
   }
 
@@ -121,29 +112,20 @@ export default function AIContentStudio() {
 
 
 
-
   async function handleGenerate(){
 
-
     try{
-
 
       setGenerating(true);
 
       setError("");
 
-
-
       await generateWeeklyContent();
-
-
 
       await loadContent();
 
 
-
     }catch(error:any){
-
 
       console.error(
         "AI generation failed",
@@ -152,20 +134,16 @@ export default function AIContentStudio() {
 
 
       setError(
-        error.message ||
+        error?.message ||
         "Failed generating weekly content"
       );
 
 
-
     }finally{
-
 
       setGenerating(false);
 
-
     }
-
 
   }
 
@@ -179,16 +157,19 @@ export default function AIContentStudio() {
     item:AIContentItem
   ){
 
+    if(!item.id){
 
-    setEditingId(
-      item.id || null
-    );
+      return;
+
+    }
+
+
+    setEditingId(item.id);
 
 
     setEditForm({
       ...item
     });
-
 
   }
 
@@ -200,11 +181,9 @@ export default function AIContentStudio() {
 
   function cancelEdit(){
 
-
     setEditingId(null);
 
     setEditForm(null);
-
 
   }
 
@@ -216,17 +195,17 @@ export default function AIContentStudio() {
 
   async function saveEdit(){
 
+    if(!editForm?.id){
 
-    if(!editForm?.id)
       return;
+
+    }
 
 
 
     try{
 
-
       setSaving(true);
-
 
 
       await updateAIContent(
@@ -236,23 +215,24 @@ export default function AIContentStudio() {
         {
 
           title:
-            editForm.title,
+          editForm.title,
 
 
           body:
-            editForm.body,
+          editForm.body,
 
 
           social_caption:
-            editForm.social_caption,
+          editForm.social_caption,
 
 
           image_prompt:
-            editForm.image_prompt,
+          editForm.image_prompt,
 
 
           scheduled_date:
-            editForm.scheduled_date,
+          editForm.scheduled_date,
+
 
         }
 
@@ -262,8 +242,6 @@ export default function AIContentStudio() {
 
       await loadContent();
 
-
-
       cancelEdit();
 
 
@@ -272,22 +250,18 @@ export default function AIContentStudio() {
 
 
       setError(
-        error.message ||
+        error?.message ||
         "Failed saving content"
       );
 
 
     }finally{
 
-
       setSaving(false);
-
 
     }
 
-
   }
-
 
 
 
@@ -298,7 +272,6 @@ export default function AIContentStudio() {
   async function approvePost(
     id:string
   ){
-
 
     try{
 
@@ -317,20 +290,16 @@ export default function AIContentStudio() {
       await loadContent();
 
 
-
     }catch(error:any){
 
-
       setError(
-        error.message
+        error?.message ||
+        "Failed approving post"
       );
-
 
     }
 
-
   }
-
 
 
 
@@ -342,30 +311,23 @@ export default function AIContentStudio() {
     id:string
   ){
 
-
     try{
 
-
       await deleteAIContent(id);
-
 
       await loadContent();
 
 
-
     }catch(error:any){
 
-
       setError(
-        error.message
+        error?.message ||
+        "Failed deleting post"
       );
-
 
     }
 
-
   }
-
 
 
 
@@ -377,7 +339,6 @@ export default function AIContentStudio() {
     item:AIContentItem
   ){
 
-
     try{
 
 
@@ -387,20 +348,15 @@ export default function AIContentStudio() {
       await loadContent();
 
 
-
     }catch(error:any){
 
 
       setError(
-
-        error.message ||
-        "Failed publishing article"
-
+        error?.message ||
+        "Failed publishing content"
       );
 
-
     }
-
 
   }
 
@@ -416,9 +372,6 @@ export default function AIContentStudio() {
     <div className="space-y-6">
 
 
-
-
-
       <div className="pp-panel p-6">
 
 
@@ -427,7 +380,6 @@ export default function AIContentStudio() {
           🤖 PulsePlay AI Content Studio
 
         </h1>
-
 
 
 
@@ -448,10 +400,7 @@ export default function AIContentStudio() {
 
             onClick={handleGenerate}
 
-            disabled={
-              generating ||
-              loading
-            }
+            disabled={generating}
 
             className="
             pp-button
@@ -460,15 +409,10 @@ export default function AIContentStudio() {
 
           >
 
-            {
-              generating
-
+            {generating
               ? "Generating..."
-
               : "🚀 Generate Weekly Content"
-
             }
-
 
           </button>
 
@@ -486,7 +430,6 @@ export default function AIContentStudio() {
             px-5
             py-3
             font-bold
-            hover:bg-slate-600
             "
 
           >
@@ -496,9 +439,7 @@ export default function AIContentStudio() {
           </button>
 
 
-
         </div>
-
 
 
       </div>
@@ -530,426 +471,370 @@ export default function AIContentStudio() {
 
 
 
+      {loading ? (
 
-      {
-        loading ? (
+        <div className="pp-panel p-6">
 
+          Loading AI Content...
 
-          <div className="pp-panel p-6">
+        </div>
 
-            Loading AI Content...
 
-          </div>
+      ) : content.length === 0 ? (
 
+        <div className="pp-panel p-6 text-slate-400">
 
+          No AI content generated yet.
 
-        ) : content.length === 0 ? (
+        </div>
 
 
-          <div className="pp-panel p-6 text-slate-400">
+      ) : (
 
-            No AI content generated yet.
 
-          </div>
+      <div className="grid gap-6">
 
 
+      {content.map((item)=>(
 
-        ) : (
 
+        <div
+          key={item.id}
+          className="pp-panel p-6"
+        >
 
 
-        <div className="grid gap-6">
+        {editingId === item.id && editForm ? (
 
 
-        {
-          content.map((item)=>(
+          <div className="space-y-4">
 
 
+            <input
 
-            <div
+              className="w-full rounded bg-black/30 p-3"
 
-              key={item.id}
+              value={editForm.title}
 
-              className="pp-panel p-6"
+              onChange={(e)=>
 
-            >
+                setEditForm({
 
+                  ...editForm,
 
+                  title:e.target.value
 
+                })
 
-            {
-              editingId === item.id &&
-              editForm ? (
+              }
 
+            />
 
 
-              <div className="space-y-4">
 
+            <textarea
 
-                <input
+              className="min-h-[250px] w-full rounded bg-black/30 p-4"
 
-                  className="
-                  w-full
-                  rounded
-                  bg-black/30
-                  p-3
-                  "
+              value={editForm.body}
 
-                  value={editForm.title}
+              onChange={(e)=>
 
-                  onChange={(e)=>
+                setEditForm({
 
-                    setEditForm({
+                  ...editForm,
 
-                      ...editForm,
+                  body:e.target.value
 
-                      title:e.target.value
+                })
 
-                    })
+              }
 
-                  }
+            />
 
-                />
 
 
+            <textarea
 
+              className="w-full rounded bg-black/30 p-4"
 
+              value={editForm.social_caption}
 
-                <textarea
+              onChange={(e)=>
 
-                  className="
-                  min-h-[300px]
-                  w-full
-                  rounded
-                  bg-black/30
-                  p-4
-                  "
+                setEditForm({
 
-                  value={editForm.body}
+                  ...editForm,
 
-                  onChange={(e)=>
+                  social_caption:e.target.value
 
-                    setEditForm({
+                })
 
-                      ...editForm,
+              }
 
-                      body:e.target.value
+            />
 
-                    })
 
-                  }
 
-                />
+            <textarea
 
+              className="w-full rounded bg-black/30 p-4"
 
+              value={editForm.image_prompt}
 
+              onChange={(e)=>
 
+                setEditForm({
 
-                <textarea
+                  ...editForm,
 
-                  className="
-                  w-full
-                  rounded
-                  bg-black/30
-                  p-4
-                  "
+                  image_prompt:e.target.value
 
-                  value={
-                    editForm.social_caption
-                  }
+                })
 
-                  onChange={(e)=>
+              }
 
-                    setEditForm({
+            />
 
-                      ...editForm,
 
-                      social_caption:
-                      e.target.value
 
-                    })
+            <div className="flex gap-3">
 
-                  }
 
-                />
+              <button
+                onClick={saveEdit}
+                className="pp-button"
+              >
 
+                {saving
+                  ? "Saving..."
+                  : "💾 Save"
+                }
 
+              </button>
 
 
 
-                <div className="flex gap-3">
+              <button
 
+                onClick={cancelEdit}
 
-                  <button
+                className="rounded-xl bg-gray-700 px-5 py-3"
 
-                    onClick={saveEdit}
+              >
 
-                    className="pp-button"
+                Cancel
 
-                  >
-
-                    {
-                      saving
-                      ?
-                      "Saving..."
-                      :
-                      "💾 Save"
-
-                    }
-
-                  </button>
-
-
-
-
-                  <button
-
-                    onClick={cancelEdit}
-
-                    className="
-                    rounded-xl
-                    bg-gray-700
-                    px-5
-                    py-3
-                    "
-
-                  >
-
-                    Cancel
-
-                  </button>
-
-
-                </div>
-
-
-              </div>
-
-
-
-              ) : (
-
-
-
-              <>
-
-
-
-              <div className="flex justify-between">
-
-
-                <div>
-
-
-                  <h2 className="text-xl font-bold">
-
-                    {item.title}
-
-                  </h2>
-
-
-
-
-                  <p className="text-sm text-slate-400">
-
-                    {item.category}
-                    {" • "}
-                    {item.content_type}
-
-                  </p>
-
-
-                </div>
-
-
-
-
-                <span className="
-                rounded
-                bg-cyan-500/20
-                px-3
-                py-1
-                text-cyan-300
-                ">
-
-                  {item.status}
-
-                </span>
-
-
-              </div>
-
-
-
-
-
-
-              <p className="mt-4 text-slate-300">
-
-                {item.body}
-
-              </p>
-
-
-
-
-
-
-              <details className="mt-5">
-
-
-                <summary className="cursor-pointer text-cyan-400">
-
-                  View Social Content
-
-                </summary>
-
-
-
-                <p className="mt-3">
-
-                  {item.social_caption}
-
-                </p>
-
-
-
-
-                <p className="mt-3 text-sm text-slate-500">
-
-                  Image Prompt:
-
-                  <br/>
-
-                  {item.image_prompt}
-
-                </p>
-
-
-              </details>
-
-
-
-
-
-
-              <div className="mt-5 flex flex-wrap gap-3">
-
-
-                <button
-
-                  onClick={()=>
-                    startEdit(item)
-                  }
-
-                  className="
-                  rounded-xl
-                  bg-purple-500/20
-                  px-4
-                  py-2
-                  text-purple-300
-                  "
-
-                >
-
-                  ✏️ Edit
-
-                </button>
-
-
-
-
-
-                <button
-
-                  onClick={()=>
-                    approvePost(item.id!)
-                  }
-
-                  className="pp-button"
-
-                >
-
-                  ✅ Approve
-
-                </button>
-
-
-
-
-
-                <button
-
-                  onClick={()=>
-                    publishPost(item)
-                  }
-
-                  className="
-                  rounded-xl
-                  bg-green-500/20
-                  px-4
-                  py-2
-                  text-green-300
-                  "
-
-                >
-
-                  🚀 Publish
-
-                </button>
-
-
-
-
-
-                <button
-
-                  onClick={()=>
-                    removePost(item.id!)
-                  }
-
-                  className="
-                  rounded-xl
-                  bg-red-500/20
-                  px-4
-                  py-2
-                  text-red-300
-                  "
-
-                >
-
-                  🗑 Delete
-
-                </button>
-
-
-              </div>
-
-
-              </>
-
-              )
-
-            }
+              </button>
 
 
             </div>
 
 
+          </div>
 
-          ))
 
-        }
+        ) : (
+
+
+        <>
+
+
+        <div className="flex justify-between">
+
+
+          <div>
+
+            <h2 className="text-xl font-bold">
+
+              {item.title}
+
+            </h2>
+
+
+            <p className="text-sm text-slate-400">
+
+              {item.category}
+              {" • "}
+              {item.content_type}
+
+            </p>
+
+
+          </div>
+
+
+
+          <span className="rounded bg-cyan-500/20 px-3 py-1 text-cyan-300">
+
+            {item.status}
+
+          </span>
 
 
         </div>
 
 
 
-        )
 
-      }
 
+        <p className="mt-4 text-slate-300">
+
+          {item.body}
+
+        </p>
+
+
+
+
+
+        <details className="mt-5">
+
+
+          <summary className="cursor-pointer text-cyan-400">
+
+            View Social Content
+
+          </summary>
+
+
+
+          <p className="mt-3">
+
+            {item.social_caption}
+
+          </p>
+
+
+
+          <p className="mt-3 text-sm text-slate-500">
+
+            Image Prompt:
+
+            <br/>
+
+            {item.image_prompt}
+
+          </p>
+
+
+        </details>
+
+
+
+
+
+        <div className="mt-5 flex flex-wrap gap-3">
+
+
+          {item.id && (
+
+          <button
+
+            onClick={() => startEdit(item)}
+
+            className="
+            rounded-xl
+            bg-purple-500/20
+            px-4
+            py-2
+            text-purple-300
+            "
+
+          >
+
+            ✏️ Edit
+
+          </button>
+
+          )}
+
+
+
+
+          {item.id && (
+
+          <button
+
+            onClick={() => approvePost(item.id!)}
+
+            className="pp-button"
+
+          >
+
+            ✅ Approve
+
+          </button>
+
+          )}
+
+
+
+
+          <button
+
+            onClick={() => publishPost(item)}
+
+            className="
+            rounded-xl
+            bg-green-500/20
+            px-4
+            py-2
+            text-green-300
+            "
+
+          >
+
+            🚀 Publish
+
+          </button>
+
+
+
+
+
+          {item.id && (
+
+          <button
+
+            onClick={() => removePost(item.id!)}
+
+            className="
+            rounded-xl
+            bg-red-500/20
+            px-4
+            py-2
+            text-red-300
+            "
+
+          >
+
+            🗑 Delete
+
+          </button>
+
+          )}
+
+
+        </div>
+
+
+        </>
+
+
+        )}
+
+
+        </div>
+
+
+      ))}
+
+
+      </div>
+
+
+      )}
 
 
     </div>
