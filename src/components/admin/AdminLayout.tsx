@@ -2,70 +2,98 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 
 
+
+type NavItem = {
+  name:string;
+  path:string;
+  icon:string;
+};
+
+
+
+
 export default function AdminLayout() {
+
 
   const location = useLocation();
 
 
-  const navigation = [
+
+  const navigation:NavItem[] = [
+
 
     {
-      name: "Dashboard",
-      path: "/admin",
-      icon: "📊",
+      name:"Dashboard",
+      path:"/admin",
+      icon:"📊",
     },
 
-    {
-      name: "Games",
-      path: "/admin/games",
-      icon: "🎮",
-    },
 
     {
-      name: "Videos",
-      path: "/admin/videos",
-      icon: "🎥",
+      name:"Games",
+      path:"/admin/games",
+      icon:"🎮",
     },
 
-    {
-      name: "Products",
-      path: "/admin/products",
-      icon: "🛒",
-    },
 
     {
-      name: "Merchandise",
-      path: "/admin/merchandise",
-      icon: "👕",
+      name:"Videos",
+      path:"/admin/videos",
+      icon:"🎥",
     },
 
-    {
-      name: "News",
-      path: "/admin/news",
-      icon: "📰",
-    },
 
     {
-      name: "AI Content Studio",
-      path: "/admin/ai-content",
-      icon: "🤖",
+      name:"Products",
+      path:"/admin/products",
+      icon:"🛒",
     },
 
+
     {
-      name: "Settings",
-      path: "/admin/settings",
-      icon: "⚙️",
+      name:"Merchandise",
+      path:"/admin/merchandise",
+      icon:"👕",
     },
+
+
+    {
+      name:"News",
+      path:"/admin/news",
+      icon:"📰",
+    },
+
+
+    {
+      name:"AI Content Studio",
+      path:"/admin/ai-content",
+      icon:"🤖",
+    },
+
+
+    {
+      name:"Settings",
+      path:"/admin/settings",
+      icon:"⚙️",
+    },
+
 
   ];
 
 
 
-  async function handleLogout() {
+
+
+
+  async function handleLogout(){
+
 
     await supabase.auth.signOut();
 
-    window.location.href = "/admin/login";
+
+    window.location.href =
+      "/admin/login";
+
 
   }
 
@@ -73,47 +101,70 @@ export default function AdminLayout() {
 
 
 
+
   return (
 
-    <div className="
-      min-h-screen
-      bg-[#05070d]
-      text-white
-      flex
-    ">
 
-
-      {/* Sidebar */}
-
-      <aside className="
+    <div
+      className="
+        min-h-screen
         flex
-        w-72
-        flex-col
-        border-r
-        border-cyan-500/20
-        bg-[#0b1120]
-        p-6
-      ">
+        bg-[#05070d]
+        text-white
+      "
+    >
 
+
+
+      {/* SIDEBAR */}
+
+      <aside
+        className="
+          w-72
+          flex
+          flex-col
+          border-r
+          border-cyan-500/20
+          bg-[#0b1120]
+          p-6
+        "
+      >
+
+
+
+        {/* Brand */}
 
         <div>
 
-          <h1 className="
-            text-3xl
-            font-black
-            text-cyan-400
-          ">
+
+          <h1
+            className="
+              text-3xl
+              font-black
+              text-cyan-400
+              tracking-wide
+            "
+          >
+
             PulsePlay
+
           </h1>
 
 
-          <p className="
-            mt-1
-            text-sm
-            text-gray-400
-          ">
+
+          <p
+            className="
+              mt-1
+              text-sm
+              text-gray-400
+            "
+          >
+
             Admin Control Center
+
           </p>
+
+
 
         </div>
 
@@ -121,25 +172,33 @@ export default function AdminLayout() {
 
 
 
-        <nav className="
-          mt-10
-          flex-1
-          space-y-2
-        ">
 
 
-          {navigation.map((item) => {
+        {/* Navigation */}
+
+        <nav
+          className="
+            mt-10
+            flex-1
+            space-y-2
+          "
+        >
+
+
+          {navigation.map((item)=>{
 
 
             const active =
-              location.pathname === item.path ||
-              location.pathname.startsWith(
-                `${item.path}/`
-              );
+              item.path === "/admin"
+                ? location.pathname === "/admin"
+                : location.pathname.startsWith(
+                    item.path
+                  );
 
 
 
             return (
+
 
               <Link
 
@@ -147,34 +206,87 @@ export default function AdminLayout() {
 
                 to={item.path}
 
+
                 className={`
+
                   flex
                   items-center
-                  gap-3
+                  justify-between
                   rounded-xl
                   px-4
                   py-3
                   font-bold
                   transition
 
+
                   ${
                     active
-                      ? "bg-cyan-500 text-black shadow-[0_0_25px_#22d3ee]"
-                      : "text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400"
+
+                    ? `
+                      bg-cyan-400
+                      text-black
+                      shadow-[0_0_25px_#22d3ee]
+                    `
+
+                    :
+
+                    `
+                      text-gray-300
+                      hover:bg-cyan-500/10
+                      hover:text-cyan-400
+                    `
+
                   }
+
                 `}
 
               >
 
-                <span>
-                  {item.icon}
-                </span>
+
+                <div className="flex items-center gap-3">
 
 
-                {item.name}
+                  <span>
+
+                    {item.icon}
+
+                  </span>
+
+
+                  {item.name}
+
+
+                </div>
+
+
+
+
+
+                {
+                  item.name === "AI Content Studio" && (
+
+                    <span
+                      className="
+                        rounded-full
+                        bg-purple-500/20
+                        px-2
+                        py-1
+                        text-xs
+                        text-purple-300
+                      "
+                    >
+
+                      AI
+
+                    </span>
+
+                  )
+                }
+
 
 
               </Link>
+
 
             );
 
@@ -188,11 +300,19 @@ export default function AdminLayout() {
 
 
 
-        <div className="
-          border-t
-          border-white/10
-          pt-6
-        ">
+
+
+
+        {/* Footer */}
+
+        <div
+          className="
+            border-t
+            border-white/10
+            pt-6
+          "
+        >
+
 
 
           <Link
@@ -205,6 +325,7 @@ export default function AdminLayout() {
               px-4
               py-3
               text-gray-300
+              transition
               hover:bg-white/5
               hover:text-white
             "
@@ -243,7 +364,9 @@ export default function AdminLayout() {
           </button>
 
 
+
         </div>
+
 
 
       </aside>
@@ -253,20 +376,29 @@ export default function AdminLayout() {
 
 
 
-      {/* Main Content */}
 
-      <main className="
-        flex-1
-        overflow-y-auto
-        p-8
-      ">
+
+      {/* MAIN AREA */}
+
+
+      <main
+
+        className="
+          flex-1
+          overflow-y-auto
+          p-8
+        "
+
+      >
 
         <Outlet />
 
       </main>
 
 
+
     </div>
+
 
   );
 

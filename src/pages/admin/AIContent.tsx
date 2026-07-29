@@ -10,26 +10,37 @@ import {
 
 
 
+const API =
+  "http://localhost:5000/api/ai";
+
+
+
+
 
 export default function AIContentStudio() {
 
 
-  const [content, setContent] =
+  const [content,setContent] =
     useState<AIContentItem[]>([]);
 
 
 
-  const [loading, setLoading] =
+  const [loading,setLoading] =
     useState(true);
 
 
 
-  const [generating, setGenerating] =
+  const [generating,setGenerating] =
     useState(false);
 
 
 
-  const [error, setError] =
+  const [publishing,setPublishing] =
+    useState<string | null>(null);
+
+
+
+  const [error,setError] =
     useState("");
 
 
@@ -37,22 +48,31 @@ export default function AIContentStudio() {
 
 
 
-  async function loadContent() {
 
-    try {
+
+  async function loadContent(){
+
+
+    try{
+
 
       setLoading(true);
 
       setError("");
 
+
+
       const data =
         await getAIContent();
+
 
 
       setContent(data);
 
 
-    } catch(error:any) {
+
+    }catch(error:any){
+
 
       console.error(
         "Loading AI content failed:",
@@ -66,11 +86,13 @@ export default function AIContentStudio() {
       );
 
 
-    } finally {
+    }finally{
+
 
       setLoading(false);
 
     }
+
 
   }
 
@@ -80,11 +102,14 @@ export default function AIContentStudio() {
 
 
 
-  useEffect(() => {
+
+  useEffect(()=>{
+
 
     loadContent();
 
-  }, []);
+
+  },[]);
 
 
 
@@ -92,10 +117,12 @@ export default function AIContentStudio() {
 
 
 
-  async function handleGenerate() {
 
 
-    try {
+  async function handleGenerate(){
+
+
+    try{
 
 
       setGenerating(true);
@@ -107,30 +134,24 @@ export default function AIContentStudio() {
       await generateWeeklyContent();
 
 
+
       await loadContent();
 
 
 
-    } catch(error:any) {
-
-
-      console.error(
-        "AI generation failed:",
-        error
-      );
+    }catch(error:any){
 
 
       setError(
         error.message ||
-        "Failed generating weekly content"
+        "AI generation failed"
       );
 
 
-    } finally {
+    }finally{
 
 
       setGenerating(false);
-
 
     }
 
@@ -143,12 +164,12 @@ export default function AIContentStudio() {
 
 
 
-  async function approvePost(
-    id:string
-  ) {
 
 
-    try {
+  async function approvePost(id:string){
+
+
+    try{
 
 
       await updateAIContent(
@@ -162,17 +183,17 @@ export default function AIContentStudio() {
       );
 
 
+
       await loadContent();
 
 
 
-    } catch(error:any) {
+    }catch(error:any){
 
 
       setError(
         error.message
       );
-
 
     }
 
@@ -185,27 +206,135 @@ export default function AIContentStudio() {
 
 
 
-  async function removePost(
-    id:string
-  ) {
+
+  async function publishPost(id:string){
 
 
-    try {
+    try{
 
 
-      await deleteAIContent(id);
+      setPublishing(id);
+
+
+
+      const response =
+        await fetch(
+
+          `${API}/publish/${id}`,
+
+          {
+            method:"POST"
+          }
+
+        );
+
+
+
+      const result =
+        await response.json();
+
+
+
+
+      if(!result.success){
+
+        throw new Error(
+          result.error ||
+          "Publishing failed"
+        );
+
+      }
+
 
 
       await loadContent();
 
 
 
-    } catch(error:any) {
+    }catch(error:any){
+
+
+      console.error(
+        "Publish failed:",
+        error
+      );
 
 
       setError(
         error.message
       );
+
+
+    }finally{
+
+
+      setPublishing(null);
+
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
+  async function removePost(id:string){
+
+
+    try{
+
+
+      await deleteAIContent(id);
+
+
+
+      await loadContent();
+
+
+
+    }catch(error:any){
+
+
+      setError(
+        error.message
+      );
+
+    }
+
+  }
+
+
+
+
+
+
+
+
+
+  function statusStyle(status:string){
+
+
+    switch(status){
+
+
+      case "published":
+
+        return "bg-green-500/20 text-green-300";
+
+
+      case "approved":
+
+        return "bg-blue-500/20 text-blue-300";
+
+
+      default:
+
+        return "bg-yellow-500/20 text-yellow-300";
 
 
     }
@@ -225,6 +354,7 @@ export default function AIContentStudio() {
     <div className="space-y-6">
 
 
+
       <div className="pp-panel p-6">
 
 
@@ -238,36 +368,65 @@ export default function AIContentStudio() {
 
         <p className="mt-3 text-slate-400">
 
-          Generate and manage your weekly gaming media workflow.
+          Generate, review, approve, and publish your weekly gaming content.
 
         </p>
 
 
 
 
+        <div className="flex gap-3 mt-5">
 
-        <button
 
-          onClick={handleGenerate}
+          <button
 
-          disabled={generating}
+            onClick={handleGenerate}
 
-          className="
-            pp-button
-            mt-5
-            disabled:opacity-50
-          "
+            disabled={generating}
 
-        >
+            className="
+              pp-button
+              disabled:opacity-50
+            "
 
-          {
-            generating
-              ? "Generating Weekly Content..."
+          >
+
+            {
+              generating
+
+              ? "Generating..."
+
               : "🚀 Generate Weekly Content"
-          }
+
+            }
 
 
-        </button>
+          </button>
+
+
+
+
+          <button
+
+            onClick={loadContent}
+
+            className="
+              rounded-xl
+              border
+              border-white/10
+              px-4
+              py-2
+            "
+
+          >
+
+            🔄 Refresh
+
+
+          </button>
+
+
+        </div>
 
 
       </div>
@@ -278,22 +437,23 @@ export default function AIContentStudio() {
 
 
 
+
       {error && (
 
-        <div
-          className="
-            pp-panel
-            border
-            border-red-500/40
-            text-red-300
-          "
-        >
+        <div className="
+          pp-panel
+          border
+          border-red-500/40
+          text-red-300
+          p-5
+        ">
 
           {error}
 
         </div>
 
       )}
+
 
 
 
@@ -317,11 +477,7 @@ export default function AIContentStudio() {
 
           <div className="pp-panel p-6 text-slate-400">
 
-            No AI content generated yet.
-
-            <br />
-
-            Click Generate Weekly Content to create this week's posts.
+            No AI content yet.
 
           </div>
 
@@ -329,58 +485,56 @@ export default function AIContentStudio() {
         ) : (
 
 
+
           <div className="grid gap-6">
 
 
-            {
-              content.map((item) => (
 
-                <div
-                  key={item.id}
-                  className="pp-panel p-6"
-                >
-
-
-                  <div className="flex justify-between">
-
-
-                    <div>
-
-                      <h2 className="text-xl font-bold">
-
-                        {item.title}
-
-                      </h2>
-
-
-                      <p className="text-sm text-slate-400">
-
-                        {item.category}
-
-                        {" • "}
-
-                        {item.content_type}
-
-                      </p>
-
-                    </div>
+          {
+            content.map(item=>(
 
 
 
+              <div
 
-                    <span
-                      className="
-                        rounded
-                        bg-cyan-500/20
-                        px-3
-                        py-1
-                        text-cyan-300
-                      "
-                    >
+                key={item.id}
 
-                      {item.status}
+                className="
+                  pp-panel
+                  p-6
+                "
 
-                    </span>
+              >
+
+
+
+                <div className="flex justify-between">
+
+
+                  <div>
+
+
+                    <h2 className="text-xl font-bold">
+
+                      {item.title}
+
+                    </h2>
+
+
+
+                    <p className="text-sm text-slate-400">
+
+                      {item.category}
+
+                      {" • "}
+
+                      {item.content_type}
+
+                      {" • "}
+
+                      📅 {item.scheduled_date}
+
+                    </p>
 
 
                   </div>
@@ -389,60 +543,79 @@ export default function AIContentStudio() {
 
 
 
-                  <p className="mt-4 text-slate-300">
 
-                    {item.body}
+                  <span
+
+                    className={`
+                      rounded-lg
+                      px-3
+                      py-1
+                      text-sm
+                      ${statusStyle(item.status)}
+                    `}
+
+                  >
+
+                    {item.status}
+
+                  </span>
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+                <p className="mt-5 text-slate-300">
+
+                  {item.body}
+
+                </p>
+
+
+
+
+
+
+
+
+                <details className="mt-5">
+
+
+                  <summary className="cursor-pointer text-cyan-400">
+
+                    View Social Content
+
+                  </summary>
+
+
+
+                  <p className="mt-3">
+
+                    {item.social_caption}
 
                   </p>
 
 
 
+                  <p className="mt-4 text-sm text-slate-500">
 
+                    Image Prompt:
 
-                  <div className="mt-4 text-sm text-slate-400">
+                    <br/>
 
-                    📅 {item.scheduled_date}
+                    {item.image_prompt}
 
-                  </div>
-
-
-
-
-
-
-
-                  <details className="mt-5">
-
-
-                    <summary className="cursor-pointer text-cyan-400">
-
-                      View Social Content
-
-                    </summary>
+                  </p>
 
 
 
-                    <p className="mt-3 text-slate-300">
-
-                      {item.social_caption}
-
-                    </p>
-
-
-
-
-                    <p className="mt-3 text-sm text-slate-500">
-
-                      Image Prompt:
-
-                      <br />
-
-                      {item.image_prompt}
-
-                    </p>
-
-
-                  </details>
+                </details>
 
 
 
@@ -450,56 +623,92 @@ export default function AIContentStudio() {
 
 
 
-                  <div className="mt-5 flex gap-3">
 
-
-                    <button
-
-                      className="pp-button"
-
-                      onClick={() =>
-                        approvePost(item.id!)
-                      }
-
-                    >
-
-                      ✅ Approve
-
-                    </button>
+                <div className="flex gap-3 mt-6">
 
 
 
+                  <button
+
+                    className="pp-button"
+
+                    onClick={()=>approvePost(item.id)}
+
+                  >
+
+                    ✅ Approve
+
+                  </button>
 
 
-                    <button
-
-                      className="
-                        rounded-xl
-                        bg-red-500/20
-                        px-4
-                        py-2
-                        text-red-300
-                      "
-
-                      onClick={() =>
-                        removePost(item.id!)
-                      }
-
-                    >
-
-                      🗑 Delete
-
-                    </button>
 
 
-                  </div>
+
+
+                  <button
+
+                    className="
+                      rounded-xl
+                      bg-green-500/20
+                      px-4
+                      py-2
+                      text-green-300
+                    "
+
+                    disabled={publishing === item.id}
+
+                    onClick={()=>publishPost(item.id)}
+
+                  >
+
+                    {
+                      publishing === item.id
+
+                      ? "Publishing..."
+
+                      : "🚀 Publish"
+
+                    }
+
+
+                  </button>
+
+
+
+
+
+
+                  <button
+
+                    className="
+                      rounded-xl
+                      bg-red-500/20
+                      px-4
+                      py-2
+                      text-red-300
+                    "
+
+                    onClick={()=>removePost(item.id)}
+
+                  >
+
+                    🗑 Delete
+
+                  </button>
+
 
 
                 </div>
 
-              ))
 
-            }
+
+              </div>
+
+
+
+            ))
+
+          }
 
 
           </div>

@@ -5,7 +5,13 @@ import MainLayout from "../layout/MainLayout";
 import AdminLayout from "../components/admin/AdminLayout";
 import ProtectedRoute from "../components/admin/ProtectedRoute";
 
+
+// =========================
+// AI Admin Page
+// =========================
+
 import AIContentStudio from "../pages/admin/AIContentStudio";
+
 
 
 // =========================
@@ -27,6 +33,7 @@ import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 
 
+
 // =========================
 // Admin Pages
 // =========================
@@ -44,95 +51,125 @@ import Login from "../pages/admin/Login";
 
 
 
+
 const router = createBrowserRouter([
 
 
+
   // =========================
-  // MAIN WEBSITE
+  // PUBLIC WEBSITE
   // =========================
 
   {
-    path: "/",
+    path:"/",
 
-    element: <MainLayout />,
+    element:<MainLayout />,
 
-    children: [
+
+    children:[
+
 
       {
         index:true,
-        element:<Home />,
+
+        element:<Home />
+
       },
 
 
       {
         path:"games",
-        element:<GamesPage />,
+
+        element:<GamesPage />
+
       },
 
 
       {
         path:"games/:slug",
-        element:<GameDetails />,
+
+        element:<GameDetails />
+
       },
 
 
       {
         path:"streams",
-        element:<Streams />,
+
+        element:<Streams />
+
       },
 
 
       {
         path:"store",
-        element:<Store />,
+
+        element:<Store />
+
       },
 
 
       {
         path:"merchandise",
-        element:<Merchandise />,
+
+        element:<Merchandise />
+
       },
 
 
       {
         path:"merchandise/:id",
-        element:<MerchandiseDetail />,
+
+        element:<MerchandiseDetail />
+
       },
 
 
       {
         path:"community",
-        element:<Community />,
+
+        element:<Community />
+
       },
 
 
       {
         path:"news",
-        element:<News />,
+
+        element:<News />
+
       },
 
 
       {
         path:"news/:slug",
-        element:<NewsArticle />,
+
+        element:<NewsArticle />
+
       },
 
 
       {
         path:"about",
-        element:<About />,
+
+        element:<About />
+
       },
 
 
       {
         path:"contact",
-        element:<Contact />,
+
+        element:<Contact />
+
       },
 
 
     ],
 
   },
+
+
 
 
 
@@ -146,7 +183,7 @@ const router = createBrowserRouter([
   {
     path:"/admin/login",
 
-    element:<Login />,
+    element:<Login />
 
   },
 
@@ -156,8 +193,9 @@ const router = createBrowserRouter([
 
 
 
+
   // =========================
-  // ADMIN DASHBOARD
+  // ADMIN PANEL
   // =========================
 
   {
@@ -174,14 +212,14 @@ const router = createBrowserRouter([
     ),
 
 
-
     children:[
+
 
 
       {
         index:true,
 
-        element:<Dashboard />,
+        element:<Dashboard />
 
       },
 
@@ -190,7 +228,7 @@ const router = createBrowserRouter([
       {
         path:"games",
 
-        element:<AdminGames />,
+        element:<AdminGames />
 
       },
 
@@ -199,7 +237,7 @@ const router = createBrowserRouter([
       {
         path:"videos",
 
-        element:<Videos />,
+        element:<Videos />
 
       },
 
@@ -208,7 +246,7 @@ const router = createBrowserRouter([
       {
         path:"products",
 
-        element:<Products />,
+        element:<Products />
 
       },
 
@@ -217,7 +255,7 @@ const router = createBrowserRouter([
       {
         path:"merchandise",
 
-        element:<MerchandiseAdmin />,
+        element:<MerchandiseAdmin />
 
       },
 
@@ -226,18 +264,20 @@ const router = createBrowserRouter([
       {
         path:"news",
 
-        element:<NewsAdmin />,
+        element:<NewsAdmin />
 
       },
 
 
 
-      // 🤖 AI CONTENT STUDIO
+      // =========================
+      // 🤖 AI CONTENT MANAGER
+      // =========================
 
       {
         path:"ai-content",
 
-        element:<AIContentStudio />,
+        element:<AIContentStudio />
 
       },
 
@@ -246,7 +286,7 @@ const router = createBrowserRouter([
       {
         path:"settings",
 
-        element:<Settings />,
+        element:<Settings />
 
       },
 
@@ -260,16 +300,18 @@ const router = createBrowserRouter([
 
 
 
+
+
   // =========================
-  // FALLBACK
+  // 404
   // =========================
 
   {
     path:"*",
 
-    element:<NotFound />,
+    element:<NotFound />
 
-  },
+  }
 
 
 ]);

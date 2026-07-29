@@ -2,9 +2,17 @@ import { supabase } from "../lib/supabase";
 
 
 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000";
+
+
+
+
+
 export type AIContentItem = {
 
-  id?: string;
+  id: string;
 
   title: string;
 
@@ -14,13 +22,19 @@ export type AIContentItem = {
 
   body: string;
 
-  social_caption: string;
+  social_caption?: string;
 
-  image_prompt: string;
+  image_prompt?: string;
 
-  scheduled_date: string;
+  image_url?: string;
 
   status: string;
+
+  scheduled_date?: string;
+
+  created_at?: string;
+
+  updated_at?: string;
 
 };
 
@@ -28,20 +42,191 @@ export type AIContentItem = {
 
 
 
+
+
+
+// =====================================
+// Get AI Queue
+// =====================================
+
 export async function getAIContent(){
 
+  const response =
+    await fetch(
+      `${API_URL}/api/ai/queue`
+    );
 
-  const { data, error } = await supabase
+
+
+  const data =
+    await response.json();
+
+
+
+  if(!response.ok){
+
+    throw new Error(
+      data.error ||
+      "Failed loading AI content"
+    );
+
+  }
+
+
+
+  return data.queue || [];
+
+}
+
+
+
+
+
+
+
+
+// =====================================
+// Generate Weekly Content
+// =====================================
+
+export async function generateWeeklyContent(){
+
+  const response =
+    await fetch(
+
+      `${API_URL}/api/ai/generate-weekly-save`,
+
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json",
+        },
+
+      }
+
+    );
+
+
+
+  const data =
+    await response.json();
+
+
+
+  if(!response.ok){
+
+    throw new Error(
+      data.error ||
+      "Failed generating weekly content"
+    );
+
+  }
+
+
+
+  return data.posts || [];
+
+}
+
+
+
+
+
+
+
+
+// =====================================
+// Generate AI Image
+// =====================================
+
+export async function generateAIImage(
+
+  id:string
+
+){
+
+  const response =
+    await fetch(
+
+      `${API_URL}/api/ai/image/${id}`,
+
+      {
+
+        method:"POST",
+
+        headers:{
+
+          "Content-Type":"application/json",
+
+        },
+
+      }
+
+    );
+
+
+
+
+
+  const data =
+    await response.json();
+
+
+
+
+
+  if(!response.ok){
+
+    throw new Error(
+
+      data.error ||
+
+      "Failed generating AI image"
+
+    );
+
+  }
+
+
+
+
+
+  return data.item;
+
+}
+
+
+
+
+
+
+
+
+// =====================================
+// Update AI Content
+// =====================================
+
+export async function updateAIContent(
+
+  id:string,
+
+  updates:Partial<AIContentItem>
+
+){
+
+
+  const {
+    error
+  } = await supabase
 
     .from("ai_content_queue")
 
-    .select("*")
+    .update(updates)
 
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
+    .eq(
+      "id",
+      id
     );
 
 
@@ -54,7 +239,7 @@ export async function getAIContent(){
 
 
 
-  return data || [];
+  return true;
 
 }
 
@@ -64,54 +249,21 @@ export async function getAIContent(){
 
 
 
-export async function updateAIContent(
 
-  id:string,
-
-  updates:any
-
-){
-
-
-  const { data,error } = await supabase
-
-    .from("ai_content_queue")
-
-    .update(updates)
-
-    .eq(
-      "id",
-      id
-    )
-
-    .select();
-
-
-
-  if(error){
-
-    throw error;
-
-  }
-
-
-
-  return data;
-
-}
-
-
-
-
-
-
+// =====================================
+// Delete AI Content
+// =====================================
 
 export async function deleteAIContent(
+
   id:string
+
 ){
 
 
-  const { error } = await supabase
+  const {
+    error
+  } = await supabase
 
     .from("ai_content_queue")
 
@@ -131,6 +283,9 @@ export async function deleteAIContent(
   }
 
 
+
+  return true;
+
 }
 
 
@@ -140,239 +295,63 @@ export async function deleteAIContent(
 
 
 
-export async function generateWeeklyContent(){
+// =====================================
+// Publish AI Content
+// =====================================
+
+export async function publishAIContent(
+
+  id:string
+
+){
 
 
-  const response = await fetch(
+  const response =
+    await fetch(
 
-    `${
-      import.meta.env.VITE_API_URL ||
-      "http://localhost:5000"
-    }/api/ai/generate-weekly`,
+      `${API_URL}/api/ai/publish/${id}`,
 
-    {
+      {
 
-      method:"POST",
+        method:"POST",
 
-      headers:{
+        headers:{
 
-        "Content-Type":
-        "application/json"
+          "Content-Type":"application/json",
+
+        },
 
       }
 
-    }
+    );
 
-  );
+
+
+
+
+  const data =
+    await response.json();
+
+
 
 
 
   if(!response.ok){
 
     throw new Error(
-      "Failed generating weekly content"
+
+      data.error ||
+
+      "Failed publishing AI content"
+
     );
 
   }
 
 
 
-  const result =
-    await response.json();
 
 
-
-  const posts =
-    result.posts || [];
-
-
-
-  const {data,error} = await supabase
-
-    .from("ai_content_queue")
-
-    .insert(
-
-      posts.map((item:any)=>({
-
-        title:item.title,
-
-        content_type:item.content_type,
-
-        category:item.category,
-
-        body:item.body,
-
-        social_caption:item.social_caption,
-
-        image_prompt:item.image_prompt,
-
-        scheduled_date:item.scheduled_date,
-
-        status:"pending"
-
-      }))
-
-    )
-
-    .select();
-
-
-
-  if(error){
-
-    throw error;
-
-  }
-
-
-
-  return data;
-
-}
-
-
-
-
-
-
-
-
-
-// ==================================
-// Publish AI Content To News
-// ==================================
-
-export async function publishAIContent(
-
-  item:AIContentItem
-
-){
-
-
-
-  const slug =
-
-    item.title
-
-    .toLowerCase()
-
-    .trim()
-
-    .replace(
-      /[^a-z0-9]+/g,
-      "-"
-    )
-
-    .replace(
-      /^-|-$/g,
-      ""
-    );
-
-
-
-
-
-  const { data:news,error:newsError } =
-
-    await supabase
-
-      .from("news")
-
-      .insert({
-
-        title:item.title,
-
-        slug,
-
-        excerpt:
-          item.social_caption,
-
-        content:
-          item.body,
-
-        image:"",
-
-        category:
-          item.category,
-
-        featured:false,
-
-        published:true,
-
-        author:
-          "PulsePlay AI",
-
-        meta_description:
-          item.body.substring(
-            0,
-            160
-          ),
-
-        facebook_post:
-          item.social_caption,
-
-        image_prompt:
-          item.image_prompt,
-
-        hashtags:[]
-
-      })
-
-      .select()
-
-      .single();
-
-
-
-
-
-  if(newsError){
-
-    throw newsError;
-
-  }
-
-
-
-
-
-
-
-  const { error:updateError } =
-
-    await supabase
-
-      .from("ai_content_queue")
-
-      .update({
-
-        status:"published"
-
-      })
-
-      .eq(
-
-        "id",
-
-        item.id
-
-      );
-
-
-
-
-
-  if(updateError){
-
-    throw updateError;
-
-  }
-
-
-
-
-
-  return news;
+  return data.article;
 
 }

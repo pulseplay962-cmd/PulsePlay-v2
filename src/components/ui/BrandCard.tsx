@@ -17,6 +17,7 @@ type BrandCardProps = {
 
 
 
+
 export default function BrandCard({
 
   children,
@@ -42,9 +43,9 @@ export default function BrandCard({
 
         overflow-hidden
 
-        p-6
-
         rounded-2xl
+
+        p-6
 
         ${hud ? "pp-panel" : "pp-card"}
 
@@ -59,13 +60,14 @@ export default function BrandCard({
     >
 
 
-      {/* HUD Status Marker */}
 
       {hud && (
 
         <div
 
           className="
+
+            pointer-events-none
 
             absolute
 
@@ -85,6 +87,8 @@ export default function BrandCard({
 
             font-black
 
+            z-10
+
           "
 
         >
@@ -97,7 +101,13 @@ export default function BrandCard({
 
 
 
-      {children}
+
+
+      <div className="relative z-20">
+
+        {children}
+
+      </div>
 
 
 
