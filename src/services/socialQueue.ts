@@ -2,12 +2,44 @@ import { supabase } from "../lib/supabase.js";
 
 
 // =====================================
+// Social Post Type
+// =====================================
+
+export type SocialPost = {
+
+    id: number;
+
+    news_id: string | null;
+
+    platform: string;
+
+    post_text: string;
+
+    image_url: string | null;
+
+    hashtags: string[];
+
+    status: string;
+
+    scheduled_at: string | null;
+
+    published_at: string | null;
+
+    created_at?: string;
+
+};
+
+
+
+
+// =====================================
 // Get Social Queue
 // =====================================
 
-export async function getSocialQueue(){
+export async function getSocialQueue(): Promise<SocialPost[]>{
 
     try{
+
 
         const {
             data,
@@ -26,10 +58,12 @@ export async function getSocialQueue(){
             );
 
 
+
         console.log(
             "SOCIAL QUEUE RESULT:",
             data
         );
+
 
 
         if(error){
@@ -44,7 +78,25 @@ export async function getSocialQueue(){
         }
 
 
-        return data || [];
+
+        return (data || []).map((post)=>({
+
+            ...post,
+
+            hashtags:
+
+                Array.isArray(post.hashtags)
+
+                ? post.hashtags
+
+                : post.hashtags
+
+                    ? post.hashtags.split(" ")
+
+                    : []
+
+        })) as SocialPost[];
+
 
 
     }catch(error){
@@ -67,6 +119,7 @@ export async function getSocialQueue(){
 
 
 
+
 // =====================================
 // Create Social Queue Post
 // =====================================
@@ -81,22 +134,26 @@ export async function createSocialPost({
 
     imageUrl = "",
 
-    hashtags = "",
+    hashtags = [],
 
     scheduledAt = null
 
+
+}:{
+
+    newsId:string;
+
+    platform?:string;
+
+    postText?:string;
+
+    imageUrl?:string;
+
+    hashtags?:string | string[];
+
+    scheduledAt?:string | null;
+
 }){
-
-
-    console.log(
-        "🔥 CREATE SOCIAL POST FUNCTION HIT",
-        {
-            newsId,
-            platform,
-            postText
-        }
-    );
-
 
 
     try{
@@ -114,34 +171,27 @@ export async function createSocialPost({
                 news_id:
                 newsId,
 
-
                 platform,
-
 
                 post_text:
                 postText,
 
-
                 image_url:
                 imageUrl,
 
-
                 hashtags:
 
-                Array.isArray(hashtags)
+                    Array.isArray(hashtags)
 
                     ? hashtags.join(" ")
 
                     : hashtags,
 
-
                 status:
                 "scheduled",
 
-
                 scheduled_at:
                 scheduledAt
-
 
             })
 
@@ -151,21 +201,18 @@ export async function createSocialPost({
 
 
 
-        console.log(
-            "🔥 SOCIAL QUEUE INSERT RESULT",
-            {
-                data,
-                error
-            }
-        );
-
-
 
         if(error){
+
+            console.error(
+                "CREATE SOCIAL POST ERROR:",
+                error
+            );
 
             throw error;
 
         }
+
 
 
         return data;
@@ -176,7 +223,7 @@ export async function createSocialPost({
 
 
         console.error(
-            "🔥 SOCIAL QUEUE INSERT FAILED",
+            "SOCIAL QUEUE INSERT FAILED:",
             error
         );
 
@@ -192,13 +239,14 @@ export async function createSocialPost({
 
 
 
+
 // =====================================
 // Approve Social Post
 // =====================================
 
 export async function approveSocialPost(
-    id:number | string
-){
+    id: number | string
+): Promise<SocialPost>{
 
 
     const {
@@ -228,11 +276,6 @@ export async function approveSocialPost(
 
     if(error){
 
-        console.error(
-            "APPROVE SOCIAL POST ERROR:",
-            error
-        );
-
         throw error;
 
     }
@@ -255,7 +298,7 @@ export async function approveSocialPost(
 
 export async function publishSocialPost(
     id:number | string
-){
+): Promise<SocialPost>{
 
 
     const {
@@ -270,12 +313,10 @@ export async function publishSocialPost(
             status:
             "published",
 
-
             published_at:
 
             new Date()
             .toISOString()
-
 
         })
 
@@ -291,11 +332,6 @@ export async function publishSocialPost(
 
 
     if(error){
-
-        console.error(
-            "PUBLISH SOCIAL POST ERROR:",
-            error
-        );
 
         throw error;
 
@@ -322,14 +358,36 @@ export async function updateSocialPost(
     id:number | string,
 
     updates:{
+
         post_text?:string;
+
         image_url?:string;
-        hashtags?:string;
+
+        hashtags?:string | string[];
+
         status?:string;
+
         scheduled_at?:string | null;
+
     }
 
 ){
+
+
+    const updateData = {
+
+        ...updates,
+
+        hashtags:
+
+            Array.isArray(updates.hashtags)
+
+            ? updates.hashtags.join(" ")
+
+            : updates.hashtags
+
+    };
+
 
 
     const {
@@ -339,11 +397,7 @@ export async function updateSocialPost(
 
         .from("social_queue")
 
-        .update({
-
-            ...updates
-
-        })
+        .update(updateData)
 
         .eq(
             "id",
@@ -357,11 +411,6 @@ export async function updateSocialPost(
 
 
     if(error){
-
-        console.error(
-            "UPDATE SOCIAL POST ERROR:",
-            error
-        );
 
         throw error;
 
@@ -379,14 +428,13 @@ export async function updateSocialPost(
 
 
 
-
 // =====================================
 // Delete Social Queue Post
 // =====================================
 
 export async function deleteSocialPost(
-    id:number | string
-){
+    id: number | string
+): Promise<boolean>{
 
 
     const {
@@ -405,11 +453,6 @@ export async function deleteSocialPost(
 
 
     if(error){
-
-        console.error(
-            "DELETE SOCIAL POST ERROR:",
-            error
-        );
 
         throw error;
 

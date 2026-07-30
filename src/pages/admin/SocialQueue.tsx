@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
 import {
-  getSocialQueue,
-  deleteSocialPost,
-  updateSocialPost,
-  type SocialPost,
+    getSocialQueue,
+    updateSocialPost,
+    deleteSocialPost,
+    type SocialPost
 } from "../../services/socialQueue";
 
 
@@ -104,7 +104,7 @@ export default function SocialQueue(){
 
   async function changeStatus(
 
-    id:string,
+    id:number | string,
 
     status:string
 
@@ -152,7 +152,7 @@ export default function SocialQueue(){
 
   async function removePost(
 
-    id:string
+    id:number | string
 
   ){
 
