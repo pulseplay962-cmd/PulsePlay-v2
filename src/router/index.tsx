@@ -4,6 +4,7 @@ import MainLayout from "../layout/MainLayout";
 
 import AdminLayout from "../components/admin/AdminLayout";
 import ProtectedRoute from "../components/admin/ProtectedRoute";
+import SocialQueue from "../pages/admin/SocialQueue";
 
 
 // =========================
@@ -265,6 +266,13 @@ const router = createBrowserRouter([
         path:"news",
 
         element:<NewsAdmin />
+
+      },
+
+      {
+        path:"social-queue",
+
+        element:<SocialQueue />
 
       },
 

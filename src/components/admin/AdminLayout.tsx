@@ -76,7 +76,12 @@ export default function AdminLayout() {
       path:"/admin/settings",
       icon:"⚙️",
     },
-
+    
+    {
+      name:"Social Queue",
+      path:"/admin/social-queue",
+      icon:"📡"
+    }
 
   ];
 

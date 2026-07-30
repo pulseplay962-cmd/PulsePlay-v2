@@ -1,213 +1,487 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import DashboardStatCard from "../../components/admin/DashboardStatCard";
+import SystemStatusCard from "../../components/admin/SystemStatusCard";
+import RecentActivity from "../../components/admin/RecentActivity";
+
 import { supabase } from "../../lib/supabase";
 
 
-export default function AdminLayout() {
 
-  const location = useLocation();
+export default function Dashboard(){
 
 
-  const navigation = [
-    {
-      name: "Dashboard",
-      path: "/admin",
-      icon: "📊",
-    },
-    {
-      name: "Games",
-      path: "/admin/games",
-      icon: "🎮",
-    },
-    {
-      name: "Videos",
-      path: "/admin/videos",
-      icon: "🎥",
-    },
-    {
-      name: "Products",
-      path: "/admin/products",
-      icon: "🛒",
-    },
-    {
-      name: "News",
-      path: "/admin/news",
-      icon: "📰",
-    },
-    {
-      name: "Settings",
-      path: "/admin/settings",
-      icon: "⚙️",
-    },
-  ];
+  const [stats,setStats] = useState({
+
+    news:0,
+
+    ai:0,
+
+    social:0,
+
+    merchandise:0,
+
+    videos:0
+
+  });
 
 
 
-  async function handleLogout() {
+  const [loading,setLoading] = useState(true);
 
-    await supabase.auth.signOut();
 
-    window.location.href = "/admin/login";
+
+
+
+
+  async function loadDashboard(){
+
+
+    try{
+
+
+      setLoading(true);
+
+
+
+      const [
+
+        news,
+
+        ai,
+
+        social,
+
+        merchandise,
+
+        videos
+
+
+      ] = await Promise.all([
+
+
+        supabase
+
+        .from("news")
+
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        ),
+
+
+
+        supabase
+
+        .from("ai_content_queue")
+
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        ),
+
+
+
+
+        supabase
+
+        .from("social_queue")
+
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        ),
+
+
+
+
+        supabase
+
+        .from("merchandise")
+
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        ),
+
+
+
+
+        supabase
+
+        .from("videos")
+
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        )
+
+
+      ]);
+
+
+
+
+
+      setStats({
+
+        news:
+        news.count || 0,
+
+
+        ai:
+        ai.count || 0,
+
+
+        social:
+        social.count || 0,
+
+
+        merchandise:
+        merchandise.count || 0,
+
+
+        videos:
+        videos.count || 0
+
+
+      });
+
+
+
+    }catch(error){
+
+
+      console.error(
+        "DASHBOARD LOAD ERROR:",
+        error
+      );
+
+
+    }finally{
+
+
+      setLoading(false);
+
+
+    }
+
 
   }
 
 
 
+
+
+
+
+  useEffect(()=>{
+
+
+    loadDashboard();
+
+
+  },[]);
+
+
+
+
+
+
+
   return (
 
-    <div className="min-h-screen bg-[#05070d] text-white flex">
+    <div className="space-y-8">
 
 
-      <aside className="flex w-72 flex-col border-r border-cyan-500/20 bg-[#0b1120] p-6">
+      <section className="pp-panel p-6">
 
 
-        <div>
+        <h1 className="
+        text-4xl
+        font-black
+        pp-gradient-text
+        ">
 
-          <h1 className="text-3xl font-black text-cyan-400">
-            PulsePlay
-          </h1>
+          🎮 PulsePlay Command Center
 
-          <p className="text-sm text-gray-400">
-            Admin Control Center
-          </p>
+        </h1>
 
 
-          <div className="mt-4 flex items-center gap-2 rounded-lg bg-green-500/10 px-3 py-2 text-sm text-green-400">
 
-            <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
+        <p className="
+        mt-3
+        text-slate-400
+        ">
 
-            System Online
+          Monitor your gaming media platform,
+          AI systems, publishing pipeline,
+          and community operations.
 
-          </div>
+        </p>
+
+
+      </section>
+
+
+
+
+
+
+
+
+      <section className="
+      grid
+      grid-cols-1
+      md:grid-cols-2
+      lg:grid-cols-5
+      gap-6
+      ">
+
+
+        <DashboardStatCard
+
+          title="News Articles"
+
+          value={
+            loading
+            ?
+            "..."
+            :
+            stats.news
+          }
+
+          icon="📰"
+
+          color="text-purple-400"
+
+        />
+
+
+
+        <DashboardStatCard
+
+          title="AI Drafts"
+
+          value={
+            loading
+            ?
+            "..."
+            :
+            stats.ai
+          }
+
+          icon="🤖"
+
+          color="text-cyan-400"
+
+        />
+
+
+
+        <DashboardStatCard
+
+          title="Social Queue"
+
+          value={
+            loading
+            ?
+            "..."
+            :
+            stats.social
+          }
+
+          icon="📡"
+
+          color="text-green-400"
+
+        />
+
+
+
+        <DashboardStatCard
+
+          title="Merchandise"
+
+          value={
+            loading
+            ?
+            "..."
+            :
+            stats.merchandise
+          }
+
+          icon="👕"
+
+          color="text-pink-400"
+
+        />
+
+
+
+        <DashboardStatCard
+
+          title="Videos"
+
+          value={
+            loading
+            ?
+            "..."
+            :
+            stats.videos
+          }
+
+          icon="🎥"
+
+          color="text-yellow-400"
+
+        />
+
+
+      </section>
+
+
+
+
+
+
+
+
+
+      <section className="
+      grid
+      grid-cols-1
+      lg:grid-cols-2
+      gap-6
+      ">
+
+
+        <SystemStatusCard />
+
+
+        <RecentActivity />
+
+
+      </section>
+
+
+
+
+
+
+
+
+      <section className="pp-panel p-6">
+
+
+        <h2 className="
+        text-2xl
+        font-black
+        text-cyan-400
+        ">
+
+          ⚡ QUICK ACTIONS
+
+        </h2>
+
+
+
+        <div className="
+        mt-5
+        grid
+        grid-cols-1
+        md:grid-cols-3
+        gap-4
+        ">
+
+
+
+          <a
+
+            href="/admin/ai-content"
+
+            className="
+            rounded-xl
+            bg-purple-500/20
+            p-4
+            text-purple-300
+            font-bold
+            hover:bg-purple-500/30
+            "
+
+          >
+
+            🤖 AI Content Studio
+
+          </a>
+
+
+
+
+
+          <a
+
+            href="/admin/news"
+
+            className="
+            rounded-xl
+            bg-cyan-500/20
+            p-4
+            text-cyan-300
+            font-bold
+            hover:bg-cyan-500/30
+            "
+
+          >
+
+            📰 Manage News
+
+          </a>
+
+
+
+
+
+          <a
+
+            href="/admin/merchandise"
+
+            className="
+            rounded-xl
+            bg-pink-500/20
+            p-4
+            text-pink-300
+            font-bold
+            hover:bg-pink-500/30
+            "
+
+          >
+
+            👕 Merchandise
+
+          </a>
 
 
         </div>
 
 
+      </section>
 
-
-        <nav className="mt-10 flex-1 space-y-2">
-
-
-          {navigation.map((item)=>{
-
-
-            const active =
-              location.pathname === item.path;
-
-
-            return (
-
-              <Link
-
-                key={item.path}
-
-                to={item.path}
-
-                className={`
-                  flex items-center gap-3 rounded-xl px-4 py-3
-                  font-bold transition
-                  ${
-                    active
-                    ? "bg-cyan-500 text-black shadow-[0_0_25px_#22d3ee]"
-                    : "text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400"
-                  }
-                `}
-
-              >
-
-                <span className="text-xl">
-                  {item.icon}
-                </span>
-
-
-                {item.name}
-
-
-              </Link>
-
-            );
-
-
-          })}
-
-
-        </nav>
-
-
-
-
-
-        <div className="border-t border-white/10 pt-6">
-
-
-          <Link
-
-            to="/"
-
-            className="block rounded-xl px-4 py-3 text-gray-300 transition hover:bg-white/5 hover:text-white"
-
-          >
-
-            🌐 View Website
-
-          </Link>
-
-
-
-
-          <button
-
-            onClick={handleLogout}
-
-            className="mt-3 w-full rounded-xl bg-red-500/20 px-4 py-3 font-bold text-red-300 transition hover:bg-red-500/30"
-
-          >
-
-            🚪 Logout
-
-          </button>
-
-
-        </div>
-
-
-
-      </aside>
-
-
-
-
-
-      <main className="flex-1 overflow-y-auto">
-
-
-        <header className="border-b border-white/10 bg-[#05070d] px-8 py-5">
-
-          <h2 className="text-xl font-bold">
-
-            PulsePlay Management
-
-          </h2>
-
-          <p className="text-sm text-gray-400">
-
-            Manage your games, videos, products, and community content.
-
-          </p>
-
-        </header>
-
-
-
-
-        <section className="p-8">
-
-          <Outlet />
-
-        </section>
-
-
-      </main>
 
 
     </div>
