@@ -1,5 +1,6 @@
 import Hero from "../components/home/Hero";
 import FeaturedGames from "../components/home/FeaturedGames";
+import NewReleases from "../components/home/NewReleases";
 import FeaturedProducts from "../components/home/FeaturedProducts";
 import TwitchSection from "../components/home/TwitchSection";
 import LatestVideos from "../components/home/LatestVideos";
@@ -18,6 +19,8 @@ export default function Home() {
       />
 
       <FeaturedGames />
+
+      <NewReleases />
 
       <LatestVideos />
 

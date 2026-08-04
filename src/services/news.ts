@@ -1,91 +1,60 @@
 import { supabase } from "../lib/supabase";
 
 
-
 export type NewsArticle = {
 
-  id: string;
+    id: string;
 
-  title: string;
+    title:string;
 
-  slug: string;
+    slug:string;
 
-  excerpt: string;
+    excerpt:string;
 
-  content: string;
+    content:string;
 
-  image: string;
+    image:string;
 
-  category: string;
+    category:string;
 
-  featured: boolean;
+    author:string;
 
-  published: boolean;
+    published:boolean;
 
-  author: string;
+    featured:boolean;
 
+    status?:string;
 
-  meta_description?: string;
+    ai_generated?:boolean;
 
-  facebook_post?: string;
+    created_at?:string;
 
-  image_prompt?: string;
+    published_at?:string;
 
-  hashtags?: string[];
+    meta_description?:string | null;
 
+    facebook_post?:string | null;
 
-  created_at?: string;
+    image_prompt?:string | null;
 
-  updated_at?: string;
-
-  published_at?: string;
-
-};
-
-
-
-
-
-
-export type CreateNewsArticle = {
-
-  title: string;
-
-  slug: string;
-
-  excerpt: string;
-
-  content: string;
-
-  image?: string;
-
-
-  category: string;
-
-  featured?: boolean;
-
-  published?: boolean;
-
-
-  author: string;
-
-
-  meta_description?: string;
-
-  facebook_post?: string;
-
-  image_prompt?: string;
-
-  hashtags?: string[];
-
-
-  published_at?: string;
+    hashtags?:string[] | null;
 
 };
 
 
 
+// ================================
+// Create Slug
+// ================================
 
+function createSlug(title:string){
+
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,"-")
+        .replace(/(^-|-$)/g,"");
+
+}
 
 
 
@@ -97,31 +66,27 @@ export type CreateNewsArticle = {
 
 export async function getNews(){
 
+    const {data,error}=
 
-  const { data,error } = await supabase
-
-    .from("news")
-
-    .select("*")
-
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    );
+        await supabase
+            .from("news")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
 
 
+    if(error){
 
-  if(error){
+        throw error;
 
-    throw error;
-
-  }
-
+    }
 
 
-  return (data || []) as NewsArticle[];
+    return (data || []) as NewsArticle[];
 
 }
 
@@ -129,53 +94,75 @@ export async function getNews(){
 
 
 
+// ================================
+// Get Published News
+// ================================
+
+export async function getPublishedNews(){
+
+    const {data,error}=
+
+        await supabase
+            .from("news")
+            .select("*")
+            .eq(
+                "published",
+                true
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    return (data || []) as NewsArticle[];
+
+}
+
 
 
 
 
 // ================================
-// Featured News
+// Get Featured News
 // ================================
 
 export async function getFeaturedNews(){
 
+    const {data,error}=
 
-  const { data,error } = await supabase
-
-    .from("news")
-
-    .select("*")
-
-    .eq(
-      "featured",
-      true
-    )
-
-    .eq(
-      "published",
-      true
-    )
-
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    )
-
-    .limit(3);
+        await supabase
+            .from("news")
+            .select("*")
+            .eq(
+                "featured",
+                true
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
 
 
+    if(error){
 
-  if(error){
+        throw error;
 
-    throw error;
-
-  }
-
+    }
 
 
-  return (data || []) as NewsArticle[];
+    return (data || []) as NewsArticle[];
 
 }
 
@@ -183,57 +170,34 @@ export async function getFeaturedNews(){
 
 
 
-
-
-
-
 // ================================
-// Single Article
+// Get News By Slug
 // ================================
 
 export async function getNewsBySlug(
-  slug:string
+    slug:string
 ){
 
-  const { data,error } = await supabase
+    const {data,error}=
 
-    .from("news")
-
-    .select("*")
-
-    .eq(
-      "slug",
-      slug
-    )
-    
-    .limit(1);
+        await supabase
+            .from("news")
+            .select("*")
+            .eq(
+                "slug",
+                slug
+            )
+            .single();
 
 
+    if(error){
 
-  if(error){
+        throw error;
 
-    console.error(
-      "GET NEWS BY SLUG ERROR:",
-      error
-    );
-
-    throw error;
-
-  }
+    }
 
 
-
-  if(!data || data.length === 0){
-
-    throw new Error(
-      "No article found for this slug"
-    );
-
-  }
-
-
-
-  return data[0] as NewsArticle;
+    return data as NewsArticle;
 
 }
 
@@ -241,60 +205,33 @@ export async function getNewsBySlug(
 
 
 
-
-
-
-
 // ================================
-// Create News Article
+// Add News
 // ================================
 
 export async function addNews(
-  article:CreateNewsArticle
+    article:Omit<NewsArticle,"id">
 ){
 
+    const {data,error}=
 
-  const { data,error } = await supabase
-
-    .from("news")
-
-    .insert([
-
-      {
-
-        ...article,
-
-        image:
-          article.image || "",
+        await supabase
+            .from("news")
+            .insert([
+                article
+            ])
+            .select()
+            .single();
 
 
-        featured:
-          article.featured ?? false,
+    if(error){
+
+        throw error;
+
+    }
 
 
-        published:
-          article.published ?? false,
-
-
-      }
-
-    ])
-
-    .select()
-
-    .single();
-
-
-
-  if(error){
-
-    throw error;
-
-  }
-
-
-
-  return data as NewsArticle;
+    return data as NewsArticle;
 
 }
 
@@ -302,49 +239,36 @@ export async function addNews(
 
 
 
-
-
-
-
 // ================================
-// Update News Article
+// Update News
 // ================================
 
 export async function updateNews(
-
-  id:string,
-
-  article:Partial<CreateNewsArticle>
-
+    id:string,
+    article:Partial<NewsArticle>
 ){
 
+    const {data,error}=
 
-  const { data,error } = await supabase
-
-    .from("news")
-
-    .update(article)
-
-    .eq(
-      "id",
-      id
-    )
-
-    .select()
-
-    .single();
+        await supabase
+            .from("news")
+            .update(article)
+            .eq(
+                "id",
+                id
+            )
+            .select()
+            .single();
 
 
+    if(error){
 
-  if(error){
+        throw error;
 
-    throw error;
-
-  }
-
+    }
 
 
-  return data as NewsArticle;
+    return data as NewsArticle;
 
 }
 
@@ -352,43 +276,33 @@ export async function updateNews(
 
 
 
-
-
-
-
 // ================================
-// Delete News Article
+// Delete News
 // ================================
 
 export async function deleteNews(
-
-  id:string
-
+    id:string
 ){
 
+    const {error}=
 
-  const { error } = await supabase
-
-    .from("news")
-
-    .delete()
-
-    .eq(
-      "id",
-      id
-    );
+        await supabase
+            .from("news")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
 
 
+    if(error){
 
-  if(error){
+        throw error;
 
-    throw error;
-
-  }
-
+    }
 
 
-  return true;
+    return true;
 
 }
 
@@ -396,176 +310,74 @@ export async function deleteNews(
 
 
 
-
-
-
-
 // ================================
-// Publish AI Generated Article
+// Save AI Draft
 // ================================
 
-export async function publishNews(
-
-  id:string
-
+export async function saveAIDraft(
+    article:{
+        title:string;
+        content:string;
+        type?:string;
+    }
 ){
 
+    const slug =
+        createSlug(article.title);
 
-  const { data,error } = await supabase
 
-    .from("news")
+    const {data,error}=
 
-    .update({
+        await supabase
+            .from("news")
+            .insert([
+                {
 
-      published:true,
+                    title:
+                    article.title,
 
-      published_at:
-        new Date().toISOString()
+                    slug,
 
-    })
+                    excerpt:
+                    article.content.substring(
+                        0,
+                        180
+                    ),
 
-    .eq(
-      "id",
-      id
-    )
+                    content:
+                    article.content,
 
-    .select()
+                    image:"",
 
-    .single();
+                    category:
+                    article.type || "Gaming",
 
+                    featured:false,
 
+                    published:false,
 
-  if(error){
+                    author:
+                    "PulsePlay AI",
 
-    throw error;
+                    status:
+                    "draft",
 
-  }
+                    ai_generated:true
 
+                }
+            ])
+            .select()
+            .single();
 
 
-  return data as NewsArticle;
 
-}
+    if(error){
 
-// ================================
-// Publish AI Article Into News
-// ================================
+        throw error;
 
-export async function createAINewsArticle(
+    }
 
-  article:{
-    title:string;
-    article:string;
-    metaDescription?:string;
-    facebookPost?:string;
-    imagePrompt?:string;
-    hashtags?:string[];
-    image?:string;
-    category?:string;
-  }
 
-){
-
-
-  const slug = article.title
-
-    .toLowerCase()
-
-    .replace(/[^a-z0-9]+/g,"-")
-
-    .replace(/(^-|-$)/g,"");
-
-
-
-
-  const {data,error} = await supabase
-
-    .from("news")
-
-    .insert([
-
-      {
-
-        title:
-          article.title,
-
-
-        slug,
-
-
-        excerpt:
-          article.article.substring(0,180),
-
-
-        content:
-          article.article,
-
-
-        image:
-          article.image || "",
-
-
-        category:
-          article.category || "Games",
-
-
-        featured:false,
-
-
-        published:true,
-
-
-        author:
-          "PulsePlay AI",
-
-
-        meta_description:
-          article.metaDescription || "",
-
-
-        facebook_post:
-          article.facebookPost || "",
-
-
-        image_prompt:
-          article.imagePrompt || "",
-
-
-        hashtags:
-          article.hashtags || [],
-
-
-        published_at:
-          new Date().toISOString()
-
-      }
-
-    ])
-
-    .select()
-
-    .single();
-
-
-
-
-
-  if(error){
-
-    console.error(
-      "AI NEWS INSERT ERROR:",
-      error
-    );
-
-    throw error;
-
-  }
-
-
-
-
-
-  return data as NewsArticle;
-
+    return data as NewsArticle;
 
 }

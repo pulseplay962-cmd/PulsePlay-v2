@@ -23,6 +23,7 @@ export async function addGame(game: {
   description: string;
   image: string;
   featured: boolean;
+  release_date?: string | null;
 }) {
   const { data, error } = await supabase
     .from("games")
@@ -46,6 +47,7 @@ export async function updateGame(
     description: string;
     image: string;
     featured: boolean;
+    release_date?: string | null;
   }
 ) {
   const { data, error } = await supabase

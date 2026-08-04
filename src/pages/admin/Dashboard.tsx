@@ -196,6 +196,23 @@ export default function Dashboard(){
     loadDashboard();
 
 
+    const refreshAfterPublish = () => {
+      loadDashboard();
+    };
+
+    window.addEventListener(
+      "pulseplay:ai-published",
+      refreshAfterPublish
+    );
+
+    return () => {
+      window.removeEventListener(
+        "pulseplay:ai-published",
+        refreshAfterPublish
+      );
+    };
+
+
   },[]);
 
 

@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../PulsePlay-api"
+		},
+		{
+			"path": "../../../../pulseai-studio"
+		}
+	],
+	"settings": {}
+}

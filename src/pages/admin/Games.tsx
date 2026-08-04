@@ -16,6 +16,7 @@ type Game = {
   description: string;
   image: string;
   featured: boolean;
+  release_date?: string;
 };
 
 
@@ -28,13 +29,14 @@ export default function Games() {
   const [saving, setSaving] = useState(false);
 
   const [editingId, setEditingId] = useState<string | null>(null);
-
+  const [statusFilter, setStatusFilter] = useState<"all" | "upcoming" | "released">("all");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [featured, setFeatured] = useState(false);
+  const [releaseDate, setReleaseDate] = useState("");
 
 
 
@@ -132,6 +134,8 @@ export default function Games() {
 
         featured,
 
+        release_date: releaseDate || null,
+
       };
 
 
@@ -216,26 +220,18 @@ export default function Games() {
       game.featured || false
     );
 
+      setReleaseDate(
+        (game as any).release_date || ""
+      );
 
-    setImageFile(null);
+      setImageFile(null);
 
-
-
-    window.scrollTo({
-
-      top: 0,
-
-      behavior: "smooth",
-
-    });
-
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
 
   }
-
-
-
-
-
 
   async function handleDelete(
     id: string
@@ -304,6 +300,8 @@ export default function Games() {
     setImageFile(null);
 
     setFeatured(false);
+
+    setReleaseDate("");
 
 
   }
@@ -402,6 +400,14 @@ export default function Games() {
 
           }}
 
+        />
+
+        <input
+          type="date"
+          className="w-full rounded bg-[#1f2937] p-3"
+          value={releaseDate}
+          onChange={(e) => setReleaseDate(e.target.value)}
+          placeholder="Release date"
         />
 
 
@@ -528,10 +534,39 @@ export default function Games() {
 
 
 
+        {!loading && games.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {[
+              { label: "All", value: "all" },
+              { label: "Coming Soon", value: "upcoming" },
+              { label: "Released", value: "released" },
+            ].map((filter) => (
+              <button
+                key={filter.value}
+                type="button"
+                onClick={() => setStatusFilter(filter.value as typeof statusFilter)}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  statusFilter === filter.value
+                    ? "bg-cyan-500 text-black"
+                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        )}
 
 
-
-        {games.map((game)=>(
+        {games
+          .filter((game) => {
+            if (statusFilter === "all") return true;
+            const date = game.release_date ? new Date(game.release_date) : null;
+            const now = new Date();
+            const isUpcoming = date ? date > now : false;
+            return statusFilter === "upcoming" ? isUpcoming : !isUpcoming;
+          })
+          .map((game)=>(
 
 
           <div
@@ -586,20 +621,36 @@ export default function Games() {
 
 
 
-            {game.featured && (
+            <div className="mt-2 flex flex-wrap gap-3 items-center text-sm">
+              {game.featured && (
+                <span className="rounded-full bg-yellow-500/20 px-3 py-1 font-bold text-yellow-300">
+                  ⭐ Featured
+                </span>
+              )}
 
-              <p className="mt-2 text-yellow-400">
+              {game.release_date && (
+                <span className={`rounded-full px-3 py-1 font-bold ${
+                  new Date(game.release_date) > new Date()
+                    ? "bg-blue-500/20 text-blue-200"
+                    : "bg-green-500/20 text-green-200"
+                }`}>
+                  {new Date(game.release_date) > new Date()
+                    ? "Coming Soon"
+                    : "Released"}
+                </span>
+              )}
+            </div>
 
-                ⭐ Featured Game
 
+
+
+
+
+            {game.release_date && (
+              <p className="mt-4 text-sm text-slate-400">
+                Release date: {new Date(game.release_date).toLocaleDateString()}
               </p>
-
             )}
-
-
-
-
-
 
             <div className="mt-4 flex gap-3">
 

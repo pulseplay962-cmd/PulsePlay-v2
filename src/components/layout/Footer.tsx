@@ -1,43 +1,32 @@
+import { socials } from "../../data/socials";
+
 export default function Footer() {
 
   const year = new Date().getFullYear();
 
-
   return (
 
     <footer
-
       className="
         mt-20
         border-t
         border-cyan-500/20
         bg-[#05070d]
       "
-
     >
 
-
-
       <div
-
         className="
           mx-auto
           max-w-7xl
           px-6
           py-12
         "
-
       >
-
-
-
-
 
         {/* System Header */}
 
-
         <div
-
           className="
             mb-10
             flex
@@ -47,16 +36,11 @@ export default function Footer() {
             md:justify-between
             gap-5
           "
-
         >
-
-
 
           <div>
 
-
             <div
-
               className="
                 inline-flex
                 items-center
@@ -70,43 +54,27 @@ export default function Footer() {
                 font-black
                 tracking-[0.3em]
               "
-
             >
-
               ⚡ COMMAND CENTER ONLINE
-
             </div>
 
 
-
-
-
             <h2
-
               className="
                 mt-5
                 text-3xl
                 font-black
                 pp-gradient-text
               "
-
             >
-
               PULSEPLAY
-
             </h2>
-
-
 
           </div>
 
 
 
-
-
-
           <div
-
             className="
               flex
               items-center
@@ -115,7 +83,6 @@ export default function Footer() {
               font-bold
               text-sm
             "
-
           >
 
             <span className="pp-live-dot" />
@@ -125,64 +92,43 @@ export default function Footer() {
           </div>
 
 
-
         </div>
 
 
 
 
-
-
-
-
-
         <div
-
           className="
             grid
             md:grid-cols-3
             gap-10
           "
-
         >
-
-
-
 
 
           {/* Brand */}
 
-
           <div>
 
-
             <h3
-
               className="
                 text-xl
                 font-black
                 text-cyan-400
               "
-
             >
-
               GAMING NETWORK
-
             </h3>
 
 
-
             <p
-
               className="
                 mt-4
                 text-slate-400
                 leading-relaxed
                 max-w-sm
               "
-
             >
-
               Gaming.
               Streaming.
               Community.
@@ -195,12 +141,7 @@ export default function Footer() {
 
             </p>
 
-
           </div>
-
-
-
-
 
 
 
@@ -208,37 +149,26 @@ export default function Footer() {
 
           {/* Navigation */}
 
-
           <div>
 
-
             <h3
-
               className="
                 mb-4
                 font-black
                 text-purple-400
               "
-
             >
-
               SYSTEM SECTORS
-
             </h3>
 
 
-
-
             <div
-
               className="
                 flex
                 flex-col
                 gap-3
               "
-
             >
-
 
               <a
                 href="/"
@@ -249,7 +179,6 @@ export default function Footer() {
               >
                 🏠 Command Center
               </a>
-
 
 
               <a
@@ -263,7 +192,6 @@ export default function Footer() {
               </a>
 
 
-
               <a
                 href="/streams"
                 className="
@@ -273,7 +201,6 @@ export default function Footer() {
               >
                 📡 Broadcast Center
               </a>
-
 
 
               <a
@@ -289,12 +216,7 @@ export default function Footer() {
 
             </div>
 
-
           </div>
-
-
-
-
 
 
 
@@ -302,43 +224,32 @@ export default function Footer() {
 
           {/* Network */}
 
-
           <div>
 
-
             <h3
-
               className="
                 mb-4
                 font-black
                 text-pink-400
               "
-
             >
-
               NETWORK LINKS
-
             </h3>
 
 
-
-
-
             <div
-
               className="
                 flex
                 flex-col
                 gap-3
               "
-
             >
 
 
               <a
-                href="https://www.twitch.tv/veiltactician"
+                href={socials.twitch}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="
                   text-slate-400
                   hover:text-cyan-400
@@ -349,12 +260,24 @@ export default function Footer() {
 
 
 
+              <a
+                href={socials.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  text-slate-400
+                  hover:text-cyan-400
+                "
+              >
+                📘 Facebook
+              </a>
+
 
 
               <a
-                href="https://throne.com/veiltactician"
+                href={socials.throne}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="
                   text-slate-400
                   hover:text-cyan-400
@@ -365,13 +288,10 @@ export default function Footer() {
 
 
 
-
-
-
               <a
-                href="https://amzn.to/4vmEtDy"
+                href={socials.amazon}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="
                   text-slate-400
                   hover:text-cyan-400
@@ -381,24 +301,12 @@ export default function Footer() {
               </a>
 
 
-
             </div>
-
 
           </div>
 
 
-
-
-
-
-
         </div>
-
-
-
-
-
 
 
       </div>
@@ -406,14 +314,9 @@ export default function Footer() {
 
 
 
-
-
-
       {/* Bottom Terminal */}
 
-
       <div
-
         className="
           border-t
           border-cyan-500/20
@@ -422,7 +325,6 @@ export default function Footer() {
           text-sm
           text-slate-500
         "
-
       >
 
         © {year} PulsePlay
@@ -431,11 +333,7 @@ export default function Footer() {
 
         SYSTEM VERSION 1.0 • ALL RIGHTS RESERVED
 
-
       </div>
-
-
-
 
 
     </footer>

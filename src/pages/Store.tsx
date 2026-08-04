@@ -21,7 +21,7 @@ type Product = {
 
   category?:string;
 
-  url?:string;
+  link?:string;
 
 };
 
@@ -621,13 +621,13 @@ AVAILABLE
 
 {
 
-product.url ?
+product.link ?
 
 (
 
 <a
 
-href={product.url}
+href={product.link}
 
 target="_blank"
 

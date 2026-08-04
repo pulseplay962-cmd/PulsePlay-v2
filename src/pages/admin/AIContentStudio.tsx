@@ -159,6 +159,10 @@ export default function AIContentStudio(){
       await loadContent();
 
 
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("pulseplay:ai-published"));
+      }
+
 
     }catch(error:any){
 

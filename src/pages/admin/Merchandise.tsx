@@ -87,8 +87,6 @@ export default function Merchandise(){
   const [editingId,setEditingId] =
     useState<string | null>(null);
 
-
-
   const [form,setForm] =
     useState<MerchandiseForm>({
       ...emptyForm
@@ -813,12 +811,6 @@ export default function Merchandise(){
           }
 
         </button>
-
-
-
-
-
-
 
         {
           editingId && (

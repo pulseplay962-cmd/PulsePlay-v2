@@ -4,271 +4,219 @@ import BrandButton from "../components/ui/BrandButton";
 import BrandCard from "../components/ui/BrandCard";
 
 
-export default function NotFound() {
+export default function NotFound(){
 
 
-return (
+    return (
 
-<main
+        <main
 
-className="
-min-h-[70vh]
-flex
-items-center
-justify-center
-px-6
-"
+        className="
+        min-h-[70vh]
+        flex
+        items-center
+        justify-center
+        px-6
+        "
 
->
+        >
 
 
-<BrandCard
+            <BrandCard
 
-className="
-max-w-2xl
-w-full
-text-center
-card-hover
-"
+            className="
+            max-w-2xl
+            w-full
+            text-center
+            card-hover
+            "
 
->
+            >
 
 
+                <div
 
+                className="
+                inline-flex
+                items-center
+                gap-3
+                px-5
+                py-2
+                rounded-full
+                pp-hud
+                text-red-400
+                text-sm
+                font-black
+                tracking-[0.35em]
+                "
 
+                >
 
-<div
+                    ⚠️ ROUTE LOST
 
-className="
-inline-flex
-items-center
-gap-3
-px-5
-py-2
-rounded-full
-pp-hud
-text-red-400
-text-sm
-font-black
-tracking-[0.35em]
-"
+                </div>
 
->
 
-⚠️ CONNECTION LOST
 
-</div>
 
 
+                <div
 
+                className="
+                mt-8
+                text-8xl
+                font-black
+                pp-gradient-text
+                "
 
+                >
 
+                    404
 
+                </div>
 
-<div
 
-className="
-mt-8
-text-8xl
-font-black
-pp-gradient-text
-"
 
->
 
-404
 
-</div>
+                <h1
 
+                className="
+                mt-6
+                text-4xl
+                md:text-5xl
+                font-black
+                "
 
+                >
 
+                    PAGE NOT FOUND
 
+                </h1>
 
 
 
-<h1
 
-className="
-mt-6
-text-4xl
-md:text-5xl
-font-black
-"
 
->
+                <p
 
-PLAYER LOCATION UNKNOWN
+                className="
+                mt-5
+                text-lg
+                text-slate-400
+                leading-relaxed
+                "
 
-</h1>
+                >
 
+                    The requested PulseAI Studio location
+                    could not be found.
 
+                    <br />
 
+                    The route may have been removed,
+                    renamed, or is not connected yet.
 
+                </p>
 
 
 
-<p
 
-className="
-mt-5
-text-lg
-text-slate-400
-leading-relaxed
-"
 
->
+                <div
 
-The requested area of the PulsePlay
-network could not be found.
+                className="
+                mt-8
+                grid
+                md:grid-cols-3
+                gap-4
+                "
 
-The level may have been removed,
-updated, or never existed.
+                >
 
-</p>
 
 
+                    <div className="pp-card-surface p-4">
 
+                        <p className="text-red-400 font-black">
+                            ERROR
+                        </p>
 
+                        <p className="text-xs text-slate-400">
+                            ROUTE UNKNOWN
+                        </p>
 
+                    </div>
 
 
 
 
-{/* System Status */}
 
+                    <div className="pp-card-surface p-4">
 
-<div
+                        <p className="text-cyan-400 font-black">
+                            SYSTEM
+                        </p>
 
-className="
-mt-8
-grid
-md:grid-cols-3
-gap-4
-"
+                        <p className="text-xs text-slate-400">
+                            ONLINE
+                        </p>
 
->
+                    </div>
 
 
 
-<div className="pp-card-surface p-4">
 
 
-<p className="text-red-400 font-black">
+                    <div className="pp-card-surface p-4">
 
-ERROR
+                        <p className="text-green-400 font-black">
+                            STATUS
+                        </p>
 
-</p>
+                        <p className="text-xs text-slate-400">
+                            RECOVERABLE
+                        </p>
 
+                    </div>
 
-<p className="text-xs text-slate-400">
 
-SECTOR UNKNOWN
 
-</p>
+                </div>
 
 
-</div>
 
 
 
+                <div
 
+                className="
+                mt-8
+                flex
+                justify-center
+                "
 
-<div className="pp-card-surface p-4">
+                >
 
+                    <Link to="/">
 
-<p className="text-cyan-400 font-black">
+                        <BrandButton>
 
-SYSTEM
+                            RETURN TO COMMAND CENTER
 
-</p>
+                        </BrandButton>
 
+                    </Link>
 
-<p className="text-xs text-slate-400">
+                </div>
 
-ONLINE
 
-</p>
 
+            </BrandCard>
 
-</div>
 
+        </main>
 
-
-
-
-<div className="pp-card-surface p-4">
-
-
-<p className="text-green-400 font-black">
-
-STATUS
-
-</p>
-
-
-<p className="text-xs text-slate-400">
-
-RECOVERABLE
-
-</p>
-
-
-</div>
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div
-
-className="
-mt-8
-flex
-justify-center
-"
-
->
-
-
-<Link to="/">
-
-<BrandButton>
-
-RETURN TO COMMAND CENTER
-
-</BrandButton>
-
-
-</Link>
-
-
-</div>
-
-
-
-
-
-
-
-
-</BrandCard>
-
-
-
-
-
-</main>
-
-);
-
+    );
 
 }

@@ -13,6 +13,7 @@ type Game = {
   description?: string;
   image?: string;
   genre?: string;
+  release_date?: string;
 };
 
 
@@ -33,6 +34,11 @@ export default function FeaturedGames() {
       setGames(
         (data || [])
           .filter((game: any) => game.featured)
+          .sort((a: any, b: any) => {
+            const aDate = a.release_date ? new Date(a.release_date).getTime() : 0;
+            const bDate = b.release_date ? new Date(b.release_date).getTime() : 0;
+            return aDate - bDate;
+          })
           .slice(0, 6)
       );
 
@@ -249,6 +255,12 @@ export default function FeaturedGames() {
                 {game.description}
               </p>
 
+            )}
+
+            {game.release_date && (
+              <p className="mt-4 text-xs uppercase tracking-widest text-slate-500">
+                Release date: {new Date(game.release_date).toLocaleDateString()}
+              </p>
             )}
 
 
