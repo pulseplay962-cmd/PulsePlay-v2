@@ -17,6 +17,8 @@ type Product = {
 
   description?:string;
 
+  price?:number;
+
   image?:string;
 
   category?:string;
@@ -95,22 +97,7 @@ return (
 
 <main>
 
-
-
-
-
-
-{/* ARMORY HEADER */}
-
-
-<section
-
-className="
-text-center
-mb-16
-"
-
->
+<section className="text-center mb-16">
 
 
 <div
@@ -187,9 +174,6 @@ creator equipment.
 
 
 
-{/* Loading */}
-
-
 {
 
 loading &&
@@ -227,9 +211,6 @@ Scanning equipment database...
 
 
 
-
-
-{/* Empty State */}
 
 
 {
@@ -286,15 +267,11 @@ PulsePlay Command Center.
 
 
 
-{/* Products */}
-
-
 {
 
 !loading && products.length>0 &&
 
 (
-
 
 <section>
 
@@ -348,6 +325,7 @@ text-sm
 
 
 
+
 <div
 
 className="
@@ -380,10 +358,6 @@ card-hover
 
 
 
-
-
-
-{/* IMAGE */}
 
 
 {
@@ -444,9 +418,6 @@ NO IMAGE
 
 
 
-
-
-{/* CATEGORY */}
 
 
 {
@@ -510,6 +481,37 @@ font-black
 
 
 
+{
+
+product.price &&
+
+(
+
+<p
+
+className="
+mt-2
+text-cyan-300
+font-black
+text-xl
+"
+
+>
+
+${Number(product.price).toFixed(2)}
+
+</p>
+
+)
+
+}
+
+
+
+
+
+
+
 
 
 <p
@@ -532,9 +534,6 @@ line-clamp-3
 
 
 
-
-
-{/* ITEM STATS */}
 
 
 <div
@@ -633,6 +632,8 @@ target="_blank"
 
 rel="noopener noreferrer"
 
+aria-label={`View ${product.name}`}
+
 >
 
 
@@ -682,7 +683,6 @@ VIEW ITEM
 
 
 </section>
-
 
 )
 
