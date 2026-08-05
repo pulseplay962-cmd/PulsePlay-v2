@@ -25,9 +25,11 @@ const [news,setNews] = useState<Article[]>([]);
 
 const [name,setName] = useState("");
 const [email,setEmail] = useState("");
+const [discord,setDiscord] = useState("");
 
 const [sending,setSending] = useState(false);
 const [message,setMessage] = useState("");
+
 
 
 
@@ -71,14 +73,23 @@ loadNews();
 
 
 
+
 async function handleSignup(
 e:React.FormEvent
 ){
 
 e.preventDefault();
 
+
+console.log(
+"COMMUNITY SIGNUP STARTED"
+);
+
+
 setSending(true);
 setMessage("");
+
+
 
 try{
 
@@ -86,18 +97,29 @@ try{
 await submitCommunitySignup({
 
 name,
-email
+email,
+discord
 
 });
 
 
-setMessage(
-"✅ Welcome to the PulsePlay Network!"
+
+console.log(
+"COMMUNITY SIGNUP SUCCESS"
 );
+
+
+
+setMessage(
+"🎮 Welcome to the PulsePlay Network!"
+);
+
 
 
 setName("");
 setEmail("");
+setDiscord("");
+
 
 
 }
@@ -108,6 +130,7 @@ console.error(
 "Community signup failed:",
 error
 );
+
 
 
 setMessage(
@@ -133,9 +156,14 @@ setSending(false);
 
 
 
+
 return (
 
 <main>
+
+
+
+
 
 <section className="text-center mb-16">
 
@@ -162,6 +190,8 @@ tracking-[0.35em]
 
 
 
+
+
 <h1
 className="
 mt-8
@@ -175,6 +205,8 @@ pp-gradient-text
 PULSEPLAY COMMUNITY
 
 </h1>
+
+
 
 
 
@@ -196,6 +228,7 @@ gaming network.
 
 
 </section>
+
 
 
 
@@ -227,6 +260,7 @@ Community Status
 
 
 
+
 <div className="pp-card-surface p-6">
 
 <h3 className="text-3xl font-black text-purple-400">
@@ -238,6 +272,7 @@ Player Network
 </p>
 
 </div>
+
 
 
 
@@ -255,6 +290,7 @@ Community Growth
 
 
 </section>
+
 
 
 
@@ -285,6 +321,8 @@ INTEL
 
 
 
+
+
 <div
 className="
 grid
@@ -292,6 +330,7 @@ md:grid-cols-3
 gap-8
 "
 >
+
 
 
 {
@@ -302,6 +341,7 @@ news.map((article)=>(
 key={article.id}
 className="card-hover"
 >
+
 
 
 {
@@ -322,6 +362,7 @@ object-cover
 
 
 
+
 <p
 className="
 mt-5
@@ -338,6 +379,7 @@ tracking-widest
 
 
 
+
 <h3
 className="
 mt-3
@@ -351,12 +393,14 @@ font-black
 </h3>
 
 
+
 </BrandCard>
 
 
 ))
 
 }
+
 
 
 </div>
@@ -373,7 +417,9 @@ font-black
 
 
 
+
 {/* COMMUNITY SIGNUP */}
+
 
 
 <section
@@ -387,6 +433,7 @@ text-center
 >
 
 
+
 <h2
 className="
 text-4xl
@@ -397,6 +444,7 @@ font-black
 JOIN THE SQUAD
 
 </h2>
+
 
 
 
@@ -416,6 +464,9 @@ and community announcements.
 
 
 
+
+
+
 <form
 onSubmit={handleSignup}
 className="
@@ -426,6 +477,8 @@ grid
 gap-4
 "
 >
+
+
 
 
 <input
@@ -442,6 +495,8 @@ value={name}
 onChange={(e)=>setName(e.target.value)}
 required
 />
+
+
 
 
 
@@ -463,6 +518,27 @@ required
 
 
 
+
+
+<input
+className="
+rounded-xl
+bg-black/40
+border
+border-cyan-400/20
+p-4
+text-white
+"
+placeholder="Discord Username (optional)"
+value={discord}
+onChange={(e)=>setDiscord(e.target.value)}
+/>
+
+
+
+
+
+
 <BrandButton>
 
 {
@@ -476,7 +552,13 @@ sending
 </BrandButton>
 
 
+
+
+
 </form>
+
+
+
 
 
 
@@ -499,7 +581,9 @@ text-cyan-300
 }
 
 
+
 </section>
+
 
 
 
