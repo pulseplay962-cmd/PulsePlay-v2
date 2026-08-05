@@ -29,6 +29,7 @@ import MerchandiseDetail from "../pages/MerchandiseDetail";
 import Community from "../pages/Community";
 import News from "../pages/News";
 import NewsArticle from "../pages/NewsArticle";
+import Feedback from "../pages/Feedback";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
@@ -151,6 +152,14 @@ const router = createBrowserRouter([
 
 
       {
+        path:"feedback",
+
+        element:<Feedback />
+
+      },
+
+
+      {
         path:"about",
 
         element:<About />
@@ -268,6 +277,7 @@ const router = createBrowserRouter([
         element:<NewsAdmin />
 
       },
+
 
       {
         path:"social-queue",

@@ -7,30 +7,56 @@ import LatestVideos from "../components/home/LatestVideos";
 import LatestNews from "../components/LatestNews";
 import Support from "../components/home/Support";
 import MerchBanner from "../components/MerchBanner";
+import SignupPanel from "../components/community/SignupPanel";
 
 
 export default function Home() {
+
   return (
+
     <>
+
       <Hero />
+
 
       <TwitchSection
         channel="Veiltactician"
       />
 
+
       <FeaturedGames />
+
 
       <NewReleases />
 
+
       <LatestVideos />
+
 
       <LatestNews />
 
+
       <MerchBanner />
+
 
       <FeaturedProducts />
 
+
+      {/* COMMUNITY NETWORK SIGNUP */}
+
+      <section className="mx-auto max-w-7xl px-6 mt-16">
+
+        <SignupPanel />
+
+      </section>
+
+
+
       <Support />
+
+
     </>
+
   );
+
 }

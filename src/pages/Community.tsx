@@ -4,36 +4,30 @@ import BrandCard from "../components/ui/BrandCard";
 import BrandButton from "../components/ui/BrandButton";
 
 import { getNews } from "../services/news";
-
+import { submitCommunitySignup } from "../services/communitySignup";
 
 
 type Article = {
-
   id:string;
-
   title:string;
-
   content:string;
-
   image:string;
-
   category:string;
-
   featured:boolean;
-
 };
-
-
 
 
 
 export default function Community(){
 
 
-
 const [news,setNews] = useState<Article[]>([]);
 
+const [name,setName] = useState("");
+const [email,setEmail] = useState("");
 
+const [sending,setSending] = useState(false);
+const [message,setMessage] = useState("");
 
 
 
@@ -42,12 +36,9 @@ useEffect(()=>{
 
 async function loadNews(){
 
-
 try{
 
-
 const data = await getNews();
-
 
 const featuredNews =
 (data || []).filter(
@@ -58,28 +49,20 @@ const featuredNews =
 setNews(featuredNews);
 
 
-
 }
-
 catch(error){
-
 
 console.error(
 "Failed loading community intel:",
 error
 );
 
-
 }
 
-
-
 }
-
 
 
 loadNews();
-
 
 
 },[]);
@@ -88,52 +71,60 @@ loadNews();
 
 
 
+async function handleSignup(
+e:React.FormEvent
+){
+
+e.preventDefault();
+
+setSending(true);
+setMessage("");
+
+try{
 
 
+await submitCommunitySignup({
 
-const links = [
+name,
+email
 
-{
-title:"🎮 Twitch Network",
-description:
-"Join live broadcasts, chat with players, and follow PulsePlay missions.",
-url:
-"https://www.twitch.tv/Veiltactician",
-button:"ENTER STREAM",
-},
+});
 
 
-{
-title:"🌐 PulsePlay Hub",
-description:
-"Access the main PulsePlay gaming network.",
-url:"",
-button:"SYSTEM LOCKED",
-},
+setMessage(
+"✅ Welcome to the PulsePlay Network!"
+);
 
 
-{
-title:"🎁 Creator Support",
-description:
-"Support future broadcasts and help upgrade the command center.",
-url:
-"https://throne.com/ve",
-button:"VIEW WISHLIST",
-},
+setName("");
+setEmail("");
 
 
-{
-title:"🛒 Gear Network",
-description:
-"Explore recommended gaming equipment and creator setups.",
-url:
-"https://amzn.to/4vmEtDy",
-button:"ACCESS ARMORY",
-},
+}
+catch(error:any){
 
 
-];
+console.error(
+"Community signup failed:",
+error
+);
 
+
+setMessage(
+error?.message ||
+"Unable to join the network."
+);
+
+
+}
+finally{
+
+setSending(false);
+
+}
+
+
+}
 
 
 
@@ -146,26 +137,10 @@ return (
 
 <main>
 
-
-
-
-
-
-{/* Header */}
-
-
-<section
-
-className="
-text-center
-mb-16
-"
-
->
+<section className="text-center mb-16">
 
 
 <div
-
 className="
 inline-flex
 items-center
@@ -179,7 +154,6 @@ text-sm
 font-black
 tracking-[0.35em]
 "
-
 >
 
 👥 PLAYER NETWORK ONLINE
@@ -188,11 +162,7 @@ tracking-[0.35em]
 
 
 
-
-
-
 <h1
-
 className="
 mt-8
 text-5xl
@@ -200,7 +170,6 @@ md:text-7xl
 font-black
 pp-gradient-text
 "
-
 >
 
 PULSEPLAY COMMUNITY
@@ -209,11 +178,7 @@ PULSEPLAY COMMUNITY
 
 
 
-
-
-
 <p
-
 className="
 mt-5
 mx-auto
@@ -221,16 +186,13 @@ max-w-3xl
 text-lg
 text-slate-400
 "
-
 >
 
-Connect with players, creators,
-and the PulsePlay gaming network.
-
-Join the squad and level up together.
+Connect with players,
+creators, and the PulsePlay
+gaming network.
 
 </p>
-
 
 
 </section>
@@ -241,85 +203,53 @@ Join the squad and level up together.
 
 
 
-
-
-{/* Network Status */}
-
-
 <section
-
 className="
 grid
 md:grid-cols-3
 gap-6
 mb-16
 "
-
 >
 
 
 <div className="pp-card-surface p-6">
 
-
 <h3 className="text-3xl font-black text-cyan-400">
-
 ACTIVE
-
 </h3>
 
-
 <p className="text-slate-400 mt-2">
-
 Community Status
-
 </p>
-
 
 </div>
 
 
 
-
-
 <div className="pp-card-surface p-6">
-
 
 <h3 className="text-3xl font-black text-purple-400">
-
 ONLINE
-
 </h3>
 
-
 <p className="text-slate-400 mt-2">
-
 Player Network
-
 </p>
-
 
 </div>
 
 
 
-
-
 <div className="pp-card-surface p-6">
 
-
 <h3 className="text-3xl font-black text-pink-400">
-
 XP+
-
 </h3>
 
-
 <p className="text-slate-400 mt-2">
-
 Community Growth
-
 </p>
-
 
 </div>
 
@@ -333,97 +263,66 @@ Community Growth
 
 
 
-
-{/* Community Intel */}
-
-
 {
-
 news.length > 0 &&
-
-(
 
 <section>
 
 
 <h2
-
 className="
 text-4xl
 font-black
 mb-8
 "
-
 >
 
 COMMUNITY <span className="text-purple-400">
-
 INTEL
-
 </span>
 
 </h2>
 
 
 
-
-
 <div
-
 className="
 grid
 md:grid-cols-3
 gap-8
 "
-
 >
 
 
 {
-
 news.map((article)=>(
 
 
 <BrandCard
-
 key={article.id}
-
 className="card-hover"
-
 >
 
 
-
 {
-
 article.image &&
 
-(
-
 <img
-
 src={article.image}
-
 alt={article.title}
-
 className="
 w-full
 h-52
 rounded-xl
 object-cover
 "
-
 />
-
-)
 
 }
 
 
 
-
 <p
-
 className="
 mt-5
 text-purple-400
@@ -431,7 +330,6 @@ text-sm
 font-bold
 tracking-widest
 "
-
 >
 
 {article.category}
@@ -440,15 +338,12 @@ tracking-widest
 
 
 
-
 <h3
-
 className="
 mt-3
 text-2xl
 font-black
 "
-
 >
 
 {article.title}
@@ -456,23 +351,6 @@ font-black
 </h3>
 
 
-
-
-<p
-
-className="
-mt-3
-text-slate-400
-"
-
->
-
-{article.content}
-
-</p>
-
-
-
 </BrandCard>
 
 
@@ -481,14 +359,11 @@ text-slate-400
 }
 
 
-
 </div>
 
 
 </section>
 
-)
-
 }
 
 
@@ -498,146 +373,10 @@ text-slate-400
 
 
 
-
-{/* Network Terminals */}
+{/* COMMUNITY SIGNUP */}
 
 
 <section
-
-className="
-mt-16
-grid
-md:grid-cols-2
-gap-8
-"
-
->
-
-
-{
-
-links.map((item)=>(
-
-
-<BrandCard
-
-key={item.title}
-
-className="card-hover"
-
->
-
-
-<h2
-
-className="
-text-2xl
-font-black
-"
-
->
-
-{item.title}
-
-</h2>
-
-
-
-
-<p
-
-className="
-mt-4
-text-slate-400
-"
-
->
-
-{item.description}
-
-</p>
-
-
-
-
-
-
-<div className="mt-6">
-
-
-{
-
-item.url ?
-
-(
-
-<a
-
-href={item.url}
-
-target="_blank"
-
-rel="noreferrer"
-
->
-
-
-<BrandButton>
-
-{item.button}
-
-</BrandButton>
-
-
-</a>
-
-)
-
-:
-
-(
-
-<BrandButton variant="secondary">
-
-{item.button}
-
-</BrandButton>
-
-)
-
-}
-
-
-
-</div>
-
-
-
-</BrandCard>
-
-
-
-))
-
-}
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-{/* Final CTA */}
-
-
-<section
-
 className="
 mt-20
 pp-card-surface
@@ -645,17 +384,14 @@ rounded-3xl
 p-10
 text-center
 "
-
 >
 
 
 <h2
-
 className="
 text-4xl
 font-black
 "
-
 >
 
 JOIN THE SQUAD
@@ -665,26 +401,105 @@ JOIN THE SQUAD
 
 
 <p
-
 className="
 mt-5
-max-w-3xl
-mx-auto
 text-slate-300
 "
-
 >
 
-PulsePlay is built around gamers,
-creators, and communities.
-Every player helps expand the network.
+Get PulsePlay updates,
+stream alerts, gaming news,
+and community announcements.
 
 </p>
 
 
 
-</section>
 
+<form
+onSubmit={handleSignup}
+className="
+mt-8
+mx-auto
+max-w-xl
+grid
+gap-4
+"
+>
+
+
+<input
+className="
+rounded-xl
+bg-black/40
+border
+border-cyan-400/20
+p-4
+text-white
+"
+placeholder="Player Name"
+value={name}
+onChange={(e)=>setName(e.target.value)}
+required
+/>
+
+
+
+<input
+className="
+rounded-xl
+bg-black/40
+border
+border-cyan-400/20
+p-4
+text-white
+"
+placeholder="Email Address"
+type="email"
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
+required
+/>
+
+
+
+<BrandButton>
+
+{
+sending
+?
+"CONNECTING..."
+:
+"🚀 JOIN COMMUNITY"
+}
+
+</BrandButton>
+
+
+</form>
+
+
+
+
+{
+message &&
+
+<p
+className="
+mt-5
+font-bold
+text-cyan-300
+"
+>
+
+{message}
+
+</p>
+
+}
+
+
+</section>
 
 
 

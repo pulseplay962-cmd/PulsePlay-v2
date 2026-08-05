@@ -1,91 +1,151 @@
+import { NavLink } from "react-router-dom";
 import { socials } from "../../data/socials";
+
 
 export default function Footer() {
 
   const year = new Date().getFullYear();
 
+
+  // Replace this with your real Discord invite link
+  const discordInvite =
+    "https://discord.gg/UTTbVJtnb";
+
+
+
+  const navigation = [
+
+    {
+      name:"🏠 Command Center",
+      path:"/"
+    },
+
+    {
+      name:"🎮 Mission Database",
+      path:"/games"
+    },
+
+    {
+      name:"📡 Broadcast Center",
+      path:"/streams"
+    },
+
+    {
+      name:"🛒 Armory",
+      path:"/store"
+    },
+
+    {
+      name:"📰 Intel Network",
+      path:"/news"
+    },
+
+    {
+      name:"🌐 Community",
+      path:"/community"
+    },
+
+    {
+      name:"📝 Feedback",
+      path:"/feedback"
+    }
+
+  ];
+
+
+
   return (
 
     <footer
       className="
-        mt-20
-        border-t
-        border-cyan-500/20
-        bg-[#05070d]
+      mt-20
+      border-t
+      border-cyan-500/20
+      bg-[#05070d]
       "
     >
 
+
       <div
         className="
-          mx-auto
-          max-w-7xl
-          px-6
-          py-12
+        mx-auto
+        max-w-7xl
+        px-6
+        py-12
         "
       >
 
-        {/* System Header */}
+
 
         <div
           className="
-            mb-10
-            flex
-            flex-col
-            md:flex-row
-            md:items-center
-            md:justify-between
-            gap-5
+          mb-10
+          flex
+          flex-col
+          gap-5
+          md:flex-row
+          md:items-center
+          md:justify-between
           "
         >
 
+
           <div>
+
 
             <div
               className="
-                inline-flex
-                items-center
-                gap-3
-                px-4
-                py-2
-                rounded-full
-                pp-hud
-                text-cyan-300
-                text-xs
-                font-black
-                tracking-[0.3em]
+              inline-flex
+              items-center
+              gap-3
+              rounded-full
+              px-4
+              py-2
+              pp-hud
+              text-xs
+              font-black
+              tracking-[0.3em]
+              text-cyan-300
               "
             >
+
               ⚡ COMMAND CENTER ONLINE
+
             </div>
+
 
 
             <h2
               className="
-                mt-5
-                text-3xl
-                font-black
-                pp-gradient-text
+              mt-5
+              text-3xl
+              font-black
+              pp-gradient-text
               "
             >
+
               PULSEPLAY
+
             </h2>
+
 
           </div>
 
 
 
+
+
           <div
             className="
-              flex
-              items-center
-              gap-3
-              text-green-400
-              font-bold
-              text-sm
+            flex
+            items-center
+            gap-3
+            font-bold
+            text-green-400
             "
           >
 
-            <span className="pp-live-dot" />
+            <span className="pp-live-dot"/>
 
             NETWORK STATUS: ACTIVE
 
@@ -97,49 +157,58 @@ export default function Footer() {
 
 
 
+
         <div
           className="
-            grid
-            md:grid-cols-3
-            gap-10
+          grid
+          gap-10
+          md:grid-cols-4
           "
         >
 
 
-          {/* Brand */}
+
+
+
+          {/* BRAND */}
 
           <div>
 
             <h3
               className="
-                text-xl
-                font-black
-                text-cyan-400
+              text-xl
+              font-black
+              text-cyan-400
               "
             >
+
               GAMING NETWORK
+
             </h3>
+
 
 
             <p
               className="
-                mt-4
-                text-slate-400
-                leading-relaxed
-                max-w-sm
+              mt-4
+              max-w-sm
+              leading-relaxed
+              text-slate-400
               "
             >
+
               Gaming.
               Streaming.
               Community.
 
-              <br />
+              <br/><br/>
 
               PulsePlay connects players,
               creators, and gaming adventures
-              together.
+              through one unified command center.
 
             </p>
+
 
           </div>
 
@@ -147,101 +216,205 @@ export default function Footer() {
 
 
 
-          {/* Navigation */}
+
+
+          {/* NAVIGATION */}
+
 
           <div>
 
+
             <h3
               className="
-                mb-4
-                font-black
-                text-purple-400
+              mb-4
+              font-black
+              text-purple-400
               "
             >
+
               SYSTEM SECTORS
+
             </h3>
+
 
 
             <div
               className="
-                flex
-                flex-col
-                gap-3
+              flex
+              flex-col
+              gap-3
               "
             >
 
-              <a
-                href="/"
-                className="
-                  text-slate-400
-                  hover:text-cyan-400
-                "
-              >
-                🏠 Command Center
-              </a>
+              {
+                navigation.map((item)=>(
 
+                  <NavLink
 
-              <a
-                href="/games"
-                className="
-                  text-slate-400
-                  hover:text-cyan-400
-                "
-              >
-                🎮 Mission Database
-              </a>
+                    key={item.path}
 
+                    to={item.path}
 
-              <a
-                href="/streams"
-                className="
-                  text-slate-400
-                  hover:text-cyan-400
-                "
-              >
-                📡 Broadcast Center
-              </a>
+                    className="
+                    text-slate-400
+                    transition
+                    hover:text-cyan-400
+                    "
 
+                  >
 
-              <a
-                href="/store"
-                className="
-                  text-slate-400
-                  hover:text-cyan-400
-                "
-              >
-                🛒 Armory
-              </a>
+                    {item.name}
+
+                  </NavLink>
+
+                ))
+              }
 
 
             </div>
 
+
           </div>
 
 
 
 
 
-          {/* Network */}
+
+
+          {/* COMMUNITY */}
+
 
           <div>
 
+
             <h3
               className="
-                mb-4
-                font-black
-                text-pink-400
+              mb-4
+              font-black
+              text-pink-400
               "
             >
-              NETWORK LINKS
+
+              JOIN THE NETWORK
+
             </h3>
+
+
+
+            <p
+              className="
+              mb-4
+              text-sm
+              text-slate-400
+              "
+            >
+
+              Get gaming updates,
+              stream alerts,
+              Discord events,
+              and community drops.
+
+            </p>
+
+
+
+
+
+            <a
+
+              href={discordInvite}
+
+              target="_blank"
+
+              rel="noopener noreferrer"
+
+              className="
+              block
+              rounded-xl
+              bg-gradient-to-r
+              from-purple-600
+              to-pink-500
+              px-5
+              py-3
+              text-center
+              font-black
+              text-white
+              transition
+              hover:scale-105
+              "
+
+            >
+
+              🎮 Join PulsePlay Discord
+
+            </a>
+
+
+
+
+
+
+            <NavLink
+
+              to="/feedback"
+
+              className="
+              mt-3
+              block
+              rounded-xl
+              border
+              border-cyan-400/30
+              px-5
+              py-3
+              text-center
+              font-bold
+              text-cyan-300
+              transition
+              hover:bg-cyan-400/10
+              "
+
+            >
+
+              📝 Submit Feedback
+
+            </NavLink>
+
+
+          </div>
+
+
+
+
+
+
+
+
+          {/* SOCIAL */}
+
+
+          <div>
+
+
+            <h3
+              className="
+              mb-4
+              font-black
+              text-yellow-400
+              "
+            >
+
+              NETWORK LINKS
+
+            </h3>
+
 
 
             <div
               className="
-                flex
-                flex-col
-                gap-3
+              flex
+              flex-col
+              gap-3
               "
             >
 
@@ -251,12 +424,13 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
-                  text-slate-400
-                  hover:text-cyan-400
+                text-slate-400
+                hover:text-cyan-400
                 "
               >
                 🎥 Twitch
               </a>
+
 
 
 
@@ -265,12 +439,13 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
-                  text-slate-400
-                  hover:text-cyan-400
+                text-slate-400
+                hover:text-cyan-400
                 "
               >
                 📘 Facebook
               </a>
+
 
 
 
@@ -279,12 +454,13 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
-                  text-slate-400
-                  hover:text-cyan-400
+                text-slate-400
+                hover:text-cyan-400
                 "
               >
                 🎁 Creator Support
               </a>
+
 
 
 
@@ -293,8 +469,8 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
-                  text-slate-400
-                  hover:text-cyan-400
+                text-slate-400
+                hover:text-cyan-400
                 "
               >
                 ⚙️ Gear Armory
@@ -303,35 +479,66 @@ export default function Footer() {
 
             </div>
 
+
           </div>
+
 
 
         </div>
 
 
-      </div>
 
 
 
 
-      {/* Bottom Terminal */}
 
-      <div
-        className="
+        <div
+          className="
+          mt-12
           border-t
-          border-cyan-500/20
-          py-6
+          border-white/10
+          pt-6
           text-center
           text-sm
           text-slate-500
-        "
-      >
+          "
+        >
 
-        © {year} PulsePlay
 
-        <br />
+          <div className="flex justify-center gap-5 mb-3">
 
-        SYSTEM VERSION 1.0 • ALL RIGHTS RESERVED
+
+            <NavLink
+              to="/privacy"
+              className="hover:text-cyan-400"
+            >
+              Privacy
+            </NavLink>
+
+
+
+            <NavLink
+              to="/terms"
+              className="hover:text-cyan-400"
+            >
+              Terms
+            </NavLink>
+
+
+          </div>
+
+
+
+          © {year} PulsePlay
+
+          <br/>
+
+          SYSTEM VERSION 2.1 • ALL RIGHTS RESERVED
+
+
+        </div>
+
+
 
       </div>
 

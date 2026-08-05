@@ -12,93 +12,90 @@ import { uploadImage } from "../../services/storage";
 
 type Product = {
 
-  id: string;
+  id:string;
 
-  name: string;
+  name:string;
 
-  description: string;
+  description?:string;
 
-  price: number | string;
+  price?:string;
 
-  image: string;
+  image?:string;
 
-  link: string;
+  link?:string;
 
-  featured: boolean;
+  featured?:boolean;
 
-  category: string;
+  category?:string;
 
 };
 
 
 
 
-export default function Products() {
+export default function Products(){
 
 
-  const [products, setProducts] =
+  const [products,setProducts] =
     useState<Product[]>([]);
 
 
-  const [editingId, setEditingId] =
+  const [editingId,setEditingId] =
     useState<string | null>(null);
 
 
-  const [saving, setSaving] =
+  const [saving,setSaving] =
     useState(false);
 
 
 
-  const [name, setName] =
+  const [name,setName] =
     useState("");
 
-
-  const [description, setDescription] =
+  const [description,setDescription] =
     useState("");
 
-
-  const [price, setPrice] =
+  const [price,setPrice] =
     useState("");
 
-
-  const [image, setImage] =
+  const [image,setImage] =
     useState("");
 
-
-  const [imageFile, setImageFile] =
+  const [imageFile,setImageFile] =
     useState<File | null>(null);
 
-
-  const [link, setLink] =
+  const [link,setLink] =
     useState("");
 
-
-  const [featured, setFeatured] =
+  const [featured,setFeatured] =
     useState(false);
 
-
-  const [category, setCategory] =
+  const [category,setCategory] =
     useState("Gaming Accessories");
 
 
 
 
-  async function loadProducts() {
 
-    try {
+
+  async function loadProducts(){
+
+    try{
 
       const data =
         await getProducts();
 
-      setProducts(data || []);
 
-    }
+      setProducts(
+        data || []
+      );
 
-    catch(err) {
+
+    }catch(error){
 
       console.error(
-        "Load products failed:",
-        err
+        "Failed loading products:",
+        error
       );
 
     }
@@ -108,11 +105,15 @@ export default function Products() {
 
 
 
-  useEffect(() => {
+
+  useEffect(()=>{
 
     loadProducts();
 
-  }, []);
+  },[]);
+
+
+
 
 
 
@@ -120,8 +121,8 @@ export default function Products() {
 
 
   async function handleSubmit(
-    e: React.FormEvent
-  ) {
+    e:React.FormEvent
+  ){
 
     e.preventDefault();
 
@@ -130,22 +131,21 @@ export default function Products() {
 
 
 
-    try {
+    try{
 
 
-      let imageUrl = image;
+      let imageUrl =
+        image;
 
 
 
-      if(imageFile) {
-
+      if(imageFile){
 
         imageUrl =
           await uploadImage(
             imageFile,
             "products"
           );
-
 
       }
 
@@ -154,6 +154,7 @@ export default function Products() {
 
 
       const product = {
+
 
         name,
 
@@ -169,12 +170,15 @@ export default function Products() {
 
         category,
 
+
       };
 
 
 
 
-      if(editingId) {
+
+
+      if(editingId){
 
 
         await updateProduct(
@@ -183,12 +187,12 @@ export default function Products() {
         );
 
 
-      }
-
-      else {
+      }else{
 
 
-        await addProduct(product);
+        await addProduct(
+          product
+        );
 
 
       }
@@ -204,40 +208,29 @@ export default function Products() {
 
 
 
-      alert(
-        editingId
-        ? "Product updated!"
-        : "Product added!"
-      );
-
-
-
-    }
-
-    catch(err:any) {
+    }catch(error:any){
 
 
       console.error(
         "Product save failed:",
-        err
+        error
       );
 
 
       alert(
-        err?.message ||
-        "Failed to save product."
+        error?.message ||
+        "Unable to save product."
       );
 
 
-    }
-
-    finally {
+    }finally{
 
 
       setSaving(false);
 
 
     }
+
 
   }
 
@@ -247,14 +240,22 @@ export default function Products() {
 
 
 
+
+
   function editProduct(
-    product: Product
-  ) {
+    product:Product
+  ){
 
 
-    setEditingId(product.id);
+    setEditingId(
+      product.id
+    );
 
-    setName(product.name);
+
+    setName(
+      product.name || ""
+    );
+
 
     setDescription(
       product.description || ""
@@ -262,7 +263,7 @@ export default function Products() {
 
 
     setPrice(
-      String(product.price ?? "")
+      product.price || ""
     );
 
 
@@ -282,8 +283,7 @@ export default function Products() {
 
 
     setCategory(
-      product.category ||
-      "Gaming Accessories"
+      product.category || "Gaming Accessories"
     );
 
 
@@ -295,7 +295,7 @@ export default function Products() {
 
       top:0,
 
-      behavior:"smooth",
+      behavior:"smooth"
 
     });
 
@@ -308,46 +308,50 @@ export default function Products() {
 
 
 
+
+
   async function handleDelete(
     id:string
-  ) {
+  ){
 
 
-    const confirmed =
-      window.confirm(
+    if(
+      !window.confirm(
         "Delete this product?"
-      );
+      )
+    ){
 
-
-    if(!confirmed)
       return;
 
+    }
 
 
-    try {
 
 
-      await deleteProduct(id);
+
+    try{
+
+
+      await deleteProduct(
+        id
+      );
 
 
       await loadProducts();
 
 
 
-    }
-
-    catch(err:any) {
+    }catch(error:any){
 
 
       console.error(
-        "Delete product failed:",
-        err
+        error
       );
 
 
       alert(
-        err?.message ||
-        "Failed to delete product."
+        error?.message ||
+        "Delete failed."
       );
 
 
@@ -363,7 +367,8 @@ export default function Products() {
 
 
 
-  function clearForm() {
+
+  function clearForm(){
 
 
     setEditingId(null);
@@ -395,16 +400,24 @@ export default function Products() {
 
 
 
-  return (
-
-<div>
 
 
-<h1 className="text-4xl font-black">
+return (
 
-Manage Products
+<div className="space-y-10">
+
+
+
+<h1 className="
+text-4xl
+font-black
+pp-gradient-text
+">
+
+🛒 Manage Products
 
 </h1>
+
 
 
 
@@ -415,24 +428,33 @@ Manage Products
 onSubmit={handleSubmit}
 
 className="
-mt-8
-max-w-xl
-space-y-4
-rounded-xl
-bg-[#111827]
+pp-panel
 p-6
+max-w-2xl
+space-y-5
 "
 
 >
 
 
-<h2 className="text-xl font-bold">
 
-{editingId
-? "Edit Product"
-: "Add Product"}
+<h2 className="
+text-2xl
+font-black
+">
+
+{
+
+editingId
+?
+"Edit Product"
+:
+"Add Product"
+
+}
 
 </h2>
+
 
 
 
@@ -443,8 +465,8 @@ p-6
 
 className="
 w-full
-rounded
-bg-[#1f2937]
+rounded-lg
+bg-black/40
 p-3
 "
 
@@ -452,8 +474,8 @@ placeholder="Product Name"
 
 value={name}
 
-onChange={(e)=>
-setName(e.target.value)
+onChange={
+e=>setName(e.target.value)
 }
 
 />
@@ -467,20 +489,23 @@ setName(e.target.value)
 
 className="
 w-full
-rounded
-bg-[#1f2937]
+rounded-lg
+bg-black/40
 p-3
 "
 
 placeholder="Description"
 
+rows={4}
+
 value={description}
 
-onChange={(e)=>
-setDescription(e.target.value)
+onChange={
+e=>setDescription(e.target.value)
 }
 
 />
+
 
 
 
@@ -491,8 +516,8 @@ setDescription(e.target.value)
 
 className="
 w-full
-rounded
-bg-[#1f2937]
+rounded-lg
+bg-black/40
 p-3
 "
 
@@ -500,11 +525,12 @@ placeholder="Price"
 
 value={price}
 
-onChange={(e)=>
-setPrice(e.target.value)
+onChange={
+e=>setPrice(e.target.value)
 }
 
 />
+
 
 
 
@@ -515,35 +541,59 @@ setPrice(e.target.value)
 
 className="
 w-full
-rounded
-bg-[#1f2937]
+rounded-lg
+bg-black/40
 p-3
 "
 
 value={category}
 
-onChange={(e)=>
-setCategory(e.target.value)
+onChange={
+e=>setCategory(e.target.value)
 }
 
 >
 
-<option>Gaming Accessories</option>
-<option>GPUs</option>
-<option>CPUs</option>
-<option>CPU Coolers</option>
-<option>Motherboards</option>
-<option>Memory (RAM)</option>
-<option>Storage</option>
-<option>Power Supplies</option>
-<option>Cases</option>
-<option>Monitors</option>
-<option>Keyboards</option>
-<option>Mice</option>
-<option>Headsets</option>
-<option>Streaming Gear</option>
+
+<option>
+Gaming Accessories
+</option>
+
+<option>
+GPUs
+</option>
+
+<option>
+CPUs
+</option>
+
+<option>
+Monitors
+</option>
+
+<option>
+Keyboards
+</option>
+
+<option>
+Mice
+</option>
+
+<option>
+Headsets
+</option>
+
+<option>
+Streaming Gear
+</option>
+
+<option>
+Gaming Chairs
+</option>
+
 
 </select>
+
 
 
 
@@ -558,12 +608,13 @@ accept="image/*"
 
 className="
 w-full
-rounded
-bg-[#1f2937]
+rounded-lg
+bg-black/40
 p-3
 "
 
-onChange={(e)=>
+onChange={
+e=>
 setImageFile(
 e.target.files?.[0] || null
 )
@@ -575,24 +626,28 @@ e.target.files?.[0] || null
 
 
 
-{image && (
+
+{
+
+image &&
 
 <img
 
 src={image}
 
-alt="Preview"
+alt="preview"
 
 className="
-h-40
+h-48
 w-full
-rounded
+rounded-xl
 object-cover
 "
 
 />
 
-)}
+}
+
 
 
 
@@ -604,17 +659,17 @@ object-cover
 
 className="
 w-full
-rounded
-bg-[#1f2937]
+rounded-lg
+bg-black/40
 p-3
 "
 
-placeholder="Product Link"
+placeholder="Product / Affiliate Link"
 
 value={link}
 
-onChange={(e)=>
-setLink(e.target.value)
+onChange={
+e=>setLink(e.target.value)
 }
 
 />
@@ -625,8 +680,13 @@ setLink(e.target.value)
 
 
 
-<label className="flex items-center gap-2">
 
+<label className="
+flex
+items-center
+gap-3
+"
+>
 
 <input
 
@@ -634,17 +694,15 @@ type="checkbox"
 
 checked={featured}
 
-onChange={(e)=>
-setFeatured(
+onChange={
+e=>setFeatured(
 e.target.checked
 )
 }
 
 />
 
-
 Featured Product
-
 
 </label>
 
@@ -656,33 +714,45 @@ Featured Product
 
 <button
 
-type="submit"
-
 disabled={saving}
 
 className="
 rounded-lg
-bg-cyan-500
+bg-cyan-400
 px-6
 py-3
-font-bold
+font-black
 text-black
 disabled:opacity-50
 "
 
 >
 
-{saving
+{
+
+saving
+
 ?
-"Uploading..."
+
+"Saving..."
+
 :
+
 editingId
+
 ?
+
 "Update Product"
+
 :
-"Add Product"}
+
+"Add Product"
+
+}
 
 </button>
+
+
 
 
 
@@ -693,12 +763,39 @@ editingId
 
 
 
-<div className="mt-10 space-y-4">
+
+
+
+
+<section>
+
+
+<h2 className="
+text-3xl
+font-black
+mb-6
+">
+
+Product Database
+
+</h2>
+
+
+
+
+
+<div className="
+grid
+grid-cols-1
+md:grid-cols-2
+gap-6
+">
 
 
 {
 
-products.map((product)=>(
+products.map(product=>(
+
 
 
 <div
@@ -706,15 +803,18 @@ products.map((product)=>(
 key={product.id}
 
 className="
-rounded-xl
-bg-[#111827]
+pp-card-surface
 p-5
 "
 
 >
 
 
-{product.image && (
+
+
+{
+
+product.image &&
 
 <img
 
@@ -723,32 +823,36 @@ src={product.image}
 alt={product.name}
 
 className="
-mb-4
 h-40
 w-full
-rounded
+rounded-xl
 object-cover
+mb-4
 "
 
 />
 
-)}
+}
 
 
 
 
-
-<h2 className="text-2xl font-bold">
+<h3 className="
+text-xl
+font-black
+">
 
 {product.name}
 
-</h2>
+</h3>
 
 
 
 
-
-<p className="text-gray-400">
+<p className="
+text-slate-400
+mt-2
+">
 
 {product.description}
 
@@ -757,10 +861,26 @@ object-cover
 
 
 
+<p className="
+text-cyan-300
+font-bold
+mt-3
+">
 
-<p className="mt-2 text-cyan-400 font-bold">
+{product.price}
 
-${Number(product.price).toFixed(2)}
+</p>
+
+
+
+
+<p className="
+text-sm
+text-purple-300
+mt-2
+">
+
+{product.category}
 
 </p>
 
@@ -768,32 +888,42 @@ ${Number(product.price).toFixed(2)}
 
 
 
-{product.featured && (
+{
 
-<p className="mt-2 text-yellow-400">
+product.featured &&
 
-⭐ Featured Product
+<p className="
+text-yellow-400
+mt-2
+">
+
+⭐ Featured
 
 </p>
 
-)}
+}
 
 
 
 
 
 
-<div className="mt-4 flex gap-3">
+
+<div className="
+flex
+gap-3
+mt-5
+">
 
 
 <button
 
-onClick={() =>
+onClick={()=>
 editProduct(product)
 }
 
 className="
-rounded
+rounded-lg
 bg-blue-600
 px-4
 py-2
@@ -812,12 +942,12 @@ Edit
 
 <button
 
-onClick={() =>
+onClick={()=>
 handleDelete(product.id)
 }
 
 className="
-rounded
+rounded-lg
 bg-red-600
 px-4
 py-2
@@ -835,6 +965,9 @@ Delete
 </div>
 
 
+
+
+
 </div>
 
 
@@ -846,9 +979,16 @@ Delete
 </div>
 
 
+</section>
+
+
+
+
+
 
 </div>
 
-  );
+);
+
 
 }

@@ -11,6 +11,7 @@ export default function Navbar() {
     { name: "Store", icon: "🛒", path: "/store" },
     { name: "News", icon: "📰", path: "/news" },
     { name: "Community", icon: "🌐", path: "/community" },
+    { name: "Feedback", icon: "📝", path: "/feedback" },
     { name: "About", icon: "📖", path: "/about" },
     { name: "Contact", icon: "💬", path: "/contact" },
   ];
@@ -30,7 +31,6 @@ export default function Navbar() {
           overflow-hidden
         "
       >
-        {/* Top Status Strip */}
 
         <div className="flex items-center justify-between border-b border-white/5 px-6 py-2 text-[10px] uppercase tracking-[.35em] text-slate-500">
           <div className="flex items-center gap-2">
@@ -47,16 +47,15 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Navigation */}
 
         <div className="flex items-center justify-between px-6 py-4">
-          {/* Logo */}
 
           <NavLink
             to="/"
             onClick={() => setOpen(false)}
             className="group flex items-center gap-4"
           >
+
             <div
               className="
                 flex
@@ -81,6 +80,7 @@ export default function Navbar() {
               PP
             </div>
 
+
             <div>
               <h1 className="text-3xl font-black pp-gradient-text">
                 PulsePlay
@@ -90,12 +90,15 @@ export default function Navbar() {
                 Gaming Command Center
               </p>
             </div>
+
           </NavLink>
 
-          {/* Desktop Menu */}
+
 
           <div className="hidden xl:flex items-center gap-2">
+
             {links.map((link) => (
+
               <NavLink
                 key={link.path}
                 to={link.path}
@@ -128,18 +131,23 @@ export default function Navbar() {
                   `
                 }
               >
+
                 <span className="text-lg">
                   {link.icon}
                 </span>
 
                 {link.name}
+
               </NavLink>
+
             ))}
+
           </div>
 
-          {/* Right Side */}
+
 
           <div className="hidden xl:flex items-center gap-4">
+
             <div className="text-right">
               <div className="text-xs uppercase tracking-widest text-slate-500">
                 Network Status
@@ -149,6 +157,7 @@ export default function Navbar() {
                 ● Online
               </div>
             </div>
+
 
             <a
               href="https://throne.com/veiltactician"
@@ -171,9 +180,10 @@ export default function Navbar() {
             >
               🎁 Support
             </a>
+
           </div>
 
-          {/* Mobile Button */}
+
 
           <button
             onClick={() => setOpen(!open)}
@@ -182,14 +192,19 @@ export default function Navbar() {
           >
             {open ? "✕" : "☰"}
           </button>
+
         </div>
 
-        {/* Mobile Menu */}
+
 
         {open && (
+
           <div className="border-t border-white/10 bg-black/70 p-5 backdrop-blur-xl xl:hidden">
+
             <div className="grid gap-3">
+
               {links.map((link) => (
+
                 <NavLink
                   key={link.path}
                   to={link.path}
@@ -219,13 +234,17 @@ export default function Navbar() {
                     `
                   }
                 >
+
                   <span className="text-xl">
                     {link.icon}
                   </span>
 
                   {link.name}
+
                 </NavLink>
+
               ))}
+
 
               <a
                 href="https://throne.com/veiltactician"
@@ -246,9 +265,14 @@ export default function Navbar() {
               >
                 🎁 Support Creator
               </a>
+
+
             </div>
+
           </div>
+
         )}
+
       </nav>
     </header>
   );

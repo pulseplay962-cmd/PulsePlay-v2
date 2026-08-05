@@ -187,7 +187,7 @@ export async function getNewsBySlug(
                 "slug",
                 slug
             )
-            .single();
+            .maybeSingle();
 
 
     if(error){
@@ -197,7 +197,7 @@ export async function getNewsBySlug(
     }
 
 
-    return data as NewsArticle;
+    return data as NewsArticle | null;
 
 }
 
