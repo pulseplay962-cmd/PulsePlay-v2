@@ -6,6 +6,8 @@ import BrandButton from "../components/ui/BrandButton";
 import { getNews } from "../services/news";
 import { submitCommunitySignup } from "../services/communitySignup";
 
+import { supabase } from "../lib/supabase";
+
 
 type Article = {
   id:string;
@@ -21,6 +23,40 @@ type Article = {
 export default function Community(){
 
 
+console.log(
+  "🔥 REAL COMMUNITY COMPONENT RENDERED"
+);
+
+
+
+useEffect(()=>{
+
+
+async function checkSession(){
+
+
+const result =
+  await supabase.auth.getSession();
+
+
+console.log(
+  "🔐 SUPABASE SESSION CHECK:",
+  result
+);
+
+
+}
+
+
+checkSession();
+
+
+},[]);
+
+
+
+
+
 const [news,setNews] = useState<Article[]>([]);
 
 const [name,setName] = useState("");
@@ -29,6 +65,7 @@ const [discord,setDiscord] = useState("");
 
 const [sending,setSending] = useState(false);
 const [message,setMessage] = useState("");
+
 
 
 
@@ -42,13 +79,12 @@ try{
 
 const data = await getNews();
 
-const featuredNews =
+
+setNews(
 (data || []).filter(
 (article)=>article.featured
+)
 );
-
-
-setNews(featuredNews);
 
 
 }
@@ -74,6 +110,7 @@ loadNews();
 
 
 
+
 async function handleSignup(
 e:React.FormEvent
 ){
@@ -82,8 +119,26 @@ e.preventDefault();
 
 
 console.log(
-"COMMUNITY SIGNUP STARTED"
+"🚀 FORM SUBMITTED",
+{
+name,
+email,
+discord
+}
 );
+
+
+
+if(!name || !email){
+
+setMessage(
+"Please enter your player name and email."
+);
+
+return;
+
+}
+
 
 
 setSending(true);
@@ -94,7 +149,13 @@ setMessage("");
 try{
 
 
-await submitCommunitySignup({
+console.log(
+"📡 CALLING SUPABASE"
+);
+
+
+
+const result = await submitCommunitySignup({
 
 name,
 email,
@@ -105,7 +166,8 @@ discord
 
 
 console.log(
-"COMMUNITY SIGNUP SUCCESS"
+"✅ SUPABASE SUCCESS",
+result
 );
 
 
@@ -121,13 +183,12 @@ setEmail("");
 setDiscord("");
 
 
-
 }
 catch(error:any){
 
 
 console.error(
-"Community signup failed:",
+"❌ COMMUNITY SIGNUP ERROR",
 error
 );
 
@@ -162,9 +223,6 @@ return (
 <main>
 
 
-
-
-
 <section className="text-center mb-16">
 
 
@@ -191,7 +249,6 @@ tracking-[0.35em]
 
 
 
-
 <h1
 className="
 mt-8
@@ -205,7 +262,6 @@ pp-gradient-text
 PULSEPLAY COMMUNITY
 
 </h1>
-
 
 
 
@@ -228,8 +284,6 @@ gaming network.
 
 
 </section>
-
-
 
 
 
@@ -260,7 +314,6 @@ Community Status
 
 
 
-
 <div className="pp-card-surface p-6">
 
 <h3 className="text-3xl font-black text-purple-400">
@@ -272,7 +325,6 @@ Player Network
 </p>
 
 </div>
-
 
 
 
@@ -297,21 +349,13 @@ Community Growth
 
 
 
-
-
 {
 news.length > 0 &&
 
 <section>
 
 
-<h2
-className="
-text-4xl
-font-black
-mb-8
-"
->
+<h2 className="text-4xl font-black mb-8">
 
 COMMUNITY <span className="text-purple-400">
 INTEL
@@ -321,16 +365,7 @@ INTEL
 
 
 
-
-
-<div
-className="
-grid
-md:grid-cols-3
-gap-8
-"
->
-
+<div className="grid md:grid-cols-3 gap-8">
 
 
 {
@@ -343,9 +378,7 @@ className="card-hover"
 >
 
 
-
-{
-article.image &&
+{article.image &&
 
 <img
 src={article.image}
@@ -362,16 +395,7 @@ object-cover
 
 
 
-
-<p
-className="
-mt-5
-text-purple-400
-text-sm
-font-bold
-tracking-widest
-"
->
+<p className="mt-5 text-purple-400 text-sm font-bold">
 
 {article.category}
 
@@ -379,14 +403,7 @@ tracking-widest
 
 
 
-
-<h3
-className="
-mt-3
-text-2xl
-font-black
-"
->
+<h3 className="mt-3 text-2xl font-black">
 
 {article.title}
 
@@ -400,7 +417,6 @@ font-black
 ))
 
 }
-
 
 
 </div>
@@ -417,11 +433,6 @@ font-black
 
 
 
-
-{/* COMMUNITY SIGNUP */}
-
-
-
 <section
 className="
 mt-20
@@ -433,13 +444,7 @@ text-center
 >
 
 
-
-<h2
-className="
-text-4xl
-font-black
-"
->
+<h2 className="text-4xl font-black">
 
 JOIN THE SQUAD
 
@@ -447,21 +452,13 @@ JOIN THE SQUAD
 
 
 
-
-<p
-className="
-mt-5
-text-slate-300
-"
->
+<p className="mt-5 text-slate-300">
 
 Get PulsePlay updates,
 stream alerts, gaming news,
 and community announcements.
 
 </p>
-
-
 
 
 
@@ -480,7 +477,6 @@ gap-4
 
 
 
-
 <input
 className="
 rounded-xl
@@ -495,8 +491,6 @@ value={name}
 onChange={(e)=>setName(e.target.value)}
 required
 />
-
-
 
 
 
@@ -518,8 +512,6 @@ required
 
 
 
-
-
 <input
 className="
 rounded-xl
@@ -538,8 +530,10 @@ onChange={(e)=>setDiscord(e.target.value)}
 
 
 
-
-<BrandButton>
+<BrandButton
+type="submit"
+disabled={sending}
+>
 
 {
 sending
@@ -553,11 +547,7 @@ sending
 
 
 
-
-
 </form>
-
-
 
 
 
@@ -583,10 +573,6 @@ text-cyan-300
 
 
 </section>
-
-
-
-
 
 
 

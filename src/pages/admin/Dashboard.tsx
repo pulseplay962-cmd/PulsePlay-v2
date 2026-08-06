@@ -21,7 +21,9 @@ export default function Dashboard(){
 
     merchandise:0,
 
-    videos:0
+    videos:0,
+
+    community:0
 
   });
 
@@ -54,16 +56,16 @@ export default function Dashboard(){
 
         merchandise,
 
-        videos
+        videos,
+
+        community
 
 
       ] = await Promise.all([
 
 
         supabase
-
         .from("news")
-
         .select(
           "id",
           {
@@ -75,9 +77,7 @@ export default function Dashboard(){
 
 
         supabase
-
         .from("ai_content_queue")
-
         .select(
           "id",
           {
@@ -90,9 +90,7 @@ export default function Dashboard(){
 
 
         supabase
-
         .from("social_queue")
-
         .select(
           "id",
           {
@@ -105,9 +103,7 @@ export default function Dashboard(){
 
 
         supabase
-
         .from("merchandise")
-
         .select(
           "id",
           {
@@ -120,9 +116,20 @@ export default function Dashboard(){
 
 
         supabase
-
         .from("videos")
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        ),
 
+
+
+
+        supabase
+        .from("community_signups")
         .select(
           "id",
           {
@@ -157,7 +164,11 @@ export default function Dashboard(){
 
 
         videos:
-        videos.count || 0
+        videos.count || 0,
+
+
+        community:
+        community.count || 0
 
 
       });
@@ -266,107 +277,61 @@ export default function Dashboard(){
       grid
       grid-cols-1
       md:grid-cols-2
-      lg:grid-cols-5
+      lg:grid-cols-6
       gap-6
       ">
 
 
         <DashboardStatCard
-
           title="News Articles"
-
-          value={
-            loading
-            ?
-            "..."
-            :
-            stats.news
-          }
-
+          value={loading ? "..." : stats.news}
           icon="📰"
-
           color="text-purple-400"
-
         />
 
 
 
         <DashboardStatCard
-
           title="AI Drafts"
-
-          value={
-            loading
-            ?
-            "..."
-            :
-            stats.ai
-          }
-
+          value={loading ? "..." : stats.ai}
           icon="🤖"
-
           color="text-cyan-400"
-
         />
 
 
 
         <DashboardStatCard
-
           title="Social Queue"
-
-          value={
-            loading
-            ?
-            "..."
-            :
-            stats.social
-          }
-
+          value={loading ? "..." : stats.social}
           icon="📡"
-
           color="text-green-400"
-
         />
 
 
 
         <DashboardStatCard
-
           title="Merchandise"
-
-          value={
-            loading
-            ?
-            "..."
-            :
-            stats.merchandise
-          }
-
+          value={loading ? "..." : stats.merchandise}
           icon="👕"
-
           color="text-pink-400"
-
         />
 
 
 
         <DashboardStatCard
-
           title="Videos"
-
-          value={
-            loading
-            ?
-            "..."
-            :
-            stats.videos
-          }
-
+          value={loading ? "..." : stats.videos}
           icon="🎥"
-
           color="text-yellow-400"
+        />
 
+
+
+        <DashboardStatCard
+          title="Community Members"
+          value={loading ? "..." : stats.community}
+          icon="🎮"
+          color="text-cyan-300"
         />
 
 
@@ -429,9 +394,7 @@ export default function Dashboard(){
 
 
           <a
-
             href="/admin/ai-content"
-
             className="
             rounded-xl
             bg-purple-500/20
@@ -440,7 +403,6 @@ export default function Dashboard(){
             font-bold
             hover:bg-purple-500/30
             "
-
           >
 
             🤖 AI Content Studio
@@ -452,9 +414,7 @@ export default function Dashboard(){
 
 
           <a
-
             href="/admin/news"
-
             className="
             rounded-xl
             bg-cyan-500/20
@@ -463,7 +423,6 @@ export default function Dashboard(){
             font-bold
             hover:bg-cyan-500/30
             "
-
           >
 
             📰 Manage News
@@ -475,9 +434,7 @@ export default function Dashboard(){
 
 
           <a
-
             href="/admin/merchandise"
-
             className="
             rounded-xl
             bg-pink-500/20
@@ -486,7 +443,6 @@ export default function Dashboard(){
             font-bold
             hover:bg-pink-500/30
             "
-
           >
 
             👕 Merchandise

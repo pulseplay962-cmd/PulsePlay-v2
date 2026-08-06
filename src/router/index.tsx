@@ -4,7 +4,14 @@ import MainLayout from "../layout/MainLayout";
 
 import AdminLayout from "../components/admin/AdminLayout";
 import ProtectedRoute from "../components/admin/ProtectedRoute";
+
+
+// =========================
+// Admin Components
+// =========================
+
 import SocialQueue from "../pages/admin/SocialQueue";
+import CommunitySignups from "../pages/admin/CommunitySignups";
 
 
 // =========================
@@ -48,7 +55,6 @@ import MerchandiseAdmin from "../pages/admin/Merchandise";
 import NewsAdmin from "../pages/admin/News";
 import Settings from "../pages/admin/Settings";
 import Login from "../pages/admin/Login";
-
 
 
 
@@ -279,6 +285,7 @@ const router = createBrowserRouter([
       },
 
 
+
       {
         path:"social-queue",
 
@@ -288,9 +295,19 @@ const router = createBrowserRouter([
 
 
 
+      {
+        path:"community-signups",
+
+        element:<CommunitySignups />
+
+      },
+
+
+
       // =========================
       // 🤖 AI CONTENT MANAGER
       // =========================
+
 
       {
         path:"ai-content",

@@ -9,7 +9,7 @@ export default function BrandButton({
   children,
   variant = "primary",
   className = "",
-  type = "button",
+  type = "submit",
   disabled = false,
   ...props
 }: BrandButtonProps) {

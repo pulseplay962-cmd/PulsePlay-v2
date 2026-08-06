@@ -20,6 +20,19 @@ if (!supabaseUrl || !supabaseKey) {
 
 
 
+console.log(
+  "SUPABASE URL:",
+  supabaseUrl
+);
+
+
+console.log(
+  "SUPABASE KEY START:",
+  supabaseKey.substring(0,30)
+);
+
+
+
 export const supabase = createClient(
   supabaseUrl,
   supabaseKey,
@@ -35,3 +48,9 @@ export const supabase = createClient(
     },
   }
 );
+
+
+// DEBUG ONLY
+if (typeof window !== "undefined") {
+  (window as any).supabase = supabase;
+}
