@@ -1,15 +1,16 @@
 import React from "react";
 
-type BrandButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "outline";
-};
+type BrandButtonProps =
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    children: React.ReactNode;
+    variant?: "primary" | "secondary" | "outline";
+  };
 
 export default function BrandButton({
   children,
   variant = "primary",
   className = "",
-  type = "submit",
+  type = "button",
   disabled = false,
   ...props
 }: BrandButtonProps) {
@@ -71,27 +72,15 @@ export default function BrandButton({
       className={`
         ${base}
         ${styles[variant]}
-        ${disabled ? "cursor-not-allowed opacity-40" : "active:scale-95"}
+        ${
+          disabled
+            ? "cursor-not-allowed opacity-40"
+            : "active:scale-95"
+        }
         ${className}
       `}
       {...props}
     >
-      {/* Shine Animation */}
-      <span
-        className="
-          absolute
-          inset-0
-          -translate-x-full
-          bg-gradient-to-r
-          from-transparent
-          via-white/20
-          to-transparent
-          transition-transform
-          duration-700
-          group-hover:translate-x-full
-        "
-      />
-
       <span className="relative z-10 flex items-center gap-2">
         {children}
       </span>

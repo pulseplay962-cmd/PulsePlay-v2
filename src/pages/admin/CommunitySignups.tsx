@@ -1,482 +1,131 @@
 import { useEffect, useState } from "react";
 
+import BrandCard from "../../components/ui/BrandCard";
+
 import { supabase } from "../../lib/supabase";
 
-
-
-type Signup = {
-
-  id:string;
-
-  name:string;
-
-  email:string;
-
-  discord:string | null;
-
-  created_at:string;
-
+type CommunitySignup = {
+  id: string;
+  name?: string;
+  email?: string;
+  created_at?: string;
 };
 
-
-
-
-
-export default function CommunitySignups(){
-
-
-
-const [signups,setSignups] =
-useState<Signup[]>([]);
-
-
-
-const [loading,setLoading] =
-useState(true);
-
-
-
-const [deleting,setDeleting] =
-useState("");
-
-
-
-
-
-
-
-async function loadSignups(){
-
-
-try{
-
-
-setLoading(true);
-
-
-
-const {
-
-data,
-
-error
-
-} = await supabase
-
-.from("community_signups")
-
-.select("*")
-
-.order(
-"created_at",
-{
-ascending:false
-}
-);
-
-
-
-
-
-if(error){
-
-throw error;
-
-}
-
-
-
-setSignups(
-data || []
-);
-
-
-
-}
-catch(error){
-
-console.error(
-"Failed loading signups:",
-error
-);
-
-
-}
-finally{
-
-
-setLoading(false);
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-async function deleteSignup(
-id:string
-){
-
-
-const confirmed =
-window.confirm(
-"Delete this community signup?"
-);
-
-
-
-if(!confirmed)
-return;
-
-
-
-try{
-
-
-setDeleting(id);
-
-
-
-const {
-
-error
-
-} = await supabase
-
-.from("community_signups")
-
-.delete()
-
-.eq(
-"id",
-id
-);
-
-
-
-
-if(error){
-
-throw error;
-
-}
-
-
-
-await loadSignups();
-
-
-
-}
-catch(error){
-
-console.error(
-"Delete signup failed:",
-error
-);
-
-
-}
-finally{
-
-
-setDeleting("");
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-useEffect(()=>{
-
-
-loadSignups();
-
-
-},[]);
-
-
-
-
-
-
-
-
-
-if(loading){
-
-return (
-
-<section className="p-8">
-
-<p className="text-cyan-300 font-bold">
-
-Loading community signups...
-
-</p>
-
-</section>
-
-);
-
-}
-
-
-
-
-
-
-
-
-
-return (
-
-<section className="p-8 space-y-8">
-
-
-
-
-
-<div>
-
-<h1
-className="
-text-5xl
-font-black
-pp-gradient-text
-"
->
-
-COMMUNITY SIGNUPS
-
-</h1>
-
-
-<p className="text-slate-400 mt-2">
-
-Manage PulsePlay player registrations.
-
-</p>
-
-
-</div>
-
-
-
-
-
-
-
-
-<div
-className="
-grid
-gap-5
-"
->
-
-
-
-
-
-{
-signups.map((signup)=>(
-
-
-<div
-
-key={signup.id}
-
-className="
-pp-card-surface
-rounded-2xl
-p-6
-flex
-justify-between
-items-center
-"
-
->
-
-
-
-
-
-<div>
-
-
-<h2
-className="
-text-2xl
-font-black
-"
->
-
-{signup.name}
-
-</h2>
-
-
-
-
-<p
-className="
-text-slate-300
-mt-2
-"
->
-
-{signup.email}
-
-</p>
-
-
-
-
-<p
-className="
-text-purple-400
-mt-1
-"
->
-
-🎮 Discord:
-{" "}
-
-{signup.discord || "No Discord"}
-
-</p>
-
-
-
-
-<p
-className="
-text-sm
-text-slate-500
-mt-3
-"
->
-
-Joined:
-
-{" "}
-
-{
-new Date(
-signup.created_at
-)
-.toLocaleDateString()
-}
-
-</p>
-
-
-
-</div>
-
-
-
-
-
-
-
-<button
-
-onClick={()=>
-deleteSignup(signup.id)
-}
-
-disabled={
-deleting === signup.id
-}
-
-className="
-rounded-xl
-bg-red-600
-px-5
-py-3
-font-black
-text-white
-disabled:opacity-50
-"
-
->
-
-{
-
-deleting === signup.id
-
-?
-
-"DELETING..."
-
-:
-
-"DELETE"
-
-}
-
-
-
-</button>
-
-
-
-
-
-</div>
-
-
-))
-
-}
-
-
-
-
-
-
-
-{
-signups.length === 0 &&
-
-<p className="text-slate-400">
-
-No community signups yet.
-
-</p>
-
-}
-
-
-
-
-
-</div>
-
-
-
-
-
-
-
-</section>
-
-);
-
-
+export default function CommunitySignups() {
+  const [signups, setSignups] = useState<CommunitySignup[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadSignups() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const { data, error } = await supabase
+          .from("community_signups")
+          .select("*")
+          .order("created_at", {
+            ascending: false,
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        setSignups(data || []);
+      } catch (err) {
+        console.error("Failed to load community signups:", err);
+
+        setError(
+          "Unable to load community signups right now."
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadSignups();
+  }, []);
+
+  return (
+    <main>
+      <section className="mb-10">
+        <h1 className="text-4xl font-black pp-gradient-text">
+          Community Signups
+        </h1>
+
+        <p className="mt-3 max-w-3xl text-slate-400">
+          View people who have signed up to join the PulsePlay
+          community.
+        </p>
+      </section>
+
+      {loading && (
+        <BrandCard>
+          <div className="flex items-center gap-3">
+            <span className="pp-live-dot" />
+
+            <p className="text-slate-400">
+              Loading community signups...
+            </p>
+          </div>
+        </BrandCard>
+      )}
+
+      {!loading && error && (
+        <BrandCard>
+          <h2 className="text-xl font-bold text-red-400">
+            Unable to Load Signups
+          </h2>
+
+          <p className="mt-3 text-slate-400">
+            {error}
+          </p>
+        </BrandCard>
+      )}
+
+      {!loading && !error && signups.length === 0 && (
+        <BrandCard>
+          <h2 className="text-2xl font-bold text-white">
+            No Community Signups
+          </h2>
+
+          <p className="mt-3 text-slate-400">
+            No community signups have been submitted yet.
+          </p>
+        </BrandCard>
+      )}
+
+      {!loading && !error && signups.length > 0 && (
+        <div className="space-y-4">
+          {signups.map((signup) => (
+            <BrandCard key={signup.id}>
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-xl font-black text-white">
+                    {signup.name || "Unnamed"}
+                  </h2>
+
+                  {signup.email && (
+                    <p className="mt-1 text-cyan-300">
+                      {signup.email}
+                    </p>
+                  )}
+                </div>
+
+                {signup.created_at && (
+                  <p className="text-sm text-slate-500">
+                    {new Date(
+                      signup.created_at
+                    ).toLocaleString()}
+                  </p>
+                )}
+              </div>
+            </BrandCard>
+          ))}
+        </div>
+      )}
+    </main>
+  );
 }

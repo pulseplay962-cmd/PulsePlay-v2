@@ -1,6 +1,5 @@
 import { supabase } from "../lib/supabase";
 
-
 export async function getGames() {
   const { data, error } = await supabase
     .from("games")
@@ -15,8 +14,6 @@ export async function getGames() {
 
   return data;
 }
-
-
 
 export async function addGame(game: {
   title: string;
@@ -37,8 +34,6 @@ export async function addGame(game: {
 
   return data;
 }
-
-
 
 export async function updateGame(
   id: string,
@@ -64,8 +59,6 @@ export async function updateGame(
   return data;
 }
 
-
-
 export async function deleteGame(id: string) {
   const { error } = await supabase
     .from("games")
@@ -77,9 +70,19 @@ export async function deleteGame(id: string) {
   }
 }
 
+/*
+ * Get one game by its database ID.
+ *
+ * The route currently uses:
+ *
+ * /games/:id
+ *
+ * so this function intentionally searches
+ * the games table by id.
+ */
 
-
-export async function getGameBySlug(id: string) {
+export async function getGameById(id: string) {
+  console.log("getGameById() called with:", id);
 
   const { data, error } = await supabase
     .from("games")
@@ -87,12 +90,12 @@ export async function getGameBySlug(id: string) {
     .eq("id", id)
     .maybeSingle();
 
+  console.log("getGameById() data:", data);
+  console.log("getGameById() error:", error);
 
   if (error) {
     throw error;
   }
 
-
   return data;
-
 }

@@ -5,7 +5,6 @@ import MainLayout from "../layout/MainLayout";
 import AdminLayout from "../components/admin/AdminLayout";
 import ProtectedRoute from "../components/admin/ProtectedRoute";
 
-
 // =========================
 // Admin Components
 // =========================
@@ -13,14 +12,11 @@ import ProtectedRoute from "../components/admin/ProtectedRoute";
 import SocialQueue from "../pages/admin/SocialQueue";
 import CommunitySignups from "../pages/admin/CommunitySignups";
 
-
 // =========================
 // AI Admin Page
 // =========================
 
 import AIContentStudio from "../pages/admin/AIContentStudio";
-
-
 
 // =========================
 // Public Pages
@@ -41,8 +37,6 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 
-
-
 // =========================
 // Admin Pages
 // =========================
@@ -56,301 +50,198 @@ import NewsAdmin from "../pages/admin/News";
 import Settings from "../pages/admin/Settings";
 import Login from "../pages/admin/Login";
 
-
-
-
-
 const router = createBrowserRouter([
-
-
-
   // =========================
   // PUBLIC WEBSITE
   // =========================
 
   {
-    path:"/",
+    path: "/",
 
-    element:<MainLayout />,
+    element: <MainLayout />,
 
-
-    children:[
-
-
+    children: [
       {
-        index:true,
+        index: true,
 
-        element:<Home />
-
+        element: <Home />,
       },
 
-
       {
-        path:"games",
+        path: "games",
 
-        element:<GamesPage />
-
+        element: <GamesPage />,
       },
 
-
+      // Game Details
+      // Uses the database game ID.
       {
-        path:"games/:slug",
+        path: "games/:id",
 
-        element:<GameDetails />
-
+        element: <GameDetails />,
       },
 
-
       {
-        path:"streams",
+        path: "streams",
 
-        element:<Streams />
-
+        element: <Streams />,
       },
 
-
       {
-        path:"store",
+        path: "store",
 
-        element:<Store />
-
+        element: <Store />,
       },
 
-
       {
-        path:"merchandise",
+        path: "merchandise",
 
-        element:<Merchandise />
-
+        element: <Merchandise />,
       },
 
-
       {
-        path:"merchandise/:id",
+        path: "merchandise/:id",
 
-        element:<MerchandiseDetail />
-
+        element: <MerchandiseDetail />,
       },
 
-
       {
-        path:"community",
+        path: "community",
 
-        element:<Community />
-
+        element: <Community />,
       },
 
-
       {
-        path:"news",
+        path: "news",
 
-        element:<News />
-
+        element: <News />,
       },
 
-
       {
-        path:"news/:slug",
+        path: "news/:slug",
 
-        element:<NewsArticle />
-
+        element: <NewsArticle />,
       },
 
-
       {
-        path:"feedback",
+        path: "feedback",
 
-        element:<Feedback />
-
+        element: <Feedback />,
       },
 
-
       {
-        path:"about",
+        path: "about",
 
-        element:<About />
-
+        element: <About />,
       },
 
-
       {
-        path:"contact",
+        path: "contact",
 
-        element:<Contact />
-
+        element: <Contact />,
       },
-
-
     ],
-
   },
-
-
-
-
-
-
-
 
   // =========================
   // ADMIN LOGIN
   // =========================
 
   {
-    path:"/admin/login",
+    path: "/admin/login",
 
-    element:<Login />
-
+    element: <Login />,
   },
-
-
-
-
-
-
-
 
   // =========================
   // ADMIN PANEL
   // =========================
 
   {
-    path:"/admin",
+    path: "/admin",
 
-    element:(
-
+    element: (
       <ProtectedRoute>
-
         <AdminLayout />
-
       </ProtectedRoute>
-
     ),
 
-
-    children:[
-
-
-
+    children: [
       {
-        index:true,
+        index: true,
 
-        element:<Dashboard />
-
+        element: <Dashboard />,
       },
 
-
-
       {
-        path:"games",
+        path: "games",
 
-        element:<AdminGames />
-
+        element: <AdminGames />,
       },
 
-
-
       {
-        path:"videos",
+        path: "videos",
 
-        element:<Videos />
-
+        element: <Videos />,
       },
 
-
-
       {
-        path:"products",
+        path: "products",
 
-        element:<Products />
-
+        element: <Products />,
       },
 
-
-
       {
-        path:"merchandise",
+        path: "merchandise",
 
-        element:<MerchandiseAdmin />
-
+        element: <MerchandiseAdmin />,
       },
 
-
-
       {
-        path:"news",
+        path: "news",
 
-        element:<NewsAdmin />
-
+        element: <NewsAdmin />,
       },
 
-
-
       {
-        path:"social-queue",
+        path: "social-queue",
 
-        element:<SocialQueue />
-
+        element: <SocialQueue />,
       },
 
-
-
       {
-        path:"community-signups",
+        path: "community-signups",
 
-        element:<CommunitySignups />
-
+        element: <CommunitySignups />,
       },
-
-
 
       // =========================
       // 🤖 AI CONTENT MANAGER
       // =========================
 
-
       {
-        path:"ai-content",
+        path: "ai-content",
 
-        element:<AIContentStudio />
-
+        element: <AIContentStudio />,
       },
 
-
-
       {
-        path:"settings",
+        path: "settings",
 
-        element:<Settings />
-
+        element: <Settings />,
       },
-
-
     ],
-
   },
-
-
-
-
-
-
-
 
   // =========================
   // 404
   // =========================
 
   {
-    path:"*",
+    path: "*",
 
-    element:<NotFound />
-
-  }
-
-
+    element: <NotFound />,
+  },
 ]);
-
-
 
 export default router;

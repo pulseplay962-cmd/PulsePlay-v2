@@ -5,15 +5,7 @@ import Footer from "../components/layout/Footer";
 
 export default function MainLayout() {
   return (
-    <div
-      className="
-        relative
-        min-h-screen
-        overflow-hidden
-        bg-[#050510]
-        text-white
-      "
-    >
+    <div className="relative min-h-screen overflow-x-hidden">
       {/* ======================================
           Animated Background
       ======================================= */}
@@ -21,6 +13,7 @@ export default function MainLayout() {
       {/* Main Gradient */}
       <div
         className="
+          pointer-events-none
           fixed
           inset-0
           -z-30
@@ -34,6 +27,7 @@ export default function MainLayout() {
       {/* Grid Overlay */}
       <div
         className="
+          pointer-events-none
           fixed
           inset-0
           -z-20
@@ -46,6 +40,7 @@ export default function MainLayout() {
       {/* Purple Orb */}
       <div
         className="
+          pointer-events-none
           fixed
           top-[-250px]
           left-[-150px]
@@ -62,6 +57,7 @@ export default function MainLayout() {
       {/* Cyan Orb */}
       <div
         className="
+          pointer-events-none
           fixed
           bottom-[-250px]
           right-[-150px]
@@ -78,11 +74,11 @@ export default function MainLayout() {
       {/* Scan Overlay */}
       <div
         className="
+          pointer-events-none
           fixed
           inset-0
           -z-10
           pp-scan
-          pointer-events-none
         "
       />
 
@@ -99,6 +95,8 @@ export default function MainLayout() {
       <main className="relative z-10 flex-1 py-8">
         <div
           className="
+            relative
+            z-10
             mx-auto
             max-w-[1600px]
             px-4
@@ -109,6 +107,7 @@ export default function MainLayout() {
             className="
               pp-hud
               relative
+              z-10
               overflow-hidden
               rounded-[28px]
               border
@@ -120,12 +119,13 @@ export default function MainLayout() {
             {/* Inner Border Glow */}
             <div
               className="
+                pointer-events-none
                 absolute
                 inset-0
+                z-0
                 rounded-[28px]
                 border
                 border-white/5
-                pointer-events-none
               "
             />
 
@@ -133,6 +133,7 @@ export default function MainLayout() {
             <div
               className="
                 relative
+                z-10
                 overflow-hidden
                 rounded-3xl
                 border
@@ -154,6 +155,8 @@ export default function MainLayout() {
 
       <div
         className="
+          relative
+          z-10
           mx-auto
           flex
           max-w-[1600px]
@@ -168,7 +171,7 @@ export default function MainLayout() {
         "
       >
         <div className="flex items-center gap-3">
-          <span className="text-cyan-400 font-bold">
+          <span className="font-bold text-cyan-400">
             PulsePlay Network
           </span>
 
@@ -190,7 +193,9 @@ export default function MainLayout() {
           Footer
       ======================================= */}
 
-      <Footer />
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </div>
   );
 }
