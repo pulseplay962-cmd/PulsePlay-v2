@@ -1,47 +1,39 @@
 import { supabase } from "../lib/supabase";
 
 
-
 const API_URL =
   import.meta.env.VITE_API_URL ||
   "http://localhost:5000";
 
 
 
-
-
 export type AIContentItem = {
 
-  id: string;
+  id:string;
 
-  title: string;
+  title:string;
 
-  content_type: string;
+  content_type:string;
 
-  category: string;
+  category:string;
 
-  body: string;
+  body:string;
 
-  social_caption?: string;
+  social_caption?:string;
 
-  image_prompt?: string;
+  image_prompt?:string;
 
-  image_url?: string;
+  image_url?:string;
 
-  status: string;
+  status:string;
 
-  scheduled_date?: string;
+  scheduled_date?:string;
 
-  created_at?: string;
+  created_at?:string;
 
-  updated_at?: string;
+  updated_at?:string;
 
 };
-
-
-
-
-
 
 
 
@@ -49,13 +41,13 @@ export type AIContentItem = {
 // Get AI Queue
 // =====================================
 
-export async function getAIContent(){
+export async function getAIContent():Promise<AIContentItem[]> {
+
 
   const response =
     await fetch(
       `${API_URL}/api/ai/queue`
     );
-
 
 
   const data =
@@ -81,15 +73,12 @@ export async function getAIContent(){
 
 
 
-
-
-
-
 // =====================================
 // Generate Weekly Content
 // =====================================
 
 export async function generateWeeklyContent(){
+
 
   const response =
     await fetch(
@@ -102,7 +91,6 @@ export async function generateWeeklyContent(){
         headers:{
           "Content-Type":"application/json",
         },
-
       }
 
     );
@@ -132,19 +120,20 @@ export async function generateWeeklyContent(){
 
 
 
-
-
-
-
 // =====================================
 // Generate AI Image
 // =====================================
 
 export async function generateAIImage(
-
   id:string
-
 ){
+
+
+  console.log(
+    "GENERATING IMAGE FOR:",
+    id
+  );
+
 
   const response =
     await fetch(
@@ -152,20 +141,14 @@ export async function generateAIImage(
       `${API_URL}/api/ai/image/${id}`,
 
       {
-
         method:"POST",
 
         headers:{
-
           "Content-Type":"application/json",
-
         },
-
       }
 
     );
-
-
 
 
 
@@ -174,21 +157,21 @@ export async function generateAIImage(
 
 
 
+  console.log(
+    "IMAGE RESPONSE:",
+    data
+  );
+
 
 
   if(!response.ok){
 
     throw new Error(
-
       data.error ||
-
       "Failed generating AI image"
-
     );
 
   }
-
-
 
 
 
@@ -199,20 +182,13 @@ export async function generateAIImage(
 
 
 
-
-
-
-
 // =====================================
 // Update AI Content
 // =====================================
 
 export async function updateAIContent(
-
   id:string,
-
   updates:Partial<AIContentItem>
-
 ){
 
 
@@ -246,18 +222,12 @@ export async function updateAIContent(
 
 
 
-
-
-
-
 // =====================================
 // Delete AI Content
 // =====================================
 
 export async function deleteAIContent(
-
   id:string
-
 ){
 
 
@@ -291,18 +261,12 @@ export async function deleteAIContent(
 
 
 
-
-
-
-
 // =====================================
 // Publish AI Content
 // =====================================
 
 export async function publishAIContent(
-
   id:string
-
 ){
 
 
@@ -312,20 +276,14 @@ export async function publishAIContent(
       `${API_URL}/api/ai/publish/${id}`,
 
       {
-
         method:"POST",
 
         headers:{
-
           "Content-Type":"application/json",
-
         },
-
       }
 
     );
-
-
 
 
 
@@ -334,21 +292,14 @@ export async function publishAIContent(
 
 
 
-
-
   if(!response.ok){
 
     throw new Error(
-
       data.error ||
-
       "Failed publishing AI content"
-
     );
 
   }
-
-
 
 
 
