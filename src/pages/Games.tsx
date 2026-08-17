@@ -4,18 +4,10 @@ import { Link } from "react-router-dom";
 import BrandCard from "../components/ui/BrandCard";
 import BrandButton from "../components/ui/BrandButton";
 
-import { getGames } from "../services/games";
-
-type Game = {
-  id: string;
-  title: string;
-  description?: string;
-  image?: string;
-  genre?: string;
-  platform?: string;
-  release_date?: string;
-  featured?: boolean;
-};
+import {
+  getGames,
+  type Game,
+} from "../services/games";
 
 export default function Games() {
   const [games, setGames] = useState<Game[]>([]);

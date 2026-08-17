@@ -2,20 +2,16 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import BrandCard from "../components/ui/BrandCard";
-import { getGameById } from "../services/games";
 
-type Game = {
-  id: string;
-  title: string;
-  slug?: string;
-  description?: string;
-  image?: string;
-  genre?: string;
-  platform?: string;
-  release_date?: string;
-  feature?: boolean;
-  featured?: boolean;
-};
+import {
+  getGameById,
+  type Game,
+} from "../services/games";
+
+import {
+  getPublishedNews,
+  type NewsArticle,
+} from "../services/news";
 
 export default function GameDetails() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +19,9 @@ export default function GameDetails() {
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [relatedNews, setRelatedNews] =
+    useState<NewsArticle[]>([]);
 
   useEffect(() => {
     async function loadGame() {
@@ -34,16 +33,27 @@ export default function GameDetails() {
       try {
         if (!id) {
           console.error("No game ID found in URL.");
-          setErrorMessage("No game ID was provided.");
+
+          setErrorMessage(
+            "No game ID was provided."
+          );
+
           setGame(null);
+
           return;
         }
 
-        console.log("Calling getGameById with:", id);
+        console.log(
+          "Calling getGameById with:",
+          id
+        );
 
         const data = await getGameById(id);
 
-        console.log("SUPABASE GAME RESULT:", data);
+        console.log(
+          "SUPABASE GAME RESULT:",
+          data
+        );
 
         if (!data) {
           console.warn("No game found.");
@@ -80,6 +90,65 @@ export default function GameDetails() {
 
     loadGame();
   }, [id]);
+
+
+  useEffect(() => {
+
+    async function loadRelatedNews() {
+
+      if (!game?.title) {
+        return;
+      }
+
+      try {
+
+        const articles =
+          await getPublishedNews();
+
+        const gameTitle =
+          game.title.toLowerCase();
+
+        const matches =
+          articles
+            .filter((article) => {
+
+              const title =
+                article.title?.toLowerCase() || "";
+
+              const content =
+                article.content?.toLowerCase() || "";
+
+              const excerpt =
+                article.excerpt?.toLowerCase() || "";
+
+              return (
+                title.includes(gameTitle) ||
+                content.includes(gameTitle) ||
+                excerpt.includes(gameTitle)
+              );
+
+            })
+            .slice(0, 3);
+
+        setRelatedNews(matches);
+
+      } catch (error) {
+
+        console.error(
+          "RELATED NEWS ERROR:",
+          error
+        );
+
+        setRelatedNews([]);
+
+      }
+
+    }
+
+    loadRelatedNews();
+
+  }, [game]);
+
 
   /*
    * =========================
@@ -173,9 +242,8 @@ export default function GameDetails() {
    * CLEAN IMAGE URL
    * =========================
    *
-   * Some existing records appear to contain
-   * Markdown-style image links instead of
-   * a plain URL.
+   * Supports both normal image URLs
+   * and existing Markdown-style URLs.
    */
 
   let imageUrl = game.image || "";
@@ -196,9 +264,20 @@ export default function GameDetails() {
    * =========================
    */
 
-  const isFeatured =
-    game.featured === true ||
-    game.feature === true;
+  const isFeatured = game.featured === true;
+
+  /*
+   * =========================
+   * STATUS
+   * =========================
+   */
+
+  const gameStatus =
+    game.status ||
+    (game.release_date &&
+    new Date(game.release_date) <= new Date()
+      ? "released"
+      : "upcoming");
 
   /*
    * =========================
@@ -209,7 +288,9 @@ export default function GameDetails() {
   return (
     <main className="min-h-[72vh] px-6 py-12">
 
-      {/* BACK BUTTON */}
+      {/* =========================
+          BACK BUTTON
+      ========================= */}
 
       <div className="mb-8">
         <Link
@@ -235,7 +316,9 @@ export default function GameDetails() {
         </Link>
       </div>
 
-      {/* GAME CARD */}
+      {/* =========================
+          GAME CARD
+      ========================= */}
 
       <BrandCard className="p-8">
 
@@ -246,7 +329,6 @@ export default function GameDetails() {
           ========================= */}
 
           <div>
-
             {imageUrl ? (
               <img
                 src={imageUrl}
@@ -286,7 +368,6 @@ export default function GameDetails() {
                 No Cover Image
               </div>
             )}
-
           </div>
 
           {/* =========================
@@ -316,6 +397,25 @@ export default function GameDetails() {
                 </span>
               )}
 
+              {game.category && (
+                <span
+                  className="
+                    inline-flex
+                    rounded-full
+                    border
+                    border-cyan-500/30
+                    bg-cyan-500/10
+                    px-4
+                    py-2
+                    text-sm
+                    font-bold
+                    text-cyan-300
+                  "
+                >
+                  {game.category}
+                </span>
+              )}
+
               {game.genre && (
                 <span
                   className="
@@ -335,6 +435,28 @@ export default function GameDetails() {
                 </span>
               )}
 
+              {gameStatus && (
+                <span
+                  className={`
+                    inline-flex
+                    rounded-full
+                    px-4
+                    py-2
+                    text-sm
+                    font-black
+                    uppercase
+                    ${
+                      gameStatus === "upcoming"
+                        ? "bg-blue-500/20 text-blue-300"
+                        : gameStatus === "released"
+                          ? "bg-green-500/20 text-green-300"
+                          : "bg-white/10 text-slate-300"
+                    }
+                  `}
+                >
+                  {gameStatus}
+                </span>
+              )}
             </div>
 
             {/* TITLE */}
@@ -366,7 +488,9 @@ export default function GameDetails() {
               </p>
             )}
 
-            {/* GAME INFORMATION */}
+            {/* =========================
+                GAME INFORMATION
+            ========================= */}
 
             <div
               className="
@@ -379,6 +503,18 @@ export default function GameDetails() {
                 p-6
               "
             >
+
+              {game.category && (
+                <div className="flex flex-col gap-1 sm:flex-row sm:gap-3">
+                  <span className="font-bold text-slate-500">
+                    Category:
+                  </span>
+
+                  <span className="text-white">
+                    {game.category}
+                  </span>
+                </div>
+              )}
 
               {game.genre && (
                 <div className="flex flex-col gap-1 sm:flex-row sm:gap-3">
@@ -411,18 +547,203 @@ export default function GameDetails() {
                   </span>
 
                   <span className="text-cyan-400">
-                    {game.release_date}
+                    {new Date(
+                      game.release_date
+                    ).toLocaleDateString()}
                   </span>
                 </div>
               )}
 
             </div>
 
+            {/* =========================
+                ARTICLE CONTENT
+            ========================= */}
+
+            {game.article_content && (
+              <section className="mt-10">
+                <h2
+                  className="
+                    text-2xl
+                    font-black
+                    text-white
+                  "
+                >
+                  About {game.title}
+                </h2>
+
+                <div
+                  className="
+                    mt-4
+                    whitespace-pre-line
+                    text-slate-300
+                    leading-8
+                  "
+                >
+                  {game.article_content}
+                </div>
+              </section>
+            )}
+
           </div>
 
         </div>
 
       </BrandCard>
+
+
+      {
+        relatedNews.length > 0 &&
+
+        (
+
+          <section className="mt-10">
+
+            <div className="mb-6">
+
+              <h2 className="
+                text-3xl
+                font-black
+                pp-gradient-text
+              ">
+
+                📰 LATEST PULSEPLAY NEWS
+
+              </h2>
+
+              <p className="
+                mt-2
+                text-slate-400
+              ">
+
+                Stay up to date with the latest news about {game.title}.
+
+              </p>
+
+            </div>
+
+
+            <div className="
+              grid
+              gap-6
+              md:grid-cols-3
+            ">
+
+              {
+                relatedNews.map(article => (
+
+                  <Link
+                    key={article.id}
+                    to={`/news/${article.slug}`}
+                    className="
+                      group
+                      overflow-hidden
+                      rounded-2xl
+                      border
+                      border-white/10
+                      bg-black/30
+                      transition-all
+                      hover:-translate-y-1
+                      hover:border-purple-400/40
+                      hover:bg-purple-400/5
+                    "
+                  >
+
+                    {
+                      article.image && (
+
+                        <img
+                          src={article.image}
+                          alt={article.title}
+                          className="
+                            h-44
+                            w-full
+                            object-cover
+                            transition
+                            duration-500
+                            group-hover:scale-105
+                          "
+                        />
+
+                      )
+                    }
+
+
+                    <div className="p-5">
+
+                      {
+                        article.category && (
+
+                          <div className="
+                            text-xs
+                            font-black
+                            uppercase
+                            tracking-widest
+                            text-purple-300
+                          ">
+
+                            {article.category}
+
+                          </div>
+
+                        )
+                      }
+
+
+                      <h3 className="
+                        mt-2
+                        text-xl
+                        font-black
+                        text-white
+                        group-hover:text-cyan-300
+                      ">
+
+                        {article.title}
+
+                      </h3>
+
+
+                      <p className="
+                        mt-3
+                        text-sm
+                        leading-relaxed
+                        text-slate-400
+                      ">
+
+                        {article.excerpt}
+
+                      </p>
+
+
+                      <p className="
+                        mt-5
+                        text-sm
+                        font-black
+                        uppercase
+                        tracking-wider
+                        text-cyan-400
+                      ">
+
+                        Read Article →
+
+                      </p>
+
+                    </div>
+
+                  </Link>
+
+                ))
+              }
+
+            </div>
+
+          </section>
+
+        )
+
+      }
+
+
 
     </main>
   );

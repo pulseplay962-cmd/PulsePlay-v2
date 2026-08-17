@@ -1,6 +1,52 @@
 import { supabase } from "../lib/supabase";
 
-export async function getGames() {
+/*
+ * =========================
+ * GAME TYPE
+ * =========================
+ *
+ * This represents the complete
+ * PulsePlay game record.
+ */
+
+export type Game = {
+  id: string;
+
+  // Game Library
+  title: string;
+  description: string;
+  image: string;
+  release_date?: string | null;
+  genre?: string | null;
+  platform?: string | null;
+  featured?: boolean;
+
+  // Organization
+  category?: string | null;
+  status?: "upcoming" | "released" | "archived" | null;
+
+  // Article / SEO
+  article_title?: string | null;
+  meta_description?: string | null;
+  article_content?: string | null;
+
+  // Social / AI Content
+  facebook_post?: string | null;
+  image_prompt?: string | null;
+  hashtags?: string | null;
+
+  // Timestamps
+  created_at?: string;
+  updated_at?: string;
+};
+
+/*
+ * =========================
+ * GET ALL GAMES
+ * =========================
+ */
+
+export async function getGames(): Promise<Game[]> {
   const { data, error } = await supabase
     .from("games")
     .select("*")
@@ -12,19 +58,71 @@ export async function getGames() {
     throw error;
   }
 
-  return data;
+  return data || [];
 }
 
-export async function addGame(game: {
+/*
+ * =========================
+ * GAME INPUT
+ * =========================
+ */
+
+export type GameInput = {
   title: string;
   description: string;
   image: string;
-  featured: boolean;
+
   release_date?: string | null;
-}) {
+
+  genre?: string | null;
+  platform?: string | null;
+
+  featured?: boolean;
+
+  category?: string | null;
+  status?: "upcoming" | "released" | "archived" | null;
+
+  article_title?: string | null;
+  meta_description?: string | null;
+  article_content?: string | null;
+
+  facebook_post?: string | null;
+  image_prompt?: string | null;
+  hashtags?: string | null;
+};
+
+/*
+ * =========================
+ * ADD GAME
+ * =========================
+ */
+
+export async function addGame(game: GameInput) {
   const { data, error } = await supabase
     .from("games")
-    .insert(game)
+    .insert({
+      title: game.title,
+      description: game.description,
+      image: game.image,
+
+      release_date: game.release_date ?? null,
+
+      genre: game.genre ?? null,
+      platform: game.platform ?? null,
+
+      featured: game.featured ?? false,
+
+      category: game.category ?? null,
+      status: game.status ?? "upcoming",
+
+      article_title: game.article_title ?? null,
+      meta_description: game.meta_description ?? null,
+      article_content: game.article_content ?? null,
+
+      facebook_post: game.facebook_post ?? null,
+      image_prompt: game.image_prompt ?? null,
+      hashtags: game.hashtags ?? null,
+    })
     .select()
     .single();
 
@@ -35,19 +133,41 @@ export async function addGame(game: {
   return data;
 }
 
+/*
+ * =========================
+ * UPDATE GAME
+ * =========================
+ */
+
 export async function updateGame(
   id: string,
-  game: {
-    title: string;
-    description: string;
-    image: string;
-    featured: boolean;
-    release_date?: string | null;
-  }
+  game: GameInput
 ) {
   const { data, error } = await supabase
     .from("games")
-    .update(game)
+    .update({
+      title: game.title,
+      description: game.description,
+      image: game.image,
+
+      release_date: game.release_date ?? null,
+
+      genre: game.genre ?? null,
+      platform: game.platform ?? null,
+
+      featured: game.featured ?? false,
+
+      category: game.category ?? null,
+      status: game.status ?? "upcoming",
+
+      article_title: game.article_title ?? null,
+      meta_description: game.meta_description ?? null,
+      article_content: game.article_content ?? null,
+
+      facebook_post: game.facebook_post ?? null,
+      image_prompt: game.image_prompt ?? null,
+      hashtags: game.hashtags ?? null,
+    })
     .eq("id", id)
     .select()
     .single();
@@ -58,6 +178,12 @@ export async function updateGame(
 
   return data;
 }
+
+/*
+ * =========================
+ * DELETE GAME
+ * =========================
+ */
 
 export async function deleteGame(id: string) {
   const { error } = await supabase
@@ -71,18 +197,22 @@ export async function deleteGame(id: string) {
 }
 
 /*
- * Get one game by its database ID.
+ * =========================
+ * GET ONE GAME
+ * =========================
  *
- * The route currently uses:
+ * Used by:
  *
  * /games/:id
- *
- * so this function intentionally searches
- * the games table by id.
  */
 
-export async function getGameById(id: string) {
-  console.log("getGameById() called with:", id);
+export async function getGameById(
+  id: string
+): Promise<Game | null> {
+  console.log(
+    "getGameById() called with:",
+    id
+  );
 
   const { data, error } = await supabase
     .from("games")
@@ -90,8 +220,15 @@ export async function getGameById(id: string) {
     .eq("id", id)
     .maybeSingle();
 
-  console.log("getGameById() data:", data);
-  console.log("getGameById() error:", error);
+  console.log(
+    "getGameById() data:",
+    data
+  );
+
+  console.log(
+    "getGameById() error:",
+    error
+  );
 
   if (error) {
     throw error;
