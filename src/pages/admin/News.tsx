@@ -1560,7 +1560,7 @@ export default function News() {
                       </button>
 
                       <a
-                        href={`/news/${article.id}`}
+                        href={`/news/${article.slug}`}
                         target="_blank"
                         rel="noreferrer"
                         className="
