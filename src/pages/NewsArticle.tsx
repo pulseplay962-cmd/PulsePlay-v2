@@ -5,6 +5,13 @@ import {
   getNewsBySlug,
 } from "../services/news";
 
+import {
+  getGames,
+  type Game,
+} from "../services/games";
+
+import { Link } from "react-router-dom";
+
 import type {
   NewsArticle as Article,
 } from "../services/news";
@@ -33,6 +40,9 @@ export default function NewsArticle(){
 
   const [error,setError] =
     useState("");
+
+  const [featuredGames,setFeaturedGames] =
+    useState<Game[]>([]);
 
 
 
@@ -139,6 +149,38 @@ export default function NewsArticle(){
 
 
   },[slug]);
+
+
+  useEffect(()=>{
+
+    async function loadFeaturedGames(){
+
+      try{
+
+        const games =
+          await getGames();
+
+        const featured =
+          games
+            .filter(game => game.featured === true)
+            .slice(0,3);
+
+        setFeaturedGames(featured);
+
+      }catch(error){
+
+        console.error(
+          "FEATURED GAMES ERROR:",
+          error
+        );
+
+      }
+
+    }
+
+    loadFeaturedGames();
+
+  },[]);
 
 
 
@@ -522,6 +564,148 @@ export default function NewsArticle(){
 
 
       </article>
+
+
+      {
+        featuredGames.length > 0 &&
+
+        (
+
+          <section className="
+          mt-10
+          ">
+
+            <div className="
+            mb-6
+            ">
+
+              <h2 className="
+              text-3xl
+              font-black
+              pp-gradient-text
+              ">
+
+                🔥 KEEP EXPLORING PULSEPLAY
+
+              </h2>
+
+              <p className="
+              mt-2
+              text-slate-400
+              ">
+
+                Discover more games featured in the PulsePlay gaming network.
+
+              </p>
+
+            </div>
+
+
+            <div className="
+            grid
+            gap-6
+            md:grid-cols-3
+            ">
+
+              {
+                featuredGames.map(game => (
+
+                  <Link
+                    key={game.id}
+                    to={`/games/${game.id}`}
+                    className="
+                    group
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    border-white/10
+                    bg-black/30
+                    transition-all
+                    hover:-translate-y-1
+                    hover:border-cyan-400/40
+                    hover:bg-cyan-400/5
+                    "
+                  >
+
+                    {
+                      game.image &&
+
+                      (
+
+                        <img
+                          src={game.image}
+                          alt={game.title}
+                          className="
+                          h-44
+                          w-full
+                          object-cover
+                          transition
+                          duration-500
+                          group-hover:scale-105
+                          "
+                        />
+
+                      )
+                    }
+
+
+                    <div className="p-5">
+
+                      <div className="
+                      text-xs
+                      font-black
+                      uppercase
+                      tracking-widest
+                      text-cyan-400
+                      ">
+
+                        {game.status === "released"
+                          ? "Released"
+                          : "Upcoming"}
+
+                      </div>
+
+
+                      <h3 className="
+                      mt-2
+                      text-xl
+                      font-black
+                      text-white
+                      group-hover:text-cyan-300
+                      ">
+
+                        {game.title}
+
+                      </h3>
+
+
+                      <p className="
+                      mt-4
+                      text-sm
+                      font-bold
+                      uppercase
+                      tracking-wider
+                      text-purple-300
+                      ">
+
+                        View Game →
+
+                      </p>
+
+                    </div>
+
+                  </Link>
+
+                ))
+              }
+
+            </div>
+
+          </section>
+
+        )
+
+      }
 
 
 
