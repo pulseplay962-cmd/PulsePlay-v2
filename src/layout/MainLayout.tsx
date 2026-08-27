@@ -1,16 +1,53 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  Outlet,
+  useLocation,
+} from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
+import { trackPageView } from "../services/analytics";
+
+
 export default function MainLayout() {
+
+
+  const location = useLocation();
+
+
+  /*
+   * ======================================
+   * Analytics
+   * ======================================
+   *
+   * Track every public page navigation.
+   *
+   * Because MainLayout wraps the public
+   * website, we only need this tracking
+   * code in one place.
+   */
+
+  useEffect(() => {
+
+    trackPageView(
+      location.pathname
+    );
+
+  }, [location.pathname]);
+
+
   return (
+
     <div className="relative min-h-screen overflow-x-hidden">
+
+
       {/* ======================================
           Animated Background
       ======================================= */}
 
       {/* Main Gradient */}
+
       <div
         className="
           pointer-events-none
@@ -24,7 +61,9 @@ export default function MainLayout() {
         "
       />
 
+
       {/* Grid Overlay */}
+
       <div
         className="
           pointer-events-none
@@ -37,7 +76,9 @@ export default function MainLayout() {
         "
       />
 
+
       {/* Purple Orb */}
+
       <div
         className="
           pointer-events-none
@@ -54,7 +95,9 @@ export default function MainLayout() {
         "
       />
 
+
       {/* Cyan Orb */}
+
       <div
         className="
           pointer-events-none
@@ -71,7 +114,9 @@ export default function MainLayout() {
         "
       />
 
+
       {/* Scan Overlay */}
+
       <div
         className="
           pointer-events-none
@@ -82,17 +127,20 @@ export default function MainLayout() {
         "
       />
 
+
       {/* ======================================
           Navigation
       ======================================= */}
 
       <Navbar />
 
+
       {/* ======================================
           Main Content
       ======================================= */}
 
       <main className="relative z-10 flex-1 py-8">
+
         <div
           className="
             relative
@@ -103,6 +151,7 @@ export default function MainLayout() {
             lg:px-8
           "
         >
+
           <div
             className="
               pp-hud
@@ -116,7 +165,9 @@ export default function MainLayout() {
               shadow-[0_0_40px_rgba(139,92,246,.15)]
             "
           >
+
             {/* Inner Border Glow */}
+
             <div
               className="
                 pointer-events-none
@@ -129,7 +180,9 @@ export default function MainLayout() {
               "
             />
 
+
             {/* Content Surface */}
+
             <div
               className="
                 relative
@@ -143,11 +196,17 @@ export default function MainLayout() {
                 min-h-[72vh]
               "
             >
+
               <Outlet />
+
             </div>
+
           </div>
+
         </div>
+
       </main>
+
 
       {/* ======================================
           HUD Status Bar
@@ -170,32 +229,61 @@ export default function MainLayout() {
           text-slate-500
         "
       >
+
         <div className="flex items-center gap-3">
+
           <span className="font-bold text-cyan-400">
+
             PulsePlay Network
+
           </span>
 
-          <span className="text-slate-600">|</span>
 
-          <span>Gaming Command Center</span>
+          <span className="text-slate-600">
+
+            |
+
+          </span>
+
+
+          <span>
+
+            Gaming Command Center
+
+          </span>
+
         </div>
 
+
         <div className="flex items-center gap-3">
+
           <span className="pp-live-dot" />
 
+
           <span className="font-bold text-green-400">
+
             System Online
+
           </span>
+
         </div>
+
       </div>
+
 
       {/* ======================================
           Footer
       ======================================= */}
 
       <div className="relative z-10">
+
         <Footer />
+
       </div>
+
+
     </div>
+
   );
+
 }

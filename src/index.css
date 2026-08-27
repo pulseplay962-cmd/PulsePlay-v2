@@ -18,26 +18,15 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--pp-bg-primary);
+  background: #050812;
 }
 
 
 body {
 
-  font-family: var(--font-main);
+  position: relative;
 
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(124, 58, 237, 0.18),
-      transparent 35%
-    ),
-    linear-gradient(
-      180deg,
-      #050510 0%,
-      #070b18 50%,
-      #02030a 100%
-    );
+  font-family: var(--font-main);
 
   color: var(--pp-text-primary);
 
@@ -45,8 +34,74 @@ body {
 
   overflow-x: hidden;
 
+  /*
+   * Deep futuristic base
+   */
+  background:
+    radial-gradient(
+      circle at 12% 8%,
+      rgba(139, 92, 246, 0.16),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      rgba(34, 211, 238, 0.11),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 50% 72%,
+      rgba(236, 72, 153, 0.06),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #040711 0%,
+      #070b18 35%,
+      #050814 68%,
+      #02040b 100%
+    );
+
 }
 
+
+/* =========================
+   Ambient Neon Atmosphere
+========================= */
+
+body::after {
+
+  content: "";
+
+  position: fixed;
+
+  inset: -20%;
+
+  pointer-events: none;
+
+  z-index: -2;
+
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(139, 92, 246, 0.10),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 80% 35%,
+      rgba(34, 211, 238, 0.08),
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 55% 85%,
+      rgba(236, 72, 153, 0.05),
+      transparent 24%
+    );
+
+  filter: blur(70px);
+
+  animation: pp-ambient-drift 18s ease-in-out infinite alternate;
+
+}
 
 
 /* =========================
@@ -61,33 +116,50 @@ body::before {
 
   inset: 0;
 
-  background-image:
-    linear-gradient(
-      rgba(124,58,237,0.08) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(124,58,237,0.08) 1px,
-      transparent 1px
-    );
-
-  background-size:
-    50px 50px;
-
   pointer-events: none;
 
   z-index: -1;
 
+  background-image:
+    linear-gradient(
+      rgba(139, 92, 246, 0.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(34, 211, 238, 0.035) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    60px 60px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black 0%,
+      rgba(0,0,0,0.75) 45%,
+      transparent 100%
+    );
+
+  -webkit-mask-image:
+    linear-gradient(
+      to bottom,
+      black 0%,
+      rgba(0,0,0,0.75) 45%,
+      transparent 100%
+    );
+
 }
 
 
-
 /* =========================
-   Main Content Container
+   Subtle Horizon Glow
 ========================= */
 
 main {
+
+  position: relative;
 
   max-width: 1400px;
 
@@ -98,11 +170,92 @@ main {
 }
 
 
+/*
+ * Creates a very subtle glow behind
+ * the primary content area.
+ */
+
+main::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 50%;
+
+  width: 80%;
+  height: 280px;
+
+  transform: translateX(-50%);
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(139, 92, 246, 0.055),
+      transparent 70%
+    );
+
+  filter: blur(30px);
+
+  z-index: -1;
+
+}
+
+
+/* =========================
+   Ambient Background Animation
+========================= */
+
+@keyframes pp-ambient-drift {
+
+  0% {
+
+    transform:
+      translate3d(-1%, -1%, 0)
+      scale(1);
+
+  }
+
+  50% {
+
+    transform:
+      translate3d(1%, 1%, 0)
+      scale(1.03);
+
+  }
+
+  100% {
+
+    transform:
+      translate3d(-1%, 2%, 0)
+      scale(1.01);
+
+  }
+
+}
+
+
+/* =========================
+   Reduced Motion Support
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  body::after {
+
+    animation: none;
+
+  }
+
+}
+
 
 /* =========================
    PulsePlay Scrollbar
 ========================= */
-
 
 ::-webkit-scrollbar {
 
@@ -113,7 +266,7 @@ main {
 
 ::-webkit-scrollbar-track {
 
-  background: #050510;
+  background: #03050c;
 
 }
 
@@ -122,26 +275,54 @@ main {
 
   background:
     linear-gradient(
-      purple,
-      #7c3aed
+      180deg,
+      #8b5cf6,
+      #22d3ee
     );
 
   border-radius: 10px;
 
+  border:
+    2px solid #03050c;
+
 }
 
+
+::-webkit-scrollbar-thumb:hover {
+
+  background:
+    linear-gradient(
+      180deg,
+      #a78bfa,
+      #67e8f9
+    );
+
+}
 
 
 /* =========================
    Gaming Selection Glow
 ========================= */
 
-
 ::selection {
 
   background:
-    rgba(124,58,237,0.6);
+    rgba(139, 92, 246, 0.65);
 
-  color:white;
+  color: white;
+
+}
+
+
+/* =========================
+   Focus Visibility
+========================= */
+
+:focus-visible {
+
+  outline:
+    2px solid rgba(34, 211, 238, 0.8);
+
+  outline-offset: 3px;
 
 }

@@ -28,6 +28,11 @@ export default function AdminLayout() {
       icon:"📊",
     },
 
+    {
+  name:"Analytics",
+  path:"/admin/analytics",
+  icon:"📈",
+    },
 
     {
       name:"Games",

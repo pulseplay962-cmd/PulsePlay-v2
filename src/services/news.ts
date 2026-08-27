@@ -175,24 +175,51 @@ export async function getFeaturedNews(){
 // ================================
 
 export async function getNewsBySlug(
-    slug:string
-){
+    slug: string
+) {
 
-    const {data,error}=
+    console.log(
+        "🔥 NEWS LOOKUP START:",
+        slug
+    );
 
+
+    const { data, error } =
         await supabase
             .from("news")
             .select("*")
-            .eq(
-                "slug",
-                slug
-            )
+            .eq("slug", slug)
             .maybeSingle();
 
 
-    if(error){
+    console.log(
+        "🔥 NEWS LOOKUP RESULT:",
+        {
+            slug,
+            data,
+            error,
+        }
+    );
+
+
+    if (error) {
+
+        console.error(
+            "❌ NEWS LOOKUP ERROR:",
+            error
+        );
 
         throw error;
+
+    }
+
+
+    if (!data) {
+
+        console.warn(
+            "⚠️ NEWS LOOKUP RETURNED NULL:",
+            slug
+        );
 
     }
 

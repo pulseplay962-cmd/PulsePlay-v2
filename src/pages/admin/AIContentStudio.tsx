@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import {
   getAIContent,
   generateWeeklyContent,
+  generateAIImage,
   updateAIContent,
   deleteAIContent,
   publishAIContent,
@@ -23,6 +24,9 @@ export default function AIContentStudio() {
 
   const [generating, setGenerating] =
     useState(false);
+
+  const [generatingImage, setGeneratingImage] =
+    useState<string | null>(null);
 
   const [saving, setSaving] =
     useState(false);
@@ -114,6 +118,66 @@ export default function AIContentStudio() {
 
     } finally {
       setGenerating(false);
+    }
+  }
+
+
+  // =====================================
+  // Generate AI Image
+  // =====================================
+
+  async function handleGenerateImage(
+    id: string
+  ) {
+    try {
+      console.log(
+        "🖼 IMAGE BUTTON CLICKED:",
+        id
+      );
+
+      setGeneratingImage(id);
+      setError("");
+
+      const updatedItem =
+        await generateAIImage(id);
+
+      console.log(
+        "🖼 GENERATED IMAGE ITEM:",
+        updatedItem
+      );
+
+      if (!updatedItem) {
+        throw new Error(
+          "Image generation returned no queue item."
+        );
+      }
+
+      // Safely merge the updated queue item
+      // into the existing content list.
+      setContent((currentContent) =>
+        currentContent.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                ...updatedItem,
+              }
+            : item
+        )
+      );
+
+    } catch (error: any) {
+      console.error(
+        "IMAGE GENERATION ERROR:",
+        error
+      );
+
+      setError(
+        error.message ||
+        "Failed generating AI image"
+      );
+
+    } finally {
+      setGeneratingImage(null);
     }
   }
 
@@ -319,12 +383,13 @@ export default function AIContentStudio() {
         </p>
 
         <p className="mt-2 text-sm text-slate-500">
-          🖼 AI image generation is currently
-          disabled while API credits are being
-          replenished.
+          🖼 Generate or regenerate featured
+          images for your AI content.
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3">
+
+          {/* GENERATE WEEKLY */}
 
           <button
             onClick={handleGenerate}
@@ -340,14 +405,18 @@ export default function AIContentStudio() {
           </button>
 
 
+          {/* REFRESH */}
+
           <button
             onClick={loadContent}
+            disabled={loading}
             className="
               rounded-xl
               bg-slate-700
               px-5
               py-3
               font-bold
+              disabled:opacity-50
             "
           >
             🔄 Refresh
@@ -408,364 +477,575 @@ export default function AIContentStudio() {
 
           <div className="grid gap-6">
 
-            {content.map((item) => (
+            {content.length === 0 ? (
 
-              <div
-                key={item.id}
-                className="pp-panel p-6"
-              >
+              <div className="pp-panel p-8 text-center">
 
-                {/* =================================
-                    EDIT MODE
-                ================================= */}
+                <div className="text-4xl">
+                  🤖
+                </div>
 
-                {editingId === item.id &&
-                editForm ? (
+                <h2 className="mt-3 text-xl font-bold">
+                  No AI Content Yet
+                </h2>
 
-                  <div className="space-y-4">
+                <p className="mt-2 text-slate-400">
+                  Click "Generate Weekly Content"
+                  to create your first PulsePlay
+                  AI content package.
+                </p>
 
-                    <h2
-                      className="
-                        text-2xl
-                        font-black
-                        text-cyan-400
-                      "
-                    >
-                      ✏️ Editing AI Content
-                    </h2>
+              </div>
 
+            ) : (
 
-                    {/* TITLE */}
+              content.map((item) => (
 
-                    <input
-                      className="
-                        w-full
-                        rounded-xl
-                        bg-black/30
-                        p-3
-                        text-white
-                      "
-                      value={
-                        editForm.title
-                      }
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          title:
-                            e.target.value,
-                        })
-                      }
-                    />
+                <div
+                  key={item.id}
+                  className="pp-panel p-6"
+                >
 
+                  {/* =================================
+                      EDIT MODE
+                  ================================= */}
 
-                    {/* BODY */}
+                  {editingId === item.id &&
+                  editForm ? (
 
-                    <textarea
-                      className="
-                        min-h-[250px]
-                        w-full
-                        rounded-xl
-                        bg-black/30
-                        p-4
-                        text-white
-                      "
-                      value={
-                        editForm.body
-                      }
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          body:
-                            e.target.value,
-                        })
-                      }
-                    />
+                    <div className="space-y-4">
 
-
-                    {/* SOCIAL CAPTION */}
-
-                    <textarea
-                      className="
-                        min-h-[120px]
-                        w-full
-                        rounded-xl
-                        bg-black/30
-                        p-4
-                        text-white
-                      "
-                      value={
-                        editForm.social_caption ||
-                        ""
-                      }
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          social_caption:
-                            e.target.value,
-                        })
-                      }
-                    />
-
-
-                    {/* IMAGE PROMPT */}
-
-                    <textarea
-                      className="
-                        min-h-[120px]
-                        w-full
-                        rounded-xl
-                        bg-black/30
-                        p-4
-                        text-white
-                      "
-                      value={
-                        editForm.image_prompt ||
-                        ""
-                      }
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          image_prompt:
-                            e.target.value,
-                        })
-                      }
-                    />
-
-
-                    {/* SAVE / CANCEL */}
-
-                    <div className="flex gap-3">
-
-                      <button
-                        onClick={saveEdit}
-                        disabled={saving}
+                      <h2
                         className="
-                          pp-button
-                          disabled:opacity-50
+                          text-2xl
+                          font-black
+                          text-cyan-400
                         "
                       >
-                        {saving
-                          ? "Saving..."
-                          : "💾 Save Changes"}
-                      </button>
+                        ✏️ Editing AI Content
+                      </h2>
 
 
-                      <button
-                        onClick={cancelEdit}
-                        className="
-                          rounded-xl
-                          bg-slate-700
-                          px-5
-                          py-3
-                          font-bold
-                        "
-                      >
-                        Cancel
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                ) : (
-
-                  /* =================================
-                     VIEW MODE
-                  ================================= */
-
-                  <>
-
-                    {/* HEADER */}
-
-                    <div
-                      className="
-                        flex
-                        justify-between
-                        gap-4
-                      "
-                    >
+                      {/* TITLE */}
 
                       <div>
 
-                        <h2 className="text-xl font-bold">
-                          {item.title}
-                        </h2>
+                        <label className="
+                          mb-2
+                          block
+                          text-sm
+                          font-bold
+                          text-slate-400
+                        ">
+                          Title
+                        </label>
 
-                        <p className="text-sm text-slate-400">
-                          {item.category}
-                          {" • "}
-                          {item.content_type}
-                        </p>
+                        <input
+                          className="
+                            w-full
+                            rounded-xl
+                            bg-black/30
+                            p-3
+                            text-white
+                          "
+                          value={
+                            editForm.title
+                          }
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              title:
+                                e.target.value,
+                            })
+                          }
+                        />
 
                       </div>
 
 
-                      <span
-                        className="
-                          h-fit
-                          rounded
-                          bg-cyan-500/20
-                          px-3
-                          py-1
-                          text-cyan-300
-                        "
-                      >
-                        {item.status}
-                      </span>
+                      {/* BODY */}
+
+                      <div>
+
+                        <label className="
+                          mb-2
+                          block
+                          text-sm
+                          font-bold
+                          text-slate-400
+                        ">
+                          Content
+                        </label>
+
+                        <textarea
+                          className="
+                            min-h-[250px]
+                            w-full
+                            rounded-xl
+                            bg-black/30
+                            p-4
+                            text-white
+                          "
+                          value={
+                            editForm.body
+                          }
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              body:
+                                e.target.value,
+                            })
+                          }
+                        />
+
+                      </div>
+
+
+                      {/* SOCIAL CAPTION */}
+
+                      <div>
+
+                        <label className="
+                          mb-2
+                          block
+                          text-sm
+                          font-bold
+                          text-slate-400
+                        ">
+                          Social Caption
+                        </label>
+
+                        <textarea
+                          className="
+                            min-h-[120px]
+                            w-full
+                            rounded-xl
+                            bg-black/30
+                            p-4
+                            text-white
+                          "
+                          value={
+                            editForm.social_caption ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              social_caption:
+                                e.target.value,
+                            })
+                          }
+                        />
+
+                      </div>
+
+
+                      {/* IMAGE PROMPT */}
+
+                      <div>
+
+                        <label className="
+                          mb-2
+                          block
+                          text-sm
+                          font-bold
+                          text-slate-400
+                        ">
+                          AI Image Prompt
+                        </label>
+
+                        <textarea
+                          className="
+                            min-h-[120px]
+                            w-full
+                            rounded-xl
+                            bg-black/30
+                            p-4
+                            text-white
+                          "
+                          value={
+                            editForm.image_prompt ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              image_prompt:
+                                e.target.value,
+                            })
+                          }
+                        />
+
+                      </div>
+
+
+                      {/* SCHEDULE DATE */}
+
+                      <div>
+
+                        <label className="
+                          mb-2
+                          block
+                          text-sm
+                          font-bold
+                          text-slate-400
+                        ">
+                          Scheduled Date
+                        </label>
+
+                        <input
+                          type="date"
+                          className="
+                            rounded-xl
+                            bg-black/30
+                            p-3
+                            text-white
+                          "
+                          value={
+                            editForm.scheduled_date
+                              ?.substring(0, 10) ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              scheduled_date:
+                                e.target.value,
+                            })
+                          }
+                        />
+
+                      </div>
+
+
+                      {/* SAVE / CANCEL */}
+
+                      <div className="flex flex-wrap gap-3">
+
+                        <button
+                          onClick={saveEdit}
+                          disabled={saving}
+                          className="
+                            pp-button
+                            disabled:opacity-50
+                          "
+                        >
+                          {saving
+                            ? "Saving..."
+                            : "💾 Save Changes"}
+                        </button>
+
+
+                        <button
+                          onClick={cancelEdit}
+                          className="
+                            rounded-xl
+                            bg-slate-700
+                            px-5
+                            py-3
+                            font-bold
+                          "
+                        >
+                          Cancel
+                        </button>
+
+                      </div>
 
                     </div>
 
+                  ) : (
 
-                    {/* BODY */}
+                    /* =================================
+                       VIEW MODE
+                    ================================= */
 
-                    <p
-                      className="
-                        mt-4
-                        whitespace-pre-line
-                        text-slate-300
-                      "
-                    >
-                      {item.body}
-                    </p>
+                    <>
 
+                      {/* HEADER */}
 
-                    {/* EXISTING IMAGE */}
-
-                    {item.image_url && (
-                      <img
-                        src={item.image_url}
-                        alt={item.title}
+                      <div
                         className="
+                          flex
+                          flex-col
+                          justify-between
+                          gap-4
+                          md:flex-row
+                        "
+                      >
+
+                        <div>
+
+                          <h2 className="
+                            text-xl
+                            font-bold
+                          ">
+                            {item.title}
+                          </h2>
+
+                          <p className="
+                            text-sm
+                            text-slate-400
+                          ">
+                            {item.category}
+                            {" • "}
+                            {item.content_type}
+                          </p>
+
+                          {item.scheduled_date && (
+                            <p className="
+                              mt-1
+                              text-xs
+                              text-slate-500
+                            ">
+                              📅 Scheduled:
+                              {" "}
+                              {item.scheduled_date.substring(0, 10)}
+                            </p>
+                          )}
+
+                        </div>
+
+
+                        {/* STATUS */}
+
+                        <span
+                          className={`
+                            h-fit
+                            rounded
+                            px-3
+                            py-1
+                            ${
+                              item.status === "published"
+                                ? "bg-green-500/20 text-green-300"
+                                : item.status === "approved"
+                                  ? "bg-blue-500/20 text-blue-300"
+                                  : "bg-yellow-500/20 text-yellow-300"
+                            }
+                          `}
+                        >
+                          {item.status}
+                        </span>
+
+                      </div>
+
+
+                      {/* BODY */}
+
+                      <p
+                        className="
+                          mt-4
+                          whitespace-pre-line
+                          text-slate-300
+                        "
+                      >
+                        {item.body}
+                      </p>
+
+
+                      {/* SOCIAL CAPTION */}
+
+                      {item.social_caption && (
+                        <div className="
                           mt-5
                           rounded-xl
-                          border
-                          border-cyan-500/20
-                        "
-                      />
-                    )}
+                          bg-black/20
+                          p-4
+                        ">
 
-
-                    {/* ACTIONS */}
-
-                    <div
-                      className="
-                        mt-5
-                        flex
-                        flex-wrap
-                        gap-3
-                      "
-                    >
-
-                      {/* EDIT */}
-
-                      <button
-                        onClick={() =>
-                          startEdit(item)
-                        }
-                        className="
-                          rounded-xl
-                          bg-purple-500/20
-                          px-4
-                          py-2
-                          text-purple-300
-                        "
-                      >
-                        ✏️ Edit
-                      </button>
-
-
-                      {/* APPROVE */}
-
-                      <button
-                        onClick={() =>
-                          approvePost(item.id)
-                        }
-                        disabled={
-                          item.status ===
-                            "approved" ||
-                          item.status ===
-                            "published"
-                        }
-                        className="
-                          pp-button
-                          disabled:opacity-40
-                        "
-                      >
-                        ✅ Approve
-                      </button>
-
-
-                      {/* PUBLISH / VIEW */}
-
-                      {item.status ===
-                        "published" &&
-                      publishedArticles[item.id] ? (
-
-                        <Link
-                          to={`/news/${publishedArticles[item.id]}`}
-                          className="
-                            rounded-xl
-                            bg-cyan-500/20
-                            px-4
-                            py-2
+                          <h3 className="
+                            mb-2
                             font-bold
-                            text-cyan-300
-                          "
-                        >
-                          📖 View Article
-                        </Link>
+                            text-cyan-400
+                          ">
+                            📱 Social Caption
+                          </h3>
 
-                      ) : (
+                          <p className="
+                            whitespace-pre-line
+                            text-sm
+                            text-slate-300
+                          ">
+                            {item.social_caption}
+                          </p>
 
-                        <button
-                          onClick={() =>
-                            publishPost(item.id)
-                          }
-                          disabled={
-                            item.status !==
-                            "approved"
-                          }
-                          className="
-                            rounded-xl
-                            bg-green-500/20
-                            px-4
-                            py-2
-                            text-green-300
-                            disabled:opacity-40
-                          "
-                        >
-                          🚀 Publish
-                        </button>
-
+                        </div>
                       )}
 
 
-                      {/* DELETE */}
+                      {/* EXISTING IMAGE */}
 
-                      <button
-                        onClick={() =>
-                          removePost(item.id)
-                        }
+                      {item.image_url && (
+                        <div className="mt-5">
+
+                          <img
+                            src={item.image_url}
+                            alt={item.title}
+                            className="
+                              w-full
+                              rounded-xl
+                              border
+                              border-cyan-500/20
+                              object-cover
+                            "
+                          />
+
+                        </div>
+                      )}
+
+
+                      {/* ACTIONS */}
+
+                      <div
                         className="
-                          rounded-xl
-                          bg-red-500/20
-                          px-4
-                          py-2
-                          text-red-300
+                          mt-5
+                          flex
+                          flex-wrap
+                          gap-3
                         "
                       >
-                        🗑 Delete
-                      </button>
 
-                    </div>
+                        {/* EDIT */}
 
-                  </>
+                        <button
+                          onClick={() =>
+                            startEdit(item)
+                          }
+                          className="
+                            rounded-xl
+                            bg-purple-500/20
+                            px-4
+                            py-2
+                            text-purple-300
+                          "
+                        >
+                          ✏️ Edit
+                        </button>
 
-                )}
 
-              </div>
+                        {/* GENERATE IMAGE */}
 
-            ))}
+                        <button
+                          onClick={() =>
+                            handleGenerateImage(
+                              item.id
+                            )
+                          }
+                          disabled={
+                            generatingImage === item.id ||
+                            !item.image_prompt ||
+                            item.status === "published"
+                          }
+                          className="
+                            rounded-xl
+                            bg-pink-500/20
+                            px-4
+                            py-2
+                            text-pink-300
+                            disabled:opacity-40
+                          "
+                        >
+                          {generatingImage === item.id
+                            ? "🖼 Generating..."
+                            : item.image_url
+                              ? "🔄 Regenerate Image"
+                              : "🖼 Generate AI Image"}
+                        </button>
+
+
+                        {/* APPROVE */}
+
+                        <button
+                          onClick={() =>
+                            approvePost(item.id)
+                          }
+                          disabled={
+                            item.status ===
+                              "approved" ||
+                            item.status ===
+                              "published"
+                          }
+                          className="
+                            pp-button
+                            disabled:opacity-40
+                          "
+                        >
+                          ✅ Approve
+                        </button>
+
+
+                        {/* PUBLISH / VIEW */}
+
+                        {item.status ===
+                          "published" &&
+                        publishedArticles[item.id] ? (
+
+                          <Link
+                            to={`/news/${publishedArticles[item.id]}`}
+                            className="
+                              rounded-xl
+                              bg-cyan-500/20
+                              px-4
+                              py-2
+                              font-bold
+                              text-cyan-300
+                            "
+                          >
+                            📖 View Article
+                          </Link>
+
+                        ) : (
+
+                          <button
+                            onClick={() =>
+                              publishPost(item.id)
+                            }
+                            disabled={
+                              item.status !==
+                              "approved"
+                            }
+                            className="
+                              rounded-xl
+                              bg-green-500/20
+                              px-4
+                              py-2
+                              text-green-300
+                              disabled:opacity-40
+                            "
+                          >
+                            🚀 Publish
+                          </button>
+
+                        )}
+
+
+                        {/* DELETE */}
+
+                        <button
+                          onClick={() =>
+                            removePost(item.id)
+                          }
+                          className="
+                            rounded-xl
+                            bg-red-500/20
+                            px-4
+                            py-2
+                            text-red-300
+                          "
+                        >
+                          🗑 Delete
+                        </button>
+
+                      </div>
+
+                    </>
+
+                  )}
+
+                </div>
+
+              ))
+
+            )}
 
           </div>
 

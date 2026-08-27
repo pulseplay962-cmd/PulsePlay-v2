@@ -42,6 +42,7 @@ import NotFound from "../pages/NotFound";
 // =========================
 
 import Dashboard from "../pages/admin/Dashboard";
+import Analytics from "../pages/admin/Analytics";
 import AdminGames from "../pages/admin/Games";
 import Videos from "../pages/admin/Videos";
 import Products from "../pages/admin/Products";
@@ -171,6 +172,16 @@ const router = createBrowserRouter([
         index: true,
 
         element: <Dashboard />,
+      },
+
+      // =========================
+      // 📈 ANALYTICS
+      // =========================
+
+      {
+        path: "analytics",
+
+        element: <Analytics />,
       },
 
       {
