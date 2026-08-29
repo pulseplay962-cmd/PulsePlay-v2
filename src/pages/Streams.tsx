@@ -181,18 +181,7 @@ Veiltactician
 
 
 
-<div
 
-className="
-text-green-400
-font-bold
-"
-
->
-
-● ONLINE
-
-</div>
 
 
 </div>
