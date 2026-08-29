@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import BrandCard from "../ui/BrandCard";
@@ -51,47 +51,63 @@ export default function FeaturedGames() {
     loadGames();
   }, []);
 
+  const intelligence = useMemo(() => {
+    const upcoming = games.filter(
+      (game) => game.status === "upcoming"
+    ).length;
+
+    const released = games.filter(
+      (game) => game.status === "released"
+    ).length;
+
+    return {
+      total: games.length,
+      upcoming,
+      released,
+    };
+  }, [games]);
+
   if (loading) {
     return (
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <BrandCard scan={true}>
-          <div className="flex items-center gap-3">
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <BrandCard scan className="p-8 md:p-10">
+          <div className="flex items-center gap-4">
             <span className="pp-live-dot h-3 w-3 rounded-full bg-cyan-400" />
 
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-cyan-400">
-              PULSEPLAY GAME DATABASE
-            </p>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.35em] text-cyan-400">
+                PulsePlay Mission Network
+              </p>
+
+              <h2 className="mt-2 text-3xl font-black uppercase text-white md:text-4xl">
+                SCANNING GAME DATABASE...
+              </h2>
+
+              <p className="mt-2 text-sm text-slate-500">
+                Establishing connection with the active mission registry.
+              </p>
+            </div>
           </div>
-
-          <h2 className="mt-3 text-4xl font-black pp-gradient-text">
-            FEATURED GAMES
-          </h2>
-
-          <p className="mt-4 text-slate-400">
-            Loading mission data...
-          </p>
         </BrandCard>
       </section>
     );
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16">
+    <section className="mx-auto max-w-7xl px-6 py-20">
 
-      {/* =========================
-          COMMAND HEADER
-      ========================= */}
+      {/* COMMAND HEADER */}
 
-      <BrandCard scan={true}>
+      <BrandCard scan className="p-6 md:p-8 lg:p-10">
 
         <div
           className="
             flex
             flex-col
-            gap-6
-            md:flex-row
-            md:items-end
-            md:justify-between
+            gap-8
+            lg:flex-row
+            lg:items-end
+            lg:justify-between
           "
         >
 
@@ -99,26 +115,18 @@ export default function FeaturedGames() {
 
             <div className="flex items-center gap-3">
 
-              <span
-                className="
-                  pp-live-dot
-                  h-3
-                  w-3
-                  rounded-full
-                  bg-cyan-400
-                "
-              />
+              <span className="pp-live-dot h-3 w-3 rounded-full bg-cyan-400" />
 
               <p
                 className="
                   text-xs
                   font-black
                   uppercase
-                  tracking-[0.3em]
+                  tracking-[0.35em]
                   text-cyan-400
                 "
               >
-                PULSEPLAY GAME DATABASE
+                Mission Intelligence
               </p>
 
             </div>
@@ -129,22 +137,24 @@ export default function FeaturedGames() {
                 text-4xl
                 font-black
                 uppercase
-                md:text-5xl
+                tracking-tight
                 pp-gradient-text
+                md:text-5xl
               "
             >
               Featured Games
             </h2>
 
             <p className="mt-3 max-w-2xl text-slate-400">
-              Active missions, upcoming releases, and games
-              currently tracked by the PulsePlay network.
+              Priority game intelligence tracked by the PulsePlay network.
+              Explore active missions, upcoming releases, and current
+              gaming operations.
             </p>
 
           </div>
 
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3">
 
             <div
               className="
@@ -152,41 +162,130 @@ export default function FeaturedGames() {
                 border
                 border-cyan-500/20
                 bg-black/30
-                px-5
+                px-4
                 py-3
                 text-center
               "
             >
-
-              <p
-                className="
-                  text-2xl
-                  font-black
-                  text-white
-                "
-              >
-                {games.length}
+              <p className="text-xl font-black text-white">
+                {intelligence.total}
               </p>
 
-              <p
-                className="
-                  text-[10px]
-                  font-black
-                  uppercase
-                  tracking-[0.25em]
-                  text-slate-500
-                "
-              >
-                Featured
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+                Tracked
+              </p>
+            </div>
+
+            <div
+              className="
+                rounded-xl
+                border
+                border-blue-500/20
+                bg-blue-500/5
+                px-4
+                py-3
+                text-center
+              "
+            >
+              <p className="text-xl font-black text-blue-300">
+                {intelligence.upcoming}
               </p>
 
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+                Incoming
+              </p>
+            </div>
+
+            <div
+              className="
+                rounded-xl
+                border
+                border-green-500/20
+                bg-green-500/5
+                px-4
+                py-3
+                text-center
+              "
+            >
+              <p className="text-xl font-black text-green-300">
+                {intelligence.released}
+              </p>
+
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+                Active
+              </p>
             </div>
 
             <Link to="/games">
               <BrandButton>
-                Browse Games
+                Open Game Database →
               </BrandButton>
             </Link>
+
+          </div>
+
+        </div>
+
+
+        {/* STATUS BAR */}
+
+        <div
+          className="
+            mt-8
+            grid
+            gap-3
+            border-t
+            border-white/10
+            pt-6
+            sm:grid-cols-3
+          "
+        >
+
+          <div className="flex items-center gap-3">
+
+            <span className="h-2 w-2 rounded-full bg-cyan-400" />
+
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-600">
+                DATABASE
+              </p>
+
+              <p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-300">
+                Online
+              </p>
+            </div>
+
+          </div>
+
+          <div className="flex items-center gap-3">
+
+            <span className="h-2 w-2 rounded-full bg-purple-400" />
+
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-600">
+                PRIORITY
+              </p>
+
+              <p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-300">
+                Featured Missions
+              </p>
+            </div>
+
+          </div>
+
+          <div className="flex items-center gap-3">
+
+            <span className="h-2 w-2 rounded-full bg-green-400" />
+
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-600">
+                STATUS
+              </p>
+
+              <p className="mt-1 text-xs font-bold uppercase tracking-wider text-green-300">
+                Intelligence Updated
+              </p>
+            </div>
 
           </div>
 
@@ -195,12 +294,10 @@ export default function FeaturedGames() {
       </BrandCard>
 
 
-      {/* =========================
-          EMPTY STATE
-      ========================= */}
+      {/* EMPTY STATE */}
 
       {games.length === 0 && (
-        <BrandCard className="mt-8">
+        <BrandCard className="mt-8 p-8">
 
           <div className="flex items-center gap-3">
 
@@ -221,21 +318,25 @@ export default function FeaturedGames() {
           </div>
 
           <h3 className="mt-4 text-2xl font-black text-white">
-            No Featured Games
+            No Featured Missions Available
           </h3>
 
-          <p className="mt-2 text-slate-400">
-            Featured games will appear here when they are
-            added through the PulsePlay Admin Dashboard.
+          <p className="mt-2 max-w-xl text-slate-400">
+            Featured games will appear here when they are activated
+            through the PulsePlay Admin Dashboard.
           </p>
+
+          <Link to="/games" className="mt-6 inline-block">
+            <BrandButton variant="secondary">
+              Browse Full Database →
+            </BrandButton>
+          </Link>
 
         </BrandCard>
       )}
 
 
-      {/* =========================
-          GAME GRID
-      ========================= */}
+      {/* GAME GRID */}
 
       {games.length > 0 && (
         <div
@@ -248,340 +349,388 @@ export default function FeaturedGames() {
           "
         >
 
-          {games.map((game) => (
+          {games.map((game, index) => {
 
-            <BrandCard
-              key={game.id}
-              className="
-                group
-                flex
-                h-full
-                flex-col
-                card-hover
-              "
-            >
+            const statusClass =
+              game.status === "upcoming"
+                ? "border-blue-400/30 bg-blue-400/10 text-blue-300"
+                : game.status === "released"
+                  ? "border-green-400/30 bg-green-400/10 text-green-300"
+                  : "border-white/10 bg-black/60 text-slate-400";
 
-              {/* IMAGE */}
-
-              <div
+            return (
+              <BrandCard
+                key={game.id}
                 className="
-                  relative
+                  group
+                  flex
+                  h-full
+                  flex-col
                   overflow-hidden
-                  rounded-xl
-                  border
-                  border-white/10
-                  bg-black
+                  p-0
+                  transition-all
+                  duration-300
+                  hover:-translate-y-2
+                  hover:border-cyan-400/40
+                  hover:shadow-[0_0_35px_rgba(34,211,238,.10)]
                 "
               >
 
-                {game.image ? (
-                  <img
-                    src={game.image}
-                    alt={game.title}
-                    className="
-                      h-64
-                      w-full
-                      object-cover
-                      transition-transform
-                      duration-500
-                      group-hover:scale-105
-                    "
-                  />
-                ) : (
-                  <div
-                    className="
-                      flex
-                      h-64
-                      items-center
-                      justify-center
-                      bg-black/40
-                      text-sm
-                      font-bold
-                      uppercase
-                      tracking-widest
-                      text-slate-500
-                    "
-                  >
-                    No Image
-                  </div>
-                )}
-
-                {/* IMAGE STATUS */}
+                {/* IMAGE */}
 
                 <div
                   className="
-                    absolute
-                    left-3
-                    top-3
-                    rounded-lg
-                    border
-                    border-cyan-400/30
-                    bg-black/75
-                    px-3
-                    py-1.5
-                    backdrop-blur-md
+                    relative
+                    overflow-hidden
+                    border-b
+                    border-white/10
+                    bg-black
                   "
                 >
 
-                  <span
-                    className="
-                      text-[10px]
-                      font-black
-                      uppercase
-                      tracking-[0.2em]
-                      text-cyan-300
-                    "
-                  >
-                    FEATURED
-                  </span>
+                  {game.image ? (
+                    <img
+                      src={game.image}
+                      alt={game.title}
+                      className="
+                        h-64
+                        w-full
+                        object-cover
+                        transition-transform
+                        duration-700
+                        group-hover:scale-105
+                      "
+                    />
+                  ) : (
+                    <div
+                      className="
+                        flex
+                        h-64
+                        items-center
+                        justify-center
+                        bg-black/50
+                        text-xs
+                        font-black
+                        uppercase
+                        tracking-[0.25em]
+                        text-slate-600
+                      "
+                    >
+                      No Mission Image
+                    </div>
+                  )}
 
-                </div>
-
-                {/* GAME STATUS */}
-
-                {game.status && (
                   <div
-                    className={`
+                    className="
+                      pointer-events-none
                       absolute
-                      right-3
-                      top-3
+                      inset-0
+                      bg-gradient-to-t
+                      from-black/80
+                      via-transparent
+                      to-transparent
+                    "
+                  />
+
+
+                  {/* MISSION NUMBER */}
+
+                  <div
+                    className="
+                      absolute
+                      left-4
+                      top-4
                       rounded-lg
                       border
+                      border-cyan-400/30
                       bg-black/75
                       px-3
                       py-1.5
                       backdrop-blur-md
-                      ${
-                        game.status === "upcoming"
-                          ? "border-blue-400/30"
-                          : game.status === "released"
-                            ? "border-green-400/30"
-                            : "border-white/10"
-                      }
-                    `}
+                    "
                   >
 
                     <span
-                      className={`
-                        text-[10px]
+                      className="
+                        text-[9px]
                         font-black
                         uppercase
                         tracking-[0.2em]
-                        ${
-                          game.status === "upcoming"
-                            ? "text-blue-400"
-                            : game.status === "released"
-                              ? "text-green-400"
-                              : "text-slate-400"
-                        }
-                      `}
+                        text-cyan-300
+                      "
                     >
-                      {game.status}
+                      MISSION {String(index + 1).padStart(2, "0")}
                     </span>
 
                   </div>
-                )}
-
-              </div>
 
 
-              {/* METADATA */}
+                  {/* STATUS */}
 
-              <div className="mt-5 flex flex-wrap gap-2">
-
-                {game.category && (
-                  <span
-                    className="
-                      rounded-full
-                      border
-                      border-cyan-500/30
-                      bg-cyan-500/10
-                      px-3
-                      py-1
-                      text-[10px]
-                      font-black
-                      uppercase
-                      tracking-wider
-                      text-cyan-300
-                    "
-                  >
-                    {game.category}
-                  </span>
-                )}
-
-                {game.genre && (
-                  <span
-                    className="
-                      rounded-full
-                      border
-                      border-purple-500/30
-                      bg-purple-500/10
-                      px-3
-                      py-1
-                      text-[10px]
-                      font-black
-                      uppercase
-                      tracking-wider
-                      text-purple-300
-                    "
-                  >
-                    {game.genre}
-                  </span>
-                )}
-
-              </div>
-
-
-              {/* TITLE */}
-
-              <h3
-                className="
-                  mt-4
-                  text-2xl
-                  font-black
-                  text-white
-                  transition-colors
-                  duration-300
-                  group-hover:text-cyan-300
-                "
-              >
-                {game.title}
-              </h3>
-
-
-              {/* DESCRIPTION */}
-
-              {game.description && (
-                <p
-                  className="
-                    mt-3
-                    line-clamp-3
-                    text-sm
-                    leading-6
-                    text-slate-400
-                  "
-                >
-                  {game.description}
-                </p>
-              )}
-
-
-              {/* DATA READOUT */}
-
-              <div
-                className="
-                  mt-5
-                  grid
-                  grid-cols-2
-                  gap-3
-                  border-y
-                  border-white/10
-                  py-4
-                "
-              >
-
-                {game.platform && (
-                  <div>
-
-                    <p
-                      className="
-                        text-[9px]
-                        font-black
-                        uppercase
-                        tracking-[0.2em]
-                        text-slate-600
-                      "
+                  {game.status && (
+                    <div
+                      className={`
+                        absolute
+                        right-4
+                        top-4
+                        rounded-lg
+                        border
+                        px-3
+                        py-1.5
+                        backdrop-blur-md
+                        ${statusClass}
+                      `}
                     >
-                      Platform
-                    </p>
 
-                    <p
-                      className="
-                        mt-1
-                        text-sm
-                        font-bold
-                        text-white
-                      "
-                    >
-                      {game.platform}
-                    </p>
+                      <span
+                        className="
+                          text-[9px]
+                          font-black
+                          uppercase
+                          tracking-[0.2em]
+                        "
+                      >
+                        {game.status}
+                      </span>
+
+                    </div>
+                  )}
+
+
+                  {/* CATEGORY */}
+
+                  {game.category && (
+                    <div className="absolute bottom-4 left-4">
+
+                      <span
+                        className="
+                          rounded-full
+                          border
+                          border-white/10
+                          bg-black/75
+                          px-3
+                          py-1.5
+                          text-[9px]
+                          font-black
+                          uppercase
+                          tracking-[0.2em]
+                          text-white
+                          backdrop-blur-md
+                        "
+                      >
+                        {game.category}
+                      </span>
+
+                    </div>
+                  )}
+
+                </div>
+
+
+                {/* CONTENT */}
+
+                <div className="flex flex-1 flex-col p-6">
+
+                  <div className="flex flex-wrap gap-2">
+
+                    {game.genre && (
+                      <span
+                        className="
+                          rounded-full
+                          border
+                          border-purple-500/30
+                          bg-purple-500/10
+                          px-3
+                          py-1
+                          text-[9px]
+                          font-black
+                          uppercase
+                          tracking-wider
+                          text-purple-300
+                        "
+                      >
+                        {game.genre}
+                      </span>
+                    )}
+
+                    {game.platform && (
+                      <span
+                        className="
+                          rounded-full
+                          border
+                          border-cyan-500/20
+                          bg-cyan-500/5
+                          px-3
+                          py-1
+                          text-[9px]
+                          font-black
+                          uppercase
+                          tracking-wider
+                          text-cyan-300
+                        "
+                      >
+                        {game.platform}
+                      </span>
+                    )}
 
                   </div>
-                )}
 
-                {game.release_date && (
-                  <div>
 
+                  <h3
+                    className="
+                      mt-4
+                      text-2xl
+                      font-black
+                      leading-tight
+                      text-white
+                      transition-colors
+                      duration-300
+                      group-hover:text-cyan-300
+                    "
+                  >
+                    {game.title}
+                  </h3>
+
+
+                  {game.description && (
                     <p
                       className="
-                        text-[9px]
-                        font-black
-                        uppercase
-                        tracking-[0.2em]
-                        text-slate-600
-                      "
-                    >
-                      Release
-                    </p>
-
-                    <p
-                      className="
-                        mt-1
+                        mt-3
+                        line-clamp-3
                         text-sm
-                        font-bold
-                        text-white
+                        leading-6
+                        text-slate-400
                       "
                     >
-                      {new Date(
-                        game.release_date
-                      ).toLocaleDateString()}
+                      {game.description}
                     </p>
+                  )}
+
+
+                  {/* DATA READOUT */}
+
+                  <div
+                    className="
+                      mt-6
+                      grid
+                      grid-cols-2
+                      gap-3
+                      border-y
+                      border-white/10
+                      py-4
+                    "
+                  >
+
+                    <div>
+
+                      <p
+                        className="
+                          text-[9px]
+                          font-black
+                          uppercase
+                          tracking-[0.2em]
+                          text-slate-600
+                        "
+                      >
+                        Platform
+                      </p>
+
+                      <p
+                        className="
+                          mt-1
+                          truncate
+                          text-sm
+                          font-bold
+                          text-white
+                        "
+                      >
+                        {game.platform || "Multi-Platform"}
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <p
+                        className="
+                          text-[9px]
+                          font-black
+                          uppercase
+                          tracking-[0.2em]
+                          text-slate-600
+                        "
+                      >
+                        Release
+                      </p>
+
+                      <p
+                        className="
+                          mt-1
+                          text-sm
+                          font-bold
+                          text-white
+                        "
+                      >
+                        {game.release_date
+                          ? new Date(
+                              game.release_date
+                            ).toLocaleDateString()
+                          : "TBA"}
+                      </p>
+
+                    </div>
 
                   </div>
-                )}
-
-              </div>
 
 
-              {/* CTA */}
+                  {/* CTA */}
 
-              <div className="mt-auto pt-5">
+                  <div className="mt-auto pt-5">
 
-                <Link
-                  to={`/games/${game.id}`}
-                  className="
-                    inline-flex
-                    w-full
-                    items-center
-                    justify-center
-                    rounded-xl
-                    border
-                    border-cyan-500/30
-                    bg-slate-900/80
-                    px-6
-                    py-3
-                    font-black
-                    uppercase
-                    tracking-[0.15em]
-                    text-cyan-300
-                    shadow-[0_0_20px_rgba(34,211,238,.15)]
-                    transition-all
-                    duration-300
-                    hover:-translate-y-1
-                    hover:border-cyan-400/60
-                    hover:bg-cyan-500/10
-                    hover:text-cyan-200
-                    active:scale-95
-                  "
-                >
-                  View Mission
-                </Link>
+                    <Link
+                      to={`/games/${game.id}`}
+                      className="
+                        group/cta
+                        inline-flex
+                        w-full
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-cyan-500/30
+                        bg-slate-950/80
+                        px-6
+                        py-3.5
+                        text-xs
+                        font-black
+                        uppercase
+                        tracking-[0.15em]
+                        text-cyan-300
+                        shadow-[0_0_20px_rgba(34,211,238,.10)]
+                        transition-all
+                        duration-300
+                        hover:-translate-y-1
+                        hover:border-cyan-400/60
+                        hover:bg-cyan-500/10
+                        hover:text-white
+                        active:scale-95
+                      "
+                    >
+                      Open Mission
+                      <span className="transition-transform group-hover/cta:translate-x-1">
+                        →
+                      </span>
+                    </Link>
 
-              </div>
+                  </div>
 
-            </BrandCard>
+                </div>
 
-          ))}
+              </BrandCard>
+            );
+          })}
 
         </div>
       )}
