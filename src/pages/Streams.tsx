@@ -1,10 +1,46 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import TwitchSection from "../components/home/TwitchSection";
 import BrandCard from "../components/ui/BrandCard";
 import BrandButton from "../components/ui/BrandButton";
 
+import {
+  getTwitchStatus,
+  type TwitchStreamData,
+} from "../services/twitch";
+
 export default function Streams() {
+  const [stream, setStream] =
+    useState<TwitchStreamData | null>(null);
+
+  const [streamLoading, setStreamLoading] =
+    useState(true);
+
+  useEffect(() => {
+    async function checkBroadcast() {
+      try {
+        setStreamLoading(true);
+
+        const data =
+          await getTwitchStatus("Veiltactician");
+
+        setStream(data.stream);
+      } catch (error) {
+        console.error(
+          "FAILED TO LOAD STREAM STATUS:",
+          error
+        );
+
+        setStream(null);
+      } finally {
+        setStreamLoading(false);
+      }
+    }
+
+    checkBroadcast();
+  }, []);
+
   return (
     <main className="min-h-[72vh] bg-[#05070d] px-6 py-12 text-white">
 
@@ -387,47 +423,104 @@ export default function Streams() {
 
           <div className="grid gap-6 md:grid-cols-3">
 
-            {/* Mission */}
+            {/* Live Transmission */}
 
             <BrandCard
-              status="MISSION"
+              status="TRANSMISSION"
               className="
-                border-cyan-500/20
+                border-red-500/20
                 transition-all
                 duration-300
                 hover:-translate-y-1
-                hover:border-cyan-400/40
+                hover:border-red-400/40
               "
             >
 
               <div className="flex items-center justify-between">
 
                 <span className="text-3xl">
-                  🎮
+                  📺
                 </span>
 
                 <span
-                  className="
+                  className={`
                     text-[9px]
                     font-black
                     uppercase
                     tracking-[0.25em]
-                    text-cyan-400
-                  "
+                    ${
+                      streamLoading
+                        ? "text-yellow-400"
+                        : stream
+                          ? "text-red-400"
+                          : "text-slate-500"
+                    }
+                  `}
                 >
-                  ACTIVE
+                  {streamLoading
+                    ? "CHECKING"
+                    : stream
+                      ? "LIVE"
+                      : "OFFLINE"}
                 </span>
 
               </div>
 
               <h3 className="mt-5 text-xl font-black">
-                Current Mission
+                {stream
+                  ? "Live Transmission"
+                  : "Broadcast Status"}
               </h3>
 
-              <p className="mt-3 text-sm leading-6 text-slate-400">
-                Follow the latest gameplay mission
-                through the PulsePlay broadcast network.
-              </p>
+              {stream ? (
+                <>
+                  <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-300">
+                    {stream.title}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap gap-2">
+
+                    <span
+                      className="
+                        rounded-lg
+                        border
+                        border-purple-500/30
+                        bg-purple-500/10
+                        px-3
+                        py-2
+                        text-xs
+                        font-bold
+                        text-purple-300
+                      "
+                    >
+                      🎮 {stream.game_name}
+                    </span>
+
+                    <span
+                      className="
+                        rounded-lg
+                        border
+                        border-red-500/30
+                        bg-red-500/10
+                        px-3
+                        py-2
+                        text-xs
+                        font-bold
+                        text-red-300
+                      "
+                    >
+                      👀 {stream.viewer_count.toLocaleString()}
+                    </span>
+
+                  </div>
+                </>
+              ) : (
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  {streamLoading
+                    ? "Checking the Twitch network for an active PulsePlay transmission."
+                    : "Veiltactician is currently offline. Check back when the next transmission begins."}
+                </p>
+              )}
 
               <div
                 className="
@@ -442,8 +535,25 @@ export default function Streams() {
                   Transmission Status
                 </p>
 
-                <p className="mt-2 text-sm font-black text-cyan-300">
-                  MONITORING CHANNEL
+                <p
+                  className={`
+                    mt-2
+                    text-sm
+                    font-black
+                    ${
+                      stream
+                        ? "text-red-300"
+                        : streamLoading
+                          ? "text-yellow-300"
+                          : "text-slate-400"
+                    }
+                  `}
+                >
+                  {streamLoading
+                    ? "CHECKING CHANNEL"
+                    : stream
+                      ? "LIVE ON TWITCH"
+                      : "AWAITING TRANSMISSION"}
                 </p>
 
               </div>
