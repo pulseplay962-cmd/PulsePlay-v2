@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 export default function MerchBanner() {
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16">
+    <section className="mx-auto max-w-7xl px-6 py-20">
       <div
         className="
           group
@@ -10,23 +12,27 @@ export default function MerchBanner() {
           border
           border-purple-500/30
           bg-gradient-to-br
-          from-[#070b14]
-          via-[#0b1120]
+          from-[#060912]
+          via-[#0b1020]
           to-purple-950/50
-          p-8
-          shadow-[0_0_50px_rgba(168,85,247,.12)]
-          md:p-12
+          p-6
+          shadow-[0_0_70px_rgba(168,85,247,.12)]
+          md:p-8
+          lg:p-10
         "
       >
-        {/* HUD glow */}
+        {/* =========================
+            AMBIENT HUD GLOWS
+        ========================= */}
+
         <div
           className="
             pointer-events-none
             absolute
-            -right-24
-            -top-24
-            h-64
-            w-64
+            -right-32
+            -top-32
+            h-80
+            w-80
             rounded-full
             bg-purple-500/10
             blur-3xl
@@ -37,17 +43,35 @@ export default function MerchBanner() {
           className="
             pointer-events-none
             absolute
-            -bottom-32
-            -left-20
-            h-64
-            w-64
+            -bottom-40
+            -left-32
+            h-80
+            w-80
             rounded-full
             bg-cyan-500/10
             blur-3xl
           "
         />
 
-        {/* Scan line */}
+        <div
+          className="
+            pointer-events-none
+            absolute
+            right-1/4
+            top-1/2
+            h-40
+            w-40
+            -translate-y-1/2
+            rounded-full
+            bg-pink-500/5
+            blur-3xl
+          "
+        />
+
+        {/* =========================
+            SCAN LINES
+        ========================= */}
+
         <div
           className="
             pointer-events-none
@@ -59,29 +83,49 @@ export default function MerchBanner() {
             from-transparent
             via-purple-400
             to-transparent
-            opacity-70
+            opacity-80
           "
         />
 
         <div
           className="
+            pointer-events-none
+            absolute
+            inset-x-0
+            bottom-0
+            h-px
+            bg-gradient-to-r
+            from-transparent
+            via-cyan-400/50
+            to-transparent
+          "
+        />
+
+        {/* =========================
+            MAIN CONTENT
+        ========================= */}
+
+        <div
+          className="
             relative
             z-10
-            flex
-            flex-col
-            gap-10
-            lg:flex-row
+            grid
+            gap-8
+            lg:grid-cols-[1fr_360px]
             lg:items-center
-            lg:justify-between
           "
         >
-          {/* Content */}
-          <div className="max-w-3xl">
+          {/* =========================
+              STORE INTELLIGENCE
+          ========================= */}
+
+          <div>
             <div className="flex items-center gap-3">
               <span
                 className="
-                  h-2.5
-                  w-2.5
+                  pp-live-dot
+                  h-3
+                  w-3
                   rounded-full
                   bg-purple-400
                   shadow-[0_0_14px_rgba(168,85,247,.8)]
@@ -97,24 +141,64 @@ export default function MerchBanner() {
                   text-purple-300
                 "
               >
-                Merchandise System
+                PulsePlay Merchandise Network
               </p>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <span
+                className="
+                  rounded-lg
+                  border
+                  border-purple-400/20
+                  bg-purple-500/5
+                  px-3
+                  py-1.5
+                  text-[9px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-purple-300
+                "
+              >
+                STORE ONLINE
+              </span>
+
+              <span
+                className="
+                  rounded-lg
+                  border
+                  border-green-400/20
+                  bg-green-500/5
+                  px-3
+                  py-1.5
+                  text-[9px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-green-300
+                "
+              >
+                ACCESS GRANTED
+              </span>
             </div>
 
             <h2
               className="
-                mt-4
+                mt-5
                 text-4xl
                 font-black
                 uppercase
-                leading-tight
+                leading-[0.95]
+                tracking-tight
                 text-white
                 md:text-5xl
+                lg:text-6xl
               "
             >
-              Level Up Your
+              Equip Your
               <span className="block pp-gradient-text">
-                Gaming Loadout
+                PulsePlay Loadout
               </span>
             </h2>
 
@@ -128,114 +212,224 @@ export default function MerchBanner() {
                 md:text-lg
               "
             >
-              Official PulsePlay apparel and gaming gear built
-              for streamers, creators, players, and the community
-              behind the network.
+              Official PulsePlay apparel, gaming gear, and
+              creator equipment built for players who are
+              ready to enter the next mission.
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <span
-                className="
-                  rounded-full
-                  border
-                  border-cyan-500/20
-                  bg-cyan-500/5
-                  px-4
-                  py-2
-                  text-xs
-                  font-black
-                  uppercase
-                  tracking-wider
-                  text-cyan-300
-                "
-              >
-                Creator Ready
-              </span>
+            {/* LOADOUT CATEGORIES */}
 
-              <span
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <div
                 className="
-                  rounded-full
+                  rounded-xl
                   border
-                  border-purple-500/20
-                  bg-purple-500/5
-                  px-4
-                  py-2
-                  text-xs
-                  font-black
-                  uppercase
-                  tracking-wider
-                  text-purple-300
+                  border-white/10
+                  bg-black/20
+                  p-4
                 "
               >
-                PulsePlay Official
-              </span>
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-cyan-400">
+                  01
+                </p>
+
+                <p className="mt-2 text-sm font-black uppercase text-white">
+                  Apparel
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Wear the network.
+                </p>
+              </div>
+
+              <div
+                className="
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-black/20
+                  p-4
+                "
+              >
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-purple-400">
+                  02
+                </p>
+
+                <p className="mt-2 text-sm font-black uppercase text-white">
+                  Gaming Gear
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Upgrade your station.
+                </p>
+              </div>
+
+              <div
+                className="
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-black/20
+                  p-4
+                "
+              >
+                <p className="text-[9px] font-black uppercase tracking-[0.25em] text-pink-400">
+                  03
+                </p>
+
+                <p className="mt-2 text-sm font-black uppercase text-white">
+                  Creator Gear
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Build your broadcast.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* CTA panel */}
+          {/* =========================
+              STORE ACCESS TERMINAL
+          ========================= */}
+
           <div
             className="
-              min-w-full
+              relative
+              overflow-hidden
               rounded-2xl
               border
-              border-white/10
-              bg-black/20
+              border-purple-400/20
+              bg-black/30
               p-6
               backdrop-blur-xl
-              lg:min-w-[280px]
+              md:p-7
             "
           >
-            <p
+            <div
               className="
-                text-[10px]
-                font-black
-                uppercase
-                tracking-[0.3em]
-                text-slate-500
+                absolute
+                inset-x-0
+                top-0
+                h-px
+                bg-gradient-to-r
+                from-transparent
+                via-purple-400
+                to-transparent
               "
-            >
-              LOADOUT ACCESS
-            </p>
+            />
 
-            <p
-              className="
-                mt-3
-                text-sm
-                font-bold
-                text-slate-300
-              "
-            >
-              Browse the latest PulsePlay merchandise drops.
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p
+                  className="
+                    text-[9px]
+                    font-black
+                    uppercase
+                    tracking-[0.3em]
+                    text-slate-500
+                  "
+                >
+                  Store Terminal
+                </p>
 
-            <a
-              href="/merchandise"
+                <h3 className="mt-2 text-xl font-black uppercase text-white">
+                  Loadout Access
+                </h3>
+              </div>
+
+              <span
+                className="
+                  rounded-lg
+                  border
+                  border-green-400/20
+                  bg-green-400/5
+                  px-3
+                  py-1
+                  text-[9px]
+                  font-black
+                  uppercase
+                  tracking-widest
+                  text-green-300
+                "
+              >
+                ONLINE
+              </span>
+            </div>
+
+            <div className="my-6 h-px bg-white/10" />
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-widest text-slate-500">
+                  Network
+                </span>
+
+                <span className="text-xs font-bold text-cyan-300">
+                  PULSEPLAY
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-widest text-slate-500">
+                  Inventory
+                </span>
+
+                <span className="text-xs font-bold text-purple-300">
+                  ACTIVE
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-widest text-slate-500">
+                  Access
+                </span>
+
+                <span className="text-xs font-bold text-green-300">
+                  AUTHORIZED
+                </span>
+              </div>
+            </div>
+
+            <Link
+              to="/merchandise"
               className="
-                mt-6
-                inline-flex
+                mt-7
+                flex
                 w-full
                 items-center
                 justify-center
+                gap-3
                 rounded-xl
                 border
                 border-purple-400/40
-                bg-purple-600/20
+                bg-gradient-to-r
+                from-purple-500/20
+                to-cyan-500/10
                 px-6
-                py-3
+                py-4
+                text-xs
                 font-black
                 uppercase
-                tracking-wider
+                tracking-[0.18em]
                 text-purple-200
-                shadow-[0_0_25px_rgba(168,85,247,.15)]
+                shadow-[0_0_30px_rgba(168,85,247,.12)]
                 transition-all
                 duration-300
                 hover:-translate-y-1
+                hover:border-purple-300/60
                 hover:bg-purple-500/30
                 hover:text-white
               "
             >
-              Explore Merchandise →
-            </a>
+              Enter Merchandise
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+
+            <p className="mt-4 text-center text-[9px] font-black uppercase tracking-[0.25em] text-slate-600">
+              EQUIP • CUSTOMIZE • DEPLOY
+            </p>
           </div>
         </div>
       </div>
