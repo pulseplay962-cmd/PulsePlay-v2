@@ -9,14 +9,55 @@ import {
   type Game,
 } from "../services/games";
 
-type FilterStatus =
+type GameFilter =
   | "all"
   | "upcoming"
-  | "released";
+  | "released"
+  | "featured";
+
+function cleanImageUrl(image: string) {
+  if (!image) {
+    return "";
+  }
+
+  if (image.startsWith("[")) {
+    const markdownMatch = image.match(
+      /\((https?:\/\/[^)]+)\)/
+    );
+
+    if (markdownMatch?.[1]) {
+      return markdownMatch[1];
+    }
+  }
+
+  return image;
+}
+
+function getGameStatus(game: Game) {
+  if (game.status === "archived") {
+    return "archived";
+  }
+
+  if (game.status === "released") {
+    return "released";
+  }
+
+  if (game.status === "upcoming") {
+    return "upcoming";
+  }
+
+  if (game.release_date) {
+    return new Date(game.release_date) <= new Date()
+      ? "released"
+      : "upcoming";
+  }
+
+  return "upcoming";
+}
 
 function formatReleaseDate(date?: string | null) {
   if (!date) {
-    return "Release date TBA";
+    return null;
   }
 
   const parsed = new Date(date);
@@ -25,40 +66,314 @@ function formatReleaseDate(date?: string | null) {
     return date;
   }
 
-  return parsed.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  return parsed.toLocaleDateString();
 }
 
-function getGameStatus(game: Game): "upcoming" | "released" {
-  if (game.status === "upcoming") {
-    return "upcoming";
-  }
+function StatusBadge({
+  status,
+}: {
+  status: string;
+}) {
+  const styles =
+    status === "released"
+      ? "border-green-400/30 bg-green-500/10 text-green-300"
+      : status === "upcoming"
+        ? "border-blue-400/30 bg-blue-500/10 text-blue-300"
+        : "border-white/10 bg-white/5 text-slate-400";
 
-  if (game.status === "released") {
-    return "released";
-  }
+  const label =
+    status === "released"
+      ? "RELEASED"
+      : status === "upcoming"
+        ? "COMING SOON"
+        : status.toUpperCase();
 
-  if (game.release_date) {
-    return new Date(game.release_date) > new Date()
-      ? "upcoming"
-      : "released";
-  }
+  return (
+    <span
+      className={`
+        inline-flex
+        rounded-full
+        border
+        px-3
+        py-1
+        text-[11px]
+        font-black
+        uppercase
+        tracking-wider
+        ${styles}
+      `}
+    >
+      {label}
+    </span>
+  );
+}
 
-  return "upcoming";
+function GameCard({
+  game,
+  featured = false,
+}: {
+  game: Game;
+  featured?: boolean;
+}) {
+  const imageUrl = cleanImageUrl(game.image);
+  const status = getGameStatus(game);
+  const releaseDate = formatReleaseDate(
+    game.release_date
+  );
+
+  return (
+    <Link
+      to={`/games/${game.id}`}
+      className="group block h-full"
+    >
+      <BrandCard
+        className="
+          h-full
+          p-0
+          transition-all
+          duration-300
+          group-hover:-translate-y-2
+          group-hover:border-cyan-400/30
+        "
+        status={
+          featured
+            ? "FEATURED GAME"
+            : "GAME INTELLIGENCE"
+        }
+      >
+        {/* COVER */}
+
+        <div className="relative overflow-hidden">
+
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={game.title}
+              className="
+                h-60
+                w-full
+                object-cover
+                transition
+                duration-500
+                group-hover:scale-105
+              "
+              onError={(event) => {
+                event.currentTarget.style.display =
+                  "none";
+              }}
+            />
+          ) : (
+            <div
+              className="
+                flex
+                h-60
+                items-center
+                justify-center
+                bg-black/40
+                text-sm
+                font-bold
+                uppercase
+                tracking-wider
+                text-slate-500
+              "
+            >
+              No Cover Image
+            </div>
+          )}
+
+          <div
+            className="
+              pointer-events-none
+              absolute
+              inset-0
+              bg-gradient-to-t
+              from-black/70
+              via-transparent
+              to-transparent
+              opacity-80
+            "
+          />
+
+          {featured && (
+            <span
+              className="
+                absolute
+                left-4
+                top-4
+                rounded-full
+                border
+                border-yellow-400/30
+                bg-yellow-500/20
+                px-3
+                py-1
+                text-[11px]
+                font-black
+                uppercase
+                tracking-wider
+                text-yellow-300
+                backdrop-blur
+              "
+            >
+              ⭐ Featured
+            </span>
+          )}
+
+          <div
+            className="
+              absolute
+              bottom-4
+              left-4
+              right-4
+              flex
+              flex-wrap
+              gap-2
+            "
+          >
+            <StatusBadge status={status} />
+
+            {game.platform && (
+              <span
+                className="
+                  rounded-full
+                  border
+                  border-white/10
+                  bg-black/50
+                  px-3
+                  py-1
+                  text-[11px]
+                  font-black
+                  uppercase
+                  tracking-wider
+                  text-slate-200
+                  backdrop-blur
+                "
+              >
+                {game.platform}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* CONTENT */}
+
+        <div className="p-6">
+
+          <div className="flex flex-wrap gap-2">
+
+            {game.category && (
+              <span
+                className="
+                  rounded-full
+                  border
+                  border-cyan-500/30
+                  bg-cyan-500/10
+                  px-3
+                  py-1
+                  text-xs
+                  font-bold
+                  text-cyan-300
+                "
+              >
+                {game.category}
+              </span>
+            )}
+
+            {game.genre && (
+              <span
+                className="
+                  rounded-full
+                  border
+                  border-purple-500/30
+                  bg-purple-500/10
+                  px-3
+                  py-1
+                  text-xs
+                  font-bold
+                  text-purple-300
+                "
+              >
+                {game.genre}
+              </span>
+            )}
+
+          </div>
+
+          <h3
+            className="
+              mt-4
+              text-2xl
+              font-black
+              text-white
+              transition
+              group-hover:text-cyan-300
+            "
+          >
+            {game.title}
+          </h3>
+
+          {game.description && (
+            <p
+              className="
+                mt-3
+                line-clamp-3
+                text-sm
+                leading-7
+                text-slate-400
+              "
+            >
+              {game.description}
+            </p>
+          )}
+
+          <div
+            className="
+              mt-6
+              flex
+              items-center
+              justify-between
+              gap-4
+              border-t
+              border-white/10
+              pt-5
+            "
+          >
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+                Release
+              </p>
+
+              <p className="mt-1 text-sm font-bold text-cyan-400">
+                {releaseDate || "TBA"}
+              </p>
+            </div>
+
+            <span
+              className="
+                text-sm
+                font-black
+                uppercase
+                tracking-wider
+                text-cyan-400
+                transition
+                group-hover:text-cyan-300
+              "
+            >
+              View Game →
+            </span>
+          </div>
+
+        </div>
+      </BrandCard>
+    </Link>
+  );
 }
 
 export default function Games() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [filter, setFilter] =
+    useState<GameFilter>("all");
   const [search, setSearch] = useState("");
-  const [genre, setGenre] = useState("all");
-  const [platform, setPlatform] = useState("all");
-  const [status, setStatus] =
-    useState<FilterStatus>("all");
 
   useEffect(() => {
     async function loadGames() {
@@ -83,130 +398,114 @@ export default function Games() {
     loadGames();
   }, []);
 
-  const genres = useMemo(() => {
-    return Array.from(
-      new Set(
-        games
-          .map((game) => game.genre?.trim())
-          .filter(Boolean) as string[]
-      )
-    ).sort();
-  }, [games]);
-
-  const platforms = useMemo(() => {
-    return Array.from(
-      new Set(
-        games
-          .map((game) => game.platform?.trim())
-          .filter(Boolean) as string[]
-      )
-    ).sort();
-  }, [games]);
-
-  const filteredGames = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    return games.filter((game) => {
-      const matchesSearch =
-        !query ||
-        game.title.toLowerCase().includes(query) ||
-        game.description
-          ?.toLowerCase()
-          .includes(query) ||
-        game.genre
-          ?.toLowerCase()
-          .includes(query);
-
-      const matchesGenre =
-        genre === "all" ||
-        game.genre === genre;
-
-      const matchesPlatform =
-        platform === "all" ||
-        game.platform === platform;
-
-      const matchesStatus =
-        status === "all" ||
-        getGameStatus(game) === status;
-
-      return (
-        matchesSearch &&
-        matchesGenre &&
-        matchesPlatform &&
-        matchesStatus
-      );
-    });
-  }, [
-    games,
-    search,
-    genre,
-    platform,
-    status,
-  ]);
-
-  const upcomingGames = useMemo(() => {
-    return filteredGames
+  const categorizedGames = useMemo(() => {
+    const upcoming = games
       .filter(
         (game) =>
           getGameStatus(game) === "upcoming"
       )
       .sort((a, b) => {
-        const aTime = a.release_date
+        const aDate = a.release_date
           ? new Date(a.release_date).getTime()
           : Number.MAX_SAFE_INTEGER;
 
-        const bTime = b.release_date
+        const bDate = b.release_date
           ? new Date(b.release_date).getTime()
           : Number.MAX_SAFE_INTEGER;
 
-        return aTime - bTime;
+        return aDate - bDate;
       });
-  }, [filteredGames]);
 
-  const releasedGames = useMemo(() => {
-    return filteredGames
+    const released = games
       .filter(
         (game) =>
           getGameStatus(game) === "released"
       )
       .sort((a, b) => {
-        const aTime = a.release_date
+        const aDate = a.release_date
           ? new Date(a.release_date).getTime()
           : 0;
 
-        const bTime = b.release_date
+        const bDate = b.release_date
           ? new Date(b.release_date).getTime()
           : 0;
 
-        return bTime - aTime;
+        return bDate - aDate;
       });
-  }, [filteredGames]);
 
-  const featuredGame = useMemo(() => {
-    return games.find(
-      (game) => game.featured === true
+    const featured = games.filter(
+      (game) =>
+        game.featured === true &&
+        getGameStatus(game) !== "archived"
     );
+
+    return {
+      upcoming,
+      released,
+      featured,
+    };
   }, [games]);
 
-  function clearFilters() {
-    setSearch("");
-    setGenre("all");
-    setPlatform("all");
-    setStatus("all");
-  }
+  const filteredGames = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return games
+      .filter((game) => {
+        if (filter === "featured") {
+          return game.featured === true;
+        }
+
+        if (filter === "upcoming") {
+          return getGameStatus(game) === "upcoming";
+        }
+
+        if (filter === "released") {
+          return getGameStatus(game) === "released";
+        }
+
+        return getGameStatus(game) !== "archived";
+      })
+      .filter((game) => {
+        if (!query) {
+          return true;
+        }
+
+        return [
+          game.title,
+          game.description,
+          game.genre,
+          game.category,
+          game.platform,
+        ]
+          .filter(Boolean)
+          .some((value) =>
+            value!
+              .toLowerCase()
+              .includes(query)
+          );
+      });
+  }, [games, filter, search]);
 
   if (loading) {
     return (
-      <main className="min-h-[72vh] px-6 py-12">
-        <BrandCard>
-          <div className="flex items-center gap-3">
-            <span className="pp-live-dot" />
+      <main className="min-h-[72vh] px-6 py-16">
+        <div className="mx-auto max-w-7xl">
+          <BrandCard status="GAME SYSTEM">
+            <div className="flex items-center gap-4">
+              <span className="pp-live-dot" />
 
-            <p className="text-slate-400">
-              Loading game intelligence...
-            </p>
-          </div>
-        </BrandCard>
+              <div>
+                <p className="font-black uppercase tracking-widest text-cyan-400">
+                  PulsePlay Game Library
+                </p>
+
+                <p className="mt-1 text-slate-400">
+                  Loading game intelligence...
+                </p>
+              </div>
+            </div>
+          </BrandCard>
+        </div>
       </main>
     );
   }
@@ -214,578 +513,516 @@ export default function Games() {
   return (
     <main className="min-h-[72vh] px-6 py-12">
 
-      {/* =========================
-          PAGE HEADER
-      ========================= */}
+      <div className="mx-auto max-w-7xl">
 
-      <section className="mx-auto mb-14 max-w-7xl">
+        {/* HERO */}
 
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <section
+          className="
+            relative
+            mb-14
+            overflow-hidden
+            rounded-3xl
+            border
+            border-cyan-500/20
+            bg-gradient-to-br
+            from-purple-950/50
+            via-[#070b16]
+            to-cyan-950/30
+            p-8
+            shadow-[0_0_60px_rgba(34,211,238,.08)]
+            md:p-12
+          "
+        >
 
-          <div>
-            <div className="mb-4 flex items-center gap-3 text-xs font-black uppercase tracking-[0.35em] text-cyan-400">
-              <span className="pp-live-dot" />
-              PulsePlay Intelligence
-            </div>
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -right-24
+              -top-24
+              h-72
+              w-72
+              rounded-full
+              bg-purple-500/10
+              blur-3xl
+            "
+          />
 
-            <h1 className="text-5xl font-black pp-gradient-text md:text-6xl">
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -bottom-32
+              -left-24
+              h-72
+              w-72
+              rounded-full
+              bg-cyan-500/10
+              blur-3xl
+            "
+          />
+
+          <div className="relative">
+
+            <p
+              className="
+                text-xs
+                font-black
+                uppercase
+                tracking-[0.45em]
+                text-cyan-400
+              "
+            >
+              PulsePlay Intelligence Network
+            </p>
+
+            <h1
+              className="
+                mt-4
+                text-5xl
+                font-black
+                leading-none
+                pp-gradient-text
+                md:text-7xl
+              "
+            >
               Game Library
             </h1>
 
-            <p className="mt-5 max-w-3xl text-lg text-slate-400">
-              Explore the games powering the PulsePlay
+            <p
+              className="
+                mt-6
+                max-w-3xl
+                text-lg
+                leading-8
+                text-slate-300
+              "
+            >
+              Explore the games driving the PulsePlay
               community — from upcoming releases to
-              titles already in the rotation.
+              recently launched titles and featured
+              experiences.
             </p>
-          </div>
 
-          <div className="grid grid-cols-3 gap-3">
+            {/* STATS */}
 
-            <div className="pp-panel min-w-[100px] p-4 text-center">
-              <p className="text-2xl font-black text-white">
-                {games.length}
-              </p>
+            <div
+              className="
+                mt-10
+                grid
+                grid-cols-2
+                gap-4
+                md:grid-cols-4
+              "
+            >
 
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                Games
-              </p>
-            </div>
-
-            <div className="pp-panel min-w-[100px] p-4 text-center">
-              <p className="text-2xl font-black text-cyan-400">
-                {upcomingGames.length}
-              </p>
-
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                Upcoming
-              </p>
-            </div>
-
-            <div className="pp-panel min-w-[100px] p-4 text-center">
-              <p className="text-2xl font-black text-green-400">
-                {releasedGames.length}
-              </p>
-
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                Released
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* =========================
-          FEATURED GAME
-      ========================= */}
-
-      {featuredGame && (
-        <section className="mx-auto mb-14 max-w-7xl">
-
-          <BrandCard
-            className="overflow-hidden p-0"
-            scan
-          >
-
-            <div className="grid lg:grid-cols-2">
-
-              <div className="relative min-h-[300px]">
-
-                {featuredGame.image ? (
-                  <img
-                    src={featuredGame.image}
-                    alt={featuredGame.title}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-slate-500">
-                    No Cover Image
-                  </div>
-                )}
-
-                <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-transparent to-transparent lg:bg-gradient-to-r" />
-
-                <div className="absolute left-6 top-6 rounded-full border border-cyan-400/40 bg-black/70 px-4 py-2 text-xs font-black uppercase tracking-widest text-cyan-300 backdrop-blur">
-                  Featured Transmission
-                </div>
-
-              </div>
-
-              <div className="flex flex-col justify-center p-8 lg:p-12">
-
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-purple-400">
-                  PulsePlay Featured
+              <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Total Games
                 </p>
 
-                <h2 className="mt-3 text-4xl font-black text-white md:text-5xl">
-                  {featuredGame.title}
-                </h2>
+                <p className="mt-2 text-3xl font-black text-white">
+                  {games.length}
+                </p>
+              </div>
 
-                {featuredGame.description && (
-                  <p className="mt-5 line-clamp-4 text-slate-400">
-                    {featuredGame.description}
-                  </p>
-                )}
+              <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Upcoming
+                </p>
 
-                <div className="mt-6 flex flex-wrap gap-2">
+                <p className="mt-2 text-3xl font-black text-blue-300">
+                  {categorizedGames.upcoming.length}
+                </p>
+              </div>
 
-                  {featuredGame.genre && (
-                    <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-purple-300">
-                      {featuredGame.genre}
-                    </span>
-                  )}
+              <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-5">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Released
+                </p>
 
-                  {featuredGame.platform && (
-                    <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-cyan-300">
-                      {featuredGame.platform}
-                    </span>
-                  )}
+                <p className="mt-2 text-3xl font-black text-green-300">
+                  {categorizedGames.released.length}
+                </p>
+              </div>
 
-                </div>
+              <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-5">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Featured
+                </p>
 
-                <div className="mt-7 flex flex-wrap items-center gap-4">
-
-                  <Link to={`/games/${featuredGame.id}`}>
-                    <BrandButton>
-                      View Game
-                    </BrandButton>
-                  </Link>
-
-                  <span className="text-sm font-bold text-slate-500">
-                    {formatReleaseDate(
-                      featuredGame.release_date
-                    )}
-                  </span>
-
-                </div>
-
+                <p className="mt-2 text-3xl font-black text-yellow-300">
+                  {categorizedGames.featured.length}
+                </p>
               </div>
 
             </div>
 
-          </BrandCard>
-
+          </div>
         </section>
-      )}
 
-      {/* =========================
-          FILTER COMMAND BAR
-      ========================= */}
+        {/* EMPTY STATE */}
 
-      <section className="mx-auto mb-14 max-w-7xl">
+        {games.length === 0 && (
+          <BrandCard status="GAME LIBRARY EMPTY">
+            <div className="py-12 text-center">
 
-        <BrandCard>
-
-          <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.3em] text-cyan-400">
-                Library Command
+              <p className="text-xs font-black uppercase tracking-[0.35em] text-purple-400">
+                No Game Data
               </p>
 
-              <h2 className="mt-1 text-2xl font-black text-white">
-                Find Your Next Game
-              </h2>
-            </div>
-
-            <p className="text-sm text-slate-500">
-              {filteredGames.length} of {games.length} results
-            </p>
-
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-4">
-
-            <input
-              type="search"
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
-              placeholder="Search games..."
-              className="
-                w-full
-                rounded-xl
-                border
-                border-white/10
-                bg-black/40
-                px-4
-                py-3
-                text-white
-                outline-none
-                transition
-                placeholder:text-slate-600
-                focus:border-cyan-400/50
-                focus:ring-2
-                focus:ring-cyan-400/10
-              "
-            />
-
-            <select
-              value={genre}
-              onChange={(event) =>
-                setGenre(event.target.value)
-              }
-              className="
-                rounded-xl
-                border
-                border-white/10
-                bg-[#0b1120]
-                px-4
-                py-3
-                text-white
-                outline-none
-                focus:border-cyan-400/50
-              "
-            >
-              <option value="all">
-                All Genres
-              </option>
-
-              {genres.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={platform}
-              onChange={(event) =>
-                setPlatform(event.target.value)
-              }
-              className="
-                rounded-xl
-                border
-                border-white/10
-                bg-[#0b1120]
-                px-4
-                py-3
-                text-white
-                outline-none
-                focus:border-cyan-400/50
-              "
-            >
-              <option value="all">
-                All Platforms
-              </option>
-
-              {platforms.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={status}
-              onChange={(event) =>
-                setStatus(
-                  event.target.value as FilterStatus
-                )
-              }
-              className="
-                rounded-xl
-                border
-                border-white/10
-                bg-[#0b1120]
-                px-4
-                py-3
-                text-white
-                outline-none
-                focus:border-cyan-400/50
-              "
-            >
-              <option value="all">
-                All Status
-              </option>
-
-              <option value="upcoming">
-                Upcoming
-              </option>
-
-              <option value="released">
-                Released
-              </option>
-            </select>
-
-          </div>
-
-          {(search ||
-            genre !== "all" ||
-            platform !== "all" ||
-            status !== "all") && (
-            <div className="mt-5">
-
-              <BrandButton
-                variant="secondary"
-                onClick={clearFilters}
-              >
-                Reset Filters
-              </BrandButton>
-
-            </div>
-          )}
-
-        </BrandCard>
-
-      </section>
-
-      {/* =========================
-          EMPTY LIBRARY
-      ========================= */}
-
-      {games.length === 0 && (
-        <section className="mx-auto max-w-7xl">
-          <BrandCard>
-            <h2 className="text-2xl font-black text-white">
-              No Games Available
-            </h2>
-
-            <p className="mt-3 text-slate-400">
-              Add games through the PulsePlay Admin Dashboard.
-            </p>
-          </BrandCard>
-        </section>
-      )}
-
-      {/* =========================
-          FILTERED EMPTY
-      ========================= */}
-
-      {games.length > 0 &&
-        filteredGames.length === 0 && (
-          <section className="mx-auto max-w-7xl">
-            <BrandCard>
-              <h2 className="text-2xl font-black text-white">
-                No Matching Games
+              <h2 className="mt-4 text-3xl font-black text-white">
+                No Games Available
               </h2>
 
-              <p className="mt-3 text-slate-400">
-                No games match the current intelligence
-                filters.
+              <p className="mx-auto mt-4 max-w-xl text-slate-400">
+                Add games through the PulsePlay Admin
+                Dashboard to populate the public library.
               </p>
 
-              <div className="mt-6">
+            </div>
+          </BrandCard>
+        )}
+
+        {games.length > 0 && (
+          <>
+
+            {/* FEATURED */}
+
+            {categorizedGames.featured.length > 0 && (
+              <section className="mb-14">
+
+                <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.4em] text-yellow-400">
+                      Curated Selection
+                    </p>
+
+                    <h2 className="mt-2 text-4xl font-black pp-gradient-text">
+                      Featured Games
+                    </h2>
+
+                    <p className="mt-3 max-w-3xl text-slate-400">
+                      Games currently receiving the
+                      PulsePlay spotlight.
+                    </p>
+                  </div>
+
+                  <BrandButton
+                    variant="secondary"
+                    type="button"
+                    onClick={() =>
+                      setFilter("featured")
+                    }
+                  >
+                    ⭐ View Featured
+                  </BrandButton>
+
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+                  {categorizedGames.featured
+                    .slice(0, 3)
+                    .map((game) => (
+                      <GameCard
+                        key={game.id}
+                        game={game}
+                        featured
+                      />
+                    ))}
+
+                </div>
+              </section>
+            )}
+
+            {/* RELEASE RADAR */}
+
+            <section className="mb-14">
+
+              <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.4em] text-blue-400">
+                    Release Radar
+                  </p>
+
+                  <h2 className="mt-2 text-4xl font-black pp-gradient-text">
+                    Upcoming Releases
+                  </h2>
+
+                  <p className="mt-3 max-w-3xl text-slate-400">
+                    Keep an eye on the newest games
+                    heading toward the PulsePlay community.
+                  </p>
+                </div>
+
                 <BrandButton
                   variant="secondary"
-                  onClick={clearFilters}
+                  type="button"
+                  onClick={() =>
+                    setFilter("upcoming")
+                  }
                 >
-                  Clear Filters
+                  View Upcoming
                 </BrandButton>
-              </div>
-            </BrandCard>
-          </section>
-        )}
 
-      {/* =========================
-          UPCOMING
-      ========================= */}
-
-      {upcomingGames.length > 0 && (
-        <section className="mx-auto mb-16 max-w-7xl">
-
-          <div className="mb-7 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-
-            <div>
-              <div className="flex items-center gap-3">
-                <span className="h-3 w-3 rounded-full bg-blue-400 shadow-[0_0_15px_rgba(96,165,250,.8)]" />
-
-                <h2 className="text-3xl font-black pp-gradient-text">
-                  Upcoming Releases
-                </h2>
               </div>
 
-              <p className="mt-2 text-slate-400">
-                Games on the horizon.
-              </p>
-            </div>
+              {categorizedGames.upcoming.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-            <span className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              {upcomingGames.length} Incoming
-            </span>
+                  {categorizedGames.upcoming
+                    .slice(0, 3)
+                    .map((game) => (
+                      <GameCard
+                        key={game.id}
+                        game={game}
+                      />
+                    ))}
 
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
-            {upcomingGames.map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                status="upcoming"
-              />
-            ))}
-
-          </div>
-
-        </section>
-      )}
-
-      {/* =========================
-          RELEASED
-      ========================= */}
-
-      {releasedGames.length > 0 && (
-        <section className="mx-auto mb-16 max-w-7xl">
-
-          <div className="mb-7 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-
-            <div>
-              <div className="flex items-center gap-3">
-                <span className="h-3 w-3 rounded-full bg-green-400 shadow-[0_0_15px_rgba(74,222,128,.8)]" />
-
-                <h2 className="text-3xl font-black pp-gradient-text">
-                  Released Games
-                </h2>
-              </div>
-
-              <p className="mt-2 text-slate-400">
-                Games currently in the PulsePlay library.
-              </p>
-            </div>
-
-            <span className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              {releasedGames.length} Available
-            </span>
-
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
-            {releasedGames.map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                status="released"
-              />
-            ))}
-
-          </div>
-
-        </section>
-      )}
-
-    </main>
-  );
-}
-
-function GameCard({
-  game,
-  status,
-}: {
-  game: Game;
-  status: "upcoming" | "released";
-}) {
-  return (
-    <BrandCard
-      className="card-hover flex h-full flex-col"
-      status={
-        status === "upcoming"
-          ? "INCOMING"
-          : "AVAILABLE"
-      }
-    >
-
-      <div className="relative">
-
-        {game.image ? (
-          <img
-            src={game.image}
-            alt={game.title}
-            className="h-60 w-full rounded-xl object-cover"
-          />
-        ) : (
-          <div className="flex h-60 items-center justify-center rounded-xl bg-black/40 text-slate-500">
-            No Cover Image
-          </div>
-        )}
-
-        <div
-          className={`
-            absolute
-            left-4
-            top-4
-            rounded-full
-            px-3
-            py-1
-            text-xs
-            font-black
-            uppercase
-            tracking-wider
-            backdrop-blur
-            ${
-              status === "upcoming"
-                ? "bg-blue-500/80 text-white"
-                : "bg-green-500/80 text-white"
-            }
-          `}
-        >
-          {status === "upcoming"
-            ? "Coming Soon"
-            : "Released"}
-        </div>
-
-      </div>
-
-      <div className="flex flex-1 flex-col">
-
-        <div className="mt-5 flex flex-wrap gap-2">
-
-          {game.genre && (
-            <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-bold text-purple-300">
-              {game.genre}
-            </span>
-          )}
-
-          {game.platform && (
-            <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-300">
-              {game.platform}
-            </span>
-          )}
-
-        </div>
-
-        <h2 className="mt-4 text-2xl font-black text-white">
-          {game.title}
-        </h2>
-
-        {game.description && (
-          <p className="mt-3 line-clamp-3 text-slate-400">
-            {game.description}
-          </p>
-        )}
-
-        <div className="mt-auto pt-6">
-
-          <div className="mb-5 flex items-center justify-between gap-4 border-t border-white/10 pt-4">
-
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
-              Release
-            </span>
-
-            <span className="text-sm font-bold text-cyan-400">
-              {formatReleaseDate(
-                game.release_date
+                </div>
+              ) : (
+                <BrandCard status="RELEASE RADAR">
+                  <p className="text-slate-400">
+                    No upcoming releases are currently
+                    listed.
+                  </p>
+                </BrandCard>
               )}
-            </span>
 
-          </div>
+            </section>
 
-          <Link to={`/games/${game.id}`}>
-            <BrandButton
-              variant="secondary"
-              className="w-full"
-            >
-              View Game
-            </BrandButton>
-          </Link>
+            {/* RECENT RELEASES */}
 
-        </div>
+            <section className="mb-14">
+
+              <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.4em] text-green-400">
+                    Launch Archive
+                  </p>
+
+                  <h2 className="mt-2 text-4xl font-black pp-gradient-text">
+                    Recent Releases
+                  </h2>
+
+                  <p className="mt-3 max-w-3xl text-slate-400">
+                    Explore games that have recently
+                    entered the PulsePlay library.
+                  </p>
+                </div>
+
+                <BrandButton
+                  variant="secondary"
+                  type="button"
+                  onClick={() =>
+                    setFilter("released")
+                  }
+                >
+                  View Released
+                </BrandButton>
+
+              </div>
+
+              {categorizedGames.released.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+                  {categorizedGames.released
+                    .slice(0, 3)
+                    .map((game) => (
+                      <GameCard
+                        key={game.id}
+                        game={game}
+                      />
+                    ))}
+
+                </div>
+              ) : (
+                <BrandCard status="LAUNCH ARCHIVE">
+                  <p className="text-slate-400">
+                    No released games are currently
+                    listed.
+                  </p>
+                </BrandCard>
+              )}
+
+            </section>
+
+            {/* FULL LIBRARY */}
+
+            <section className="pb-16">
+
+              <div className="mb-7 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
+                    Complete Database
+                  </p>
+
+                  <h2 className="mt-2 text-4xl font-black pp-gradient-text">
+                    Full Game Library
+                  </h2>
+
+                  <p className="mt-3 text-slate-400">
+                    Search and explore the complete
+                    PulsePlay game database.
+                  </p>
+                </div>
+
+                <div className="w-full lg:max-w-md">
+
+                  <label
+                    htmlFor="game-search"
+                    className="sr-only"
+                  >
+                    Search games
+                  </label>
+
+                  <input
+                    id="game-search"
+                    type="search"
+                    value={search}
+                    onChange={(event) =>
+                      setSearch(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Search games, genres, platforms..."
+                    className="
+                      w-full
+                      rounded-xl
+                      border
+                      border-cyan-500/20
+                      bg-black/30
+                      px-5
+                      py-3
+                      text-white
+                      outline-none
+                      transition
+                      placeholder:text-slate-600
+                      focus:border-cyan-400/50
+                      focus:ring-2
+                      focus:ring-cyan-500/10
+                    "
+                  />
+
+                </div>
+
+              </div>
+
+              {/* FILTERS */}
+
+              <div className="mb-8 flex flex-wrap gap-3">
+
+                {(
+                  [
+                    ["all", "All Games"],
+                    ["featured", "⭐ Featured"],
+                    ["upcoming", "Coming Soon"],
+                    ["released", "Released"],
+                  ] as const
+                ).map(([value, label]) => {
+
+                  const active =
+                    filter === value;
+
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() =>
+                        setFilter(value)
+                      }
+                      className={`
+                        rounded-xl
+                        border
+                        px-5
+                        py-2.5
+                        text-sm
+                        font-black
+                        uppercase
+                        tracking-wider
+                        transition-all
+                        ${
+                          active
+                            ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-300 shadow-[0_0_20px_rgba(34,211,238,.12)]"
+                            : "border-white/10 bg-white/5 text-slate-400 hover:border-cyan-500/30 hover:text-cyan-300"
+                        }
+                      `}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+
+              </div>
+
+              {filteredGames.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+                  {filteredGames.map((game) => (
+                    <GameCard
+                      key={game.id}
+                      game={game}
+                      featured={
+                        game.featured === true
+                      }
+                    />
+                  ))}
+
+                </div>
+              ) : (
+                <BrandCard status="NO MATCHES">
+                  <div className="py-10 text-center">
+
+                    <h3 className="text-2xl font-black text-white">
+                      No Games Found
+                    </h3>
+
+                    <p className="mt-3 text-slate-400">
+                      Try another search or change the
+                      library filter.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearch("");
+                        setFilter("all");
+                      }}
+                      className="
+                        mt-6
+                        rounded-xl
+                        border
+                        border-cyan-500/30
+                        bg-cyan-500/10
+                        px-6
+                        py-3
+                        font-black
+                        uppercase
+                        tracking-wider
+                        text-cyan-300
+                        transition
+                        hover:bg-cyan-500/20
+                      "
+                    >
+                      Reset Library
+                    </button>
+
+                  </div>
+                </BrandCard>
+              )}
+
+            </section>
+
+          </>
+        )}
 
       </div>
-
-    </BrandCard>
+    </main>
   );
 }
