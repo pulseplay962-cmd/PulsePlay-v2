@@ -4,6 +4,8 @@ import {
   submitCommunitySignup,
 } from "../../services/communitySignup";
 
+import BrandButton from "../ui/BrandButton";
+
 export default function SignupPanel() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,21 +27,18 @@ export default function SignupPanel() {
       });
 
       setMessage(
-        "🎮 Welcome to the PulsePlay Network!"
+        "🎮 CONNECTION ESTABLISHED — Welcome to the PulsePlay Network!"
       );
 
       setName("");
       setEmail("");
       setDiscord("");
     } catch (error: any) {
-      console.error(
-        "Signup failed:",
-        error
-      );
+      console.error("Signup failed:", error);
 
       setMessage(
         error?.message ||
-          "Signup failed"
+          "CONNECTION FAILED — Please try again."
       );
     } finally {
       setLoading(false);
@@ -53,26 +52,29 @@ export default function SignupPanel() {
         overflow-hidden
         rounded-3xl
         border
-        border-cyan-500/20
+        border-cyan-400/20
         bg-gradient-to-br
-        from-[#070b14]
-        via-[#0b1120]
-        to-cyan-950/30
-        p-8
-        shadow-[0_0_50px_rgba(34,211,238,.08)]
-        md:p-12
+        from-[#050811]
+        via-[#09101d]
+        to-purple-950/30
+        p-6
+        shadow-[0_0_70px_rgba(34,211,238,.08)]
+        md:p-10
+        lg:p-12
       "
     >
-      {/* Ambient glow */}
+      {/* =========================
+          AMBIENT SYSTEM EFFECTS
+      ========================= */}
 
       <div
         className="
           pointer-events-none
           absolute
-          -right-24
-          -top-24
-          h-64
-          w-64
+          -right-32
+          -top-32
+          h-80
+          w-80
           rounded-full
           bg-cyan-500/10
           blur-3xl
@@ -83,17 +85,15 @@ export default function SignupPanel() {
         className="
           pointer-events-none
           absolute
-          -bottom-32
-          -left-24
-          h-64
-          w-64
+          -bottom-40
+          -left-32
+          h-80
+          w-80
           rounded-full
           bg-purple-500/10
           blur-3xl
         "
       />
-
-      {/* Top scan line */}
 
       <div
         className="
@@ -106,9 +106,28 @@ export default function SignupPanel() {
           from-transparent
           via-cyan-400
           to-transparent
-          opacity-70
+          opacity-80
         "
       />
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-x-0
+          bottom-0
+          h-px
+          bg-gradient-to-r
+          from-transparent
+          via-purple-500
+          to-transparent
+          opacity-50
+        "
+      />
+
+      {/* =========================
+          MAIN NETWORK GRID
+      ========================= */}
 
       <div
         className="
@@ -116,21 +135,26 @@ export default function SignupPanel() {
           z-10
           grid
           gap-10
-          lg:grid-cols-[1fr_1.15fr]
+          lg:grid-cols-[1fr_1.1fr]
           lg:items-center
         "
       >
-        {/* INFORMATION */}
+
+        {/* =========================
+            NETWORK INFORMATION
+        ========================= */}
 
         <div>
+
           <div className="flex items-center gap-3">
+
             <span
               className="
-                h-2.5
-                w-2.5
+                pp-live-dot
+                h-3
+                w-3
                 rounded-full
                 bg-cyan-400
-                shadow-[0_0_14px_rgba(34,211,238,.8)]
               "
             />
 
@@ -143,30 +167,51 @@ export default function SignupPanel() {
                 text-cyan-400
               "
             >
-              Network Access
+              Player Network
             </p>
+
+            <span className="text-xs text-slate-700">
+              //
+            </span>
+
+            <span
+              className="
+                text-[10px]
+                font-black
+                uppercase
+                tracking-widest
+                text-green-400
+              "
+            >
+              ONLINE
+            </span>
+
           </div>
+
 
           <h2
             className="
-              mt-4
+              mt-5
               text-4xl
               font-black
               uppercase
-              leading-tight
+              leading-[1.05]
               text-white
               md:text-5xl
+              lg:text-6xl
             "
           >
-            Join The
+            Enter The
+
             <span className="block pp-gradient-text">
               PulsePlay Network
             </span>
           </h2>
 
+
           <p
             className="
-              mt-5
+              mt-6
               max-w-xl
               text-base
               leading-7
@@ -174,20 +219,30 @@ export default function SignupPanel() {
               md:text-lg
             "
           >
-            Get connected to the PulsePlay gaming
-            network for stream alerts, gaming news,
-            community events, new releases, and
-            merchandise drops.
+            Connect to the PulsePlay gaming network
+            and stay locked into the broadcasts,
+            intelligence, releases, events, and
+            community activity shaping the next mission.
           </p>
 
-          <div className="mt-7 grid gap-3 sm:grid-cols-2">
+
+          {/* NETWORK CAPABILITIES */}
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+
             <div
               className="
-                rounded-xl
+                group
+                rounded-2xl
                 border
-                border-white/10
-                bg-black/20
+                border-cyan-400/10
+                bg-black/30
                 p-4
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                hover:border-cyan-400/30
+                hover:bg-cyan-400/5
               "
             >
               <p
@@ -195,25 +250,33 @@ export default function SignupPanel() {
                   text-[10px]
                   font-black
                   uppercase
-                  tracking-widest
+                  tracking-[0.25em]
                   text-cyan-400
                 "
               >
-                STREAM ALERTS
+                01 // STREAM ALERTS
               </p>
 
-              <p className="mt-2 text-sm text-slate-400">
-                Know when the next broadcast goes live.
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Know when the next PulsePlay broadcast
+                goes live.
               </p>
             </div>
 
+
             <div
               className="
-                rounded-xl
+                group
+                rounded-2xl
                 border
-                border-white/10
-                bg-black/20
+                border-purple-400/10
+                bg-black/30
                 p-4
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                hover:border-purple-400/30
+                hover:bg-purple-400/5
               "
             >
               <p
@@ -221,18 +284,91 @@ export default function SignupPanel() {
                   text-[10px]
                   font-black
                   uppercase
-                  tracking-widest
+                  tracking-[0.25em]
                   text-purple-400
                 "
               >
-                COMMUNITY INTEL
+                02 // GAMING INTEL
               </p>
 
-              <p className="mt-2 text-sm text-slate-400">
-                Stay connected with what's happening.
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Stay ahead of gaming news and industry
+                developments.
               </p>
             </div>
+
+
+            <div
+              className="
+                group
+                rounded-2xl
+                border
+                border-pink-400/10
+                bg-black/30
+                p-4
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                hover:border-pink-400/30
+                hover:bg-pink-400/5
+              "
+            >
+              <p
+                className="
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-pink-400
+                "
+              >
+                03 // EVENTS
+              </p>
+
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Keep connected with community activity
+                and gaming events.
+              </p>
+            </div>
+
+
+            <div
+              className="
+                group
+                rounded-2xl
+                border
+                border-cyan-300/10
+                bg-black/30
+                p-4
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                hover:border-cyan-300/30
+                hover:bg-cyan-300/5
+              "
+            >
+              <p
+                className="
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-cyan-300
+                "
+              >
+                04 // DROPS
+              </p>
+
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Get notified about new releases and
+                merchandise drops.
+              </p>
+            </div>
+
           </div>
+
+
+          {/* NETWORK STATUS */}
 
           <div
             className="
@@ -254,201 +390,327 @@ export default function SignupPanel() {
             "
           >
             <span className="pp-live-dot h-2 w-2 rounded-full bg-green-400" />
+
             NETWORK ACCEPTING PLAYERS
           </div>
+
         </div>
 
-        {/* SIGNUP TERMINAL */}
+
+        {/* =========================
+            PLAYER REGISTRATION
+        ========================= */}
 
         <div
           className="
+            relative
+            overflow-hidden
             rounded-2xl
             border
             border-white/10
-            bg-black/30
+            bg-black/40
             p-6
+            shadow-[0_0_40px_rgba(0,0,0,.25)]
             backdrop-blur-xl
             md:p-8
           "
         >
+
+          {/* TERMINAL HEADER */}
+
           <div
             className="
-              mb-6
+              mb-7
               flex
-              items-center
+              items-start
               justify-between
               border-b
               border-white/10
-              pb-4
+              pb-5
             "
           >
+
             <div>
-              <p
+
+              <div className="flex items-center gap-2">
+
+                <span
+                  className="
+                    h-2
+                    w-2
+                    rounded-full
+                    bg-cyan-400
+                    shadow-[0_0_12px_rgba(34,211,238,.8)]
+                  "
+                />
+
+                <p
+                  className="
+                    text-[10px]
+                    font-black
+                    uppercase
+                    tracking-[0.3em]
+                    text-cyan-400
+                  "
+                >
+                  Network Terminal
+                </p>
+
+              </div>
+
+              <h3
                 className="
-                  text-[10px]
+                  mt-2
+                  text-2xl
                   font-black
                   uppercase
-                  tracking-[0.3em]
-                  text-slate-500
+                  text-white
                 "
               >
-                Player Registration
-              </p>
-
-              <h3 className="mt-1 text-xl font-black text-white">
                 Establish Connection
               </h3>
+
             </div>
+
 
             <span
               className="
                 rounded-lg
                 border
-                border-cyan-500/20
-                bg-cyan-500/5
+                border-green-500/20
+                bg-green-500/5
                 px-3
                 py-1
-                text-[10px]
+                text-[9px]
                 font-black
+                uppercase
                 tracking-widest
-                text-cyan-300
+                text-green-400
               "
             >
               SECURE
             </span>
+
           </div>
+
 
           <form
             onSubmit={submit}
             className="space-y-4"
           >
-            <input
-              type="text"
-              required
-              placeholder="Player Name"
-              value={name}
-              onChange={(e) =>
-                setName(e.target.value)
-              }
-              className="
-                w-full
-                rounded-xl
-                border
-                border-white/10
-                bg-black/40
-                p-4
-                text-white
-                outline-none
-                transition
-                placeholder:text-slate-600
-                focus:border-cyan-400/50
-                focus:ring-1
-                focus:ring-cyan-400/30
-              "
-            />
 
-            <input
-              type="email"
-              required
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-              className="
-                w-full
-                rounded-xl
-                border
-                border-white/10
-                bg-black/40
-                p-4
-                text-white
-                outline-none
-                transition
-                placeholder:text-slate-600
-                focus:border-cyan-400/50
-                focus:ring-1
-                focus:ring-cyan-400/30
-              "
-            />
+            {/* PLAYER NAME */}
 
-            <input
-              type="text"
-              placeholder="Discord Username (Optional)"
-              value={discord}
-              onChange={(e) =>
-                setDiscord(e.target.value)
-              }
-              className="
-                w-full
-                rounded-xl
-                border
-                border-white/10
-                bg-black/40
-                p-4
-                text-white
-                outline-none
-                transition
-                placeholder:text-slate-600
-                focus:border-purple-400/50
-                focus:ring-1
-                focus:ring-purple-400/30
-              "
-            />
+            <div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="
-                w-full
-                rounded-xl
-                border
-                border-cyan-400/30
-                bg-gradient-to-r
-                from-cyan-500/20
-                to-purple-500/20
-                px-6
-                py-4
-                font-black
-                uppercase
-                tracking-wider
-                text-cyan-200
-                shadow-[0_0_25px_rgba(34,211,238,.08)]
-                transition-all
-                duration-300
-                hover:-translate-y-1
-                hover:border-cyan-300/50
-                hover:bg-cyan-500/20
-                hover:text-white
-                disabled:cursor-not-allowed
-                disabled:opacity-50
-              "
-            >
-              {loading
-                ? "CONNECTING..."
-                : "🚀 JOIN COMMUNITY"}
-            </button>
+              <label
+                className="
+                  mb-2
+                  block
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-slate-500
+                "
+              >
+                Player Identity
+              </label>
+
+              <input
+                type="text"
+                required
+                placeholder="PLAYER NAME"
+                value={name}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
+                className="
+                  w-full
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-black/50
+                  p-4
+                  text-white
+                  outline-none
+                  transition-all
+                  placeholder:text-slate-700
+                  focus:border-cyan-400/50
+                  focus:bg-cyan-400/5
+                  focus:ring-1
+                  focus:ring-cyan-400/30
+                "
+              />
+
+            </div>
+
+
+            {/* EMAIL */}
+
+            <div>
+
+              <label
+                className="
+                  mb-2
+                  block
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-slate-500
+                "
+              >
+                Communication Channel
+              </label>
+
+              <input
+                type="email"
+                required
+                placeholder="EMAIL ADDRESS"
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
+                className="
+                  w-full
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-black/50
+                  p-4
+                  text-white
+                  outline-none
+                  transition-all
+                  placeholder:text-slate-700
+                  focus:border-cyan-400/50
+                  focus:bg-cyan-400/5
+                  focus:ring-1
+                  focus:ring-cyan-400/30
+                "
+              />
+
+            </div>
+
+
+            {/* DISCORD */}
+
+            <div>
+
+              <label
+                className="
+                  mb-2
+                  block
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-slate-500
+                "
+              >
+                Community Link
+              </label>
+
+              <input
+                type="text"
+                placeholder="DISCORD USERNAME (OPTIONAL)"
+                value={discord}
+                onChange={(e) =>
+                  setDiscord(e.target.value)
+                }
+                className="
+                  w-full
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-black/50
+                  p-4
+                  text-white
+                  outline-none
+                  transition-all
+                  placeholder:text-slate-700
+                  focus:border-purple-400/50
+                  focus:bg-purple-400/5
+                  focus:ring-1
+                  focus:ring-purple-400/30
+                "
+              />
+
+            </div>
+
+
+            {/* CONNECTION BUTTON */}
+
+            <div className="pt-2">
+
+              <BrandButton
+                type="submit"
+                disabled={loading}
+                className="w-full py-4"
+              >
+                {loading
+                  ? "CONNECTING..."
+                  : "🚀 JOIN PLAYER NETWORK"}
+              </BrandButton>
+
+            </div>
+
+
+            {/* STATUS MESSAGE */}
 
             {message && (
               <div
                 className="
                   rounded-xl
                   border
-                  border-cyan-500/20
-                  bg-cyan-500/5
+                  border-cyan-400/20
+                  bg-cyan-400/5
                   p-4
                   text-center
                   text-sm
                   font-bold
+                  leading-relaxed
                   text-cyan-300
                 "
               >
                 {message}
               </div>
             )}
+
           </form>
+
+
+          {/* TERMINAL FOOTER */}
+
+          <div
+            className="
+              mt-6
+              flex
+              items-center
+              justify-between
+              border-t
+              border-white/5
+              pt-4
+              text-[9px]
+              font-black
+              uppercase
+              tracking-[0.2em]
+              text-slate-600
+            "
+          >
+            <span>
+              PULSEPLAY // PLAYER ACCESS
+            </span>
+
+            <span>
+              ENCRYPTED
+            </span>
+          </div>
+
         </div>
+
       </div>
+
     </section>
   );
 }
