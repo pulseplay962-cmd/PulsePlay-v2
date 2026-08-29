@@ -15,7 +15,7 @@ type GameFilter =
   | "released"
   | "featured";
 
-function cleanImageUrl(image: string) {
+function cleanImageUrl(image?: string | null) {
   if (!image) {
     return "";
   }
@@ -66,7 +66,11 @@ function formatReleaseDate(date?: string | null) {
     return date;
   }
 
-  return parsed.toLocaleDateString();
+  return parsed.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function StatusBadge({
@@ -92,14 +96,16 @@ function StatusBadge({
     <span
       className={`
         inline-flex
+        items-center
         rounded-full
         border
         px-3
         py-1
-        text-[11px]
+        text-[10px]
         font-black
         uppercase
-        tracking-wider
+        tracking-[0.18em]
+        backdrop-blur-md
         ${styles}
       `}
     >
@@ -111,9 +117,11 @@ function StatusBadge({
 function GameCard({
   game,
   featured = false,
+  compact = false,
 }: {
   game: Game;
   featured?: boolean;
+  compact?: boolean;
 }) {
   const imageUrl = cleanImageUrl(game.image);
   const status = getGameStatus(game);
@@ -127,57 +135,57 @@ function GameCard({
       className="group block h-full"
     >
       <BrandCard
-        className="
-          h-full
-          p-0
-          transition-all
-          duration-300
-          group-hover:-translate-y-2
-          group-hover:border-cyan-400/30
-        "
+        hover={false}
         status={
           featured
             ? "FEATURED GAME"
             : "GAME INTELLIGENCE"
         }
+        className={`
+          h-full
+          overflow-hidden
+          p-0
+          transition-all
+          duration-300
+          group-hover:-translate-y-2
+          group-hover:border-cyan-400/40
+          group-hover:shadow-[0_0_35px_rgba(34,211,238,.10)]
+        `}
       >
-        {/* COVER */}
-
         <div className="relative overflow-hidden">
-
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={game.title}
-              className="
-                h-60
+              className={`
                 w-full
                 object-cover
-                transition
-                duration-500
+                transition-transform
+                duration-700
                 group-hover:scale-105
-              "
+                ${compact ? "h-44" : "h-60"}
+              `}
               onError={(event) => {
-                event.currentTarget.style.display =
-                  "none";
+                event.currentTarget.style.display = "none";
               }}
             />
           ) : (
             <div
-              className="
+              className={`
                 flex
-                h-60
+                w-full
                 items-center
                 justify-center
-                bg-black/40
-                text-sm
-                font-bold
+                bg-black/50
+                text-[10px]
+                font-black
                 uppercase
-                tracking-wider
-                text-slate-500
-              "
+                tracking-[0.25em]
+                text-slate-600
+                ${compact ? "h-44" : "h-60"}
+              `}
             >
-              No Cover Image
+              NO COVER IMAGE
             </div>
           )}
 
@@ -187,10 +195,9 @@ function GameCard({
               absolute
               inset-0
               bg-gradient-to-t
-              from-black/70
-              via-transparent
+              from-black
+              via-black/20
               to-transparent
-              opacity-80
             "
           />
 
@@ -203,18 +210,18 @@ function GameCard({
                 rounded-full
                 border
                 border-yellow-400/30
-                bg-yellow-500/20
+                bg-yellow-500/15
                 px-3
                 py-1
-                text-[11px]
+                text-[10px]
                 font-black
                 uppercase
-                tracking-wider
+                tracking-[0.18em]
                 text-yellow-300
-                backdrop-blur
+                backdrop-blur-md
               "
             >
-              ⭐ Featured
+              ★ FEATURED
             </span>
           )}
 
@@ -237,15 +244,15 @@ function GameCard({
                   rounded-full
                   border
                   border-white/10
-                  bg-black/50
+                  bg-black/60
                   px-3
                   py-1
-                  text-[11px]
+                  text-[10px]
                   font-black
                   uppercase
-                  tracking-wider
+                  tracking-[0.18em]
                   text-slate-200
-                  backdrop-blur
+                  backdrop-blur-md
                 "
               >
                 {game.platform}
@@ -254,23 +261,21 @@ function GameCard({
           </div>
         </div>
 
-        {/* CONTENT */}
-
-        <div className="p-6">
-
+        <div className={compact ? "p-5" : "p-6"}>
           <div className="flex flex-wrap gap-2">
-
             {game.category && (
               <span
                 className="
                   rounded-full
                   border
-                  border-cyan-500/30
-                  bg-cyan-500/10
+                  border-cyan-500/20
+                  bg-cyan-500/5
                   px-3
                   py-1
-                  text-xs
-                  font-bold
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-wider
                   text-cyan-300
                 "
               >
@@ -283,35 +288,37 @@ function GameCard({
                 className="
                   rounded-full
                   border
-                  border-purple-500/30
-                  bg-purple-500/10
+                  border-purple-500/20
+                  bg-purple-500/5
                   px-3
                   py-1
-                  text-xs
-                  font-bold
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-wider
                   text-purple-300
                 "
               >
                 {game.genre}
               </span>
             )}
-
           </div>
 
           <h3
-            className="
-              mt-4
-              text-2xl
+            className={`
               font-black
+              leading-tight
               text-white
-              transition
+              transition-colors
+              duration-300
               group-hover:text-cyan-300
-            "
+              ${compact ? "mt-3 text-xl" : "mt-4 text-2xl"}
+            `}
           >
             {game.title}
           </h3>
 
-          {game.description && (
+          {game.description && !compact && (
             <p
               className="
                 mt-3
@@ -327,7 +334,7 @@ function GameCard({
 
           <div
             className="
-              mt-6
+              mt-5
               flex
               items-center
               justify-between
@@ -338,7 +345,15 @@ function GameCard({
             "
           >
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+              <p
+                className="
+                  text-[9px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-slate-600
+                "
+              >
                 Release
               </p>
 
@@ -349,22 +364,89 @@ function GameCard({
 
             <span
               className="
-                text-sm
+                inline-flex
+                items-center
+                gap-2
+                text-[10px]
                 font-black
                 uppercase
-                tracking-wider
+                tracking-[0.2em]
                 text-cyan-400
                 transition
                 group-hover:text-cyan-300
               "
             >
-              View Game →
+              Open File
+              <span className="transition-transform group-hover:translate-x-1">
+                →
+              </span>
             </span>
           </div>
-
         </div>
       </BrandCard>
     </Link>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: "cyan" | "blue" | "green" | "yellow";
+}) {
+  const styles = {
+    cyan: {
+      border: "border-cyan-400/20",
+      bg: "bg-cyan-500/5",
+      text: "text-cyan-300",
+    },
+    blue: {
+      border: "border-blue-400/20",
+      bg: "bg-blue-500/5",
+      text: "text-blue-300",
+    },
+    green: {
+      border: "border-green-400/20",
+      bg: "bg-green-500/5",
+      text: "text-green-300",
+    },
+    yellow: {
+      border: "border-yellow-400/20",
+      bg: "bg-yellow-500/5",
+      text: "text-yellow-300",
+    },
+  };
+
+  const style = styles[tone];
+
+  return (
+    <div
+      className={`
+        rounded-2xl
+        border
+        p-5
+        ${style.border}
+        ${style.bg}
+      `}
+    >
+      <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+        {label}
+      </p>
+
+      <p
+        className={`
+          mt-2
+          text-3xl
+          font-black
+          ${style.text}
+        `}
+      >
+        {value}
+      </p>
+    </div>
   );
 }
 
@@ -452,7 +534,10 @@ export default function Games() {
     return games
       .filter((game) => {
         if (filter === "featured") {
-          return game.featured === true;
+          return (
+            game.featured === true &&
+            getGameStatus(game) !== "archived"
+          );
         }
 
         if (filter === "upcoming") {
@@ -490,17 +575,26 @@ export default function Games() {
     return (
       <main className="min-h-[72vh] px-6 py-16">
         <div className="mx-auto max-w-7xl">
-          <BrandCard status="GAME SYSTEM">
+          <BrandCard
+            scan
+            status="GAME SYSTEM"
+            className="p-8 md:p-10"
+          >
             <div className="flex items-center gap-4">
               <span className="pp-live-dot" />
 
               <div>
-                <p className="font-black uppercase tracking-widest text-cyan-400">
-                  PulsePlay Game Library
+                <p className="text-xs font-black uppercase tracking-[0.35em] text-cyan-400">
+                  PulsePlay Game Intelligence
                 </p>
 
-                <p className="mt-1 text-slate-400">
-                  Loading game intelligence...
+                <h1 className="mt-2 text-3xl font-black uppercase text-white md:text-4xl">
+                  Establishing Connection...
+                </h1>
+
+                <p className="mt-2 text-sm text-slate-500">
+                  Loading mission database and release
+                  intelligence.
                 </p>
               </div>
             </div>
@@ -511,38 +605,38 @@ export default function Games() {
   }
 
   return (
-    <main className="min-h-[72vh] px-6 py-12">
-
+    <main className="min-h-[72vh] px-6 py-12 text-white">
       <div className="mx-auto max-w-7xl">
 
-        {/* HERO */}
+        {/* =====================================================
+            COMMAND HERO
+        ====================================================== */}
 
         <section
           className="
             relative
             mb-14
             overflow-hidden
-            rounded-3xl
+            rounded-[2rem]
             border
-            border-cyan-500/20
+            border-cyan-400/20
             bg-gradient-to-br
             from-purple-950/50
             via-[#070b16]
             to-cyan-950/30
             p-8
-            shadow-[0_0_60px_rgba(34,211,238,.08)]
+            shadow-[0_0_70px_rgba(34,211,238,.08)]
             md:p-12
           "
         >
-
           <div
             className="
               pointer-events-none
               absolute
               -right-24
               -top-24
-              h-72
-              w-72
+              h-80
+              w-80
               rounded-full
               bg-purple-500/10
               blur-3xl
@@ -553,160 +647,180 @@ export default function Games() {
             className="
               pointer-events-none
               absolute
-              -bottom-32
+              -bottom-40
               -left-24
-              h-72
-              w-72
+              h-80
+              w-80
               rounded-full
               bg-cyan-500/10
               blur-3xl
             "
           />
 
+          <div
+            className="
+              pointer-events-none
+              absolute
+              inset-x-0
+              top-0
+              h-px
+              bg-gradient-to-r
+              from-transparent
+              via-cyan-400
+              to-transparent
+              opacity-70
+            "
+          />
+
           <div className="relative">
+            <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+              <div>
+                <div className="flex items-center gap-3">
+                  <span className="pp-live-dot" />
 
-            <p
-              className="
-                text-xs
-                font-black
-                uppercase
-                tracking-[0.45em]
-                text-cyan-400
-              "
-            >
-              PulsePlay Intelligence Network
-            </p>
+                  <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
+                    PulsePlay Mission Database
+                  </p>
+                </div>
 
-            <h1
-              className="
-                mt-4
-                text-5xl
-                font-black
-                leading-none
-                pp-gradient-text
-                md:text-7xl
-              "
-            >
-              Game Library
-            </h1>
+                <h1
+                  className="
+                    mt-4
+                    text-5xl
+                    font-black
+                    leading-none
+                    pp-gradient-text
+                    md:text-7xl
+                  "
+                >
+                  GAME
+                  <span className="block">
+                    COMMAND CENTER
+                  </span>
+                </h1>
 
-            <p
-              className="
-                mt-6
-                max-w-3xl
-                text-lg
-                leading-8
-                text-slate-300
-              "
-            >
-              Explore the games driving the PulsePlay
-              community — from upcoming releases to
-              recently launched titles and featured
-              experiences.
-            </p>
-
-            {/* STATS */}
-
-            <div
-              className="
-                mt-10
-                grid
-                grid-cols-2
-                gap-4
-                md:grid-cols-4
-              "
-            >
-
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                  Total Games
-                </p>
-
-                <p className="mt-2 text-3xl font-black text-white">
-                  {games.length}
+                <p
+                  className="
+                    mt-6
+                    max-w-3xl
+                    text-base
+                    leading-8
+                    text-slate-300
+                    md:text-lg
+                  "
+                >
+                  Track the games driving the PulsePlay
+                  network — from upcoming launches and
+                  featured missions to recently released
+                  titles.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5">
-                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                  Upcoming
+              <div
+                className="
+                  w-fit
+                  rounded-2xl
+                  border
+                  border-green-400/20
+                  bg-green-400/5
+                  px-5
+                  py-4
+                  text-right
+                "
+              >
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+                  DATABASE STATUS
                 </p>
 
-                <p className="mt-2 text-3xl font-black text-blue-300">
-                  {categorizedGames.upcoming.length}
-                </p>
+                <div className="mt-2 flex items-center justify-end gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-400 shadow-[0_0_14px_rgba(74,222,128,.7)]" />
+
+                  <span className="text-xs font-black uppercase tracking-widest text-green-400">
+                    ONLINE
+                  </span>
+                </div>
               </div>
-
-              <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-5">
-                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                  Released
-                </p>
-
-                <p className="mt-2 text-3xl font-black text-green-300">
-                  {categorizedGames.released.length}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-5">
-                <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                  Featured
-                </p>
-
-                <p className="mt-2 text-3xl font-black text-yellow-300">
-                  {categorizedGames.featured.length}
-                </p>
-              </div>
-
             </div>
 
+            <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+              <StatCard
+                label="Total Games"
+                value={games.length}
+                tone="cyan"
+              />
+
+              <StatCard
+                label="Upcoming"
+                value={categorizedGames.upcoming.length}
+                tone="blue"
+              />
+
+              <StatCard
+                label="Released"
+                value={categorizedGames.released.length}
+                tone="green"
+              />
+
+              <StatCard
+                label="Featured"
+                value={categorizedGames.featured.length}
+                tone="yellow"
+              />
+            </div>
           </div>
         </section>
 
-        {/* EMPTY STATE */}
+        {/* =====================================================
+            EMPTY DATABASE
+        ====================================================== */}
 
         {games.length === 0 && (
-          <BrandCard status="GAME LIBRARY EMPTY">
-            <div className="py-12 text-center">
+          <BrandCard
+            scan
+            status="DATABASE EMPTY"
+            className="mb-14"
+          >
+            <div className="py-14 text-center">
+              <div className="text-5xl">🎮</div>
 
-              <p className="text-xs font-black uppercase tracking-[0.35em] text-purple-400">
-                No Game Data
+              <p className="mt-6 text-xs font-black uppercase tracking-[0.35em] text-purple-400">
+                No Mission Data
               </p>
 
-              <h2 className="mt-4 text-3xl font-black text-white">
+              <h2 className="mt-3 text-3xl font-black text-white">
                 No Games Available
               </h2>
 
               <p className="mx-auto mt-4 max-w-xl text-slate-400">
                 Add games through the PulsePlay Admin
-                Dashboard to populate the public library.
+                Dashboard to populate the public mission
+                database.
               </p>
-
             </div>
           </BrandCard>
         )}
 
         {games.length > 0 && (
           <>
-
-            {/* FEATURED */}
+            {/* =================================================
+                FEATURED MISSIONS
+            ================================================== */}
 
             {categorizedGames.featured.length > 0 && (
-              <section className="mb-14">
-
-                <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-
+              <section className="mb-16">
+                <div className="mb-7 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                   <div>
                     <p className="text-xs font-black uppercase tracking-[0.4em] text-yellow-400">
-                      Curated Selection
+                      Priority Missions
                     </p>
 
-                    <h2 className="mt-2 text-4xl font-black pp-gradient-text">
+                    <h2 className="mt-2 text-4xl font-black pp-gradient-text md:text-5xl">
                       Featured Games
                     </h2>
 
                     <p className="mt-3 max-w-3xl text-slate-400">
-                      Games currently receiving the
-                      PulsePlay spotlight.
+                      Current games receiving the
+                      PulsePlay network spotlight.
                     </p>
                   </div>
 
@@ -717,13 +831,11 @@ export default function Games() {
                       setFilter("featured")
                     }
                   >
-                    ⭐ View Featured
+                    ★ View Featured
                   </BrandButton>
-
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
                   {categorizedGames.featured
                     .slice(0, 3)
                     .map((game) => (
@@ -733,29 +845,28 @@ export default function Games() {
                         featured
                       />
                     ))}
-
                 </div>
               </section>
             )}
 
-            {/* RELEASE RADAR */}
+            {/* =================================================
+                RELEASE RADAR
+            ================================================== */}
 
-            <section className="mb-14">
-
-              <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-
+            <section className="mb-16">
+              <div className="mb-7 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.4em] text-blue-400">
                     Release Radar
                   </p>
 
-                  <h2 className="mt-2 text-4xl font-black pp-gradient-text">
+                  <h2 className="mt-2 text-4xl font-black pp-gradient-text md:text-5xl">
                     Upcoming Releases
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-slate-400">
-                    Keep an eye on the newest games
-                    heading toward the PulsePlay community.
+                    Monitor the next games entering the
+                    PulsePlay operational zone.
                   </p>
                 </div>
 
@@ -768,12 +879,10 @@ export default function Games() {
                 >
                   View Upcoming
                 </BrandButton>
-
               </div>
 
               {categorizedGames.upcoming.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
                   {categorizedGames.upcoming
                     .slice(0, 3)
                     .map((game) => (
@@ -782,37 +891,40 @@ export default function Games() {
                         game={game}
                       />
                     ))}
-
                 </div>
               ) : (
-                <BrandCard status="RELEASE RADAR">
-                  <p className="text-slate-400">
-                    No upcoming releases are currently
-                    listed.
-                  </p>
+                <BrandCard
+                  scan
+                  status="RELEASE RADAR"
+                >
+                  <div className="py-6">
+                    <p className="text-sm text-slate-400">
+                      No upcoming releases are currently
+                      listed.
+                    </p>
+                  </div>
                 </BrandCard>
               )}
-
             </section>
 
-            {/* RECENT RELEASES */}
+            {/* =================================================
+                RECENT RELEASES
+            ================================================== */}
 
-            <section className="mb-14">
-
-              <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-
+            <section className="mb-16">
+              <div className="mb-7 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.4em] text-green-400">
                     Launch Archive
                   </p>
 
-                  <h2 className="mt-2 text-4xl font-black pp-gradient-text">
+                  <h2 className="mt-2 text-4xl font-black pp-gradient-text md:text-5xl">
                     Recent Releases
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-slate-400">
-                    Explore games that have recently
-                    entered the PulsePlay library.
+                    Review the latest titles that have
+                    entered the active game library.
                   </p>
                 </div>
 
@@ -825,12 +937,10 @@ export default function Games() {
                 >
                   View Released
                 </BrandButton>
-
               </div>
 
               {categorizedGames.released.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
                   {categorizedGames.released
                     .slice(0, 3)
                     .map((game) => (
@@ -839,153 +949,201 @@ export default function Games() {
                         game={game}
                       />
                     ))}
-
                 </div>
               ) : (
-                <BrandCard status="LAUNCH ARCHIVE">
-                  <p className="text-slate-400">
-                    No released games are currently
-                    listed.
-                  </p>
+                <BrandCard
+                  scan
+                  status="LAUNCH ARCHIVE"
+                >
+                  <div className="py-6">
+                    <p className="text-sm text-slate-400">
+                      No released games are currently
+                      listed.
+                    </p>
+                  </div>
                 </BrandCard>
               )}
-
             </section>
 
-            {/* FULL LIBRARY */}
+            {/* =================================================
+                FULL DATABASE
+            ================================================== */}
 
             <section className="pb-16">
+              <div className="mb-8">
+                <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
+                      Complete Database
+                    </p>
 
-              <div className="mb-7 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                    <h2 className="mt-2 text-4xl font-black pp-gradient-text md:text-5xl">
+                      Full Game Library
+                    </h2>
 
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
-                    Complete Database
-                  </p>
+                    <p className="mt-3 max-w-3xl text-slate-400">
+                      Search, filter, and open any game
+                      intelligence file in the PulsePlay
+                      database.
+                    </p>
+                  </div>
 
-                  <h2 className="mt-2 text-4xl font-black pp-gradient-text">
-                    Full Game Library
-                  </h2>
-
-                  <p className="mt-3 text-slate-400">
-                    Search and explore the complete
-                    PulsePlay game database.
-                  </p>
-                </div>
-
-                <div className="w-full lg:max-w-md">
-
-                  <label
-                    htmlFor="game-search"
-                    className="sr-only"
-                  >
-                    Search games
-                  </label>
-
-                  <input
-                    id="game-search"
-                    type="search"
-                    value={search}
-                    onChange={(event) =>
-                      setSearch(
-                        event.target.value
-                      )
-                    }
-                    placeholder="Search games, genres, platforms..."
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-cyan-500/20
-                      bg-black/30
-                      px-5
-                      py-3
-                      text-white
-                      outline-none
-                      transition
-                      placeholder:text-slate-600
-                      focus:border-cyan-400/50
-                      focus:ring-2
-                      focus:ring-cyan-500/10
-                    "
-                  />
-
-                </div>
-
-              </div>
-
-              {/* FILTERS */}
-
-              <div className="mb-8 flex flex-wrap gap-3">
-
-                {(
-                  [
-                    ["all", "All Games"],
-                    ["featured", "⭐ Featured"],
-                    ["upcoming", "Coming Soon"],
-                    ["released", "Released"],
-                  ] as const
-                ).map(([value, label]) => {
-
-                  const active =
-                    filter === value;
-
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() =>
-                        setFilter(value)
-                      }
-                      className={`
-                        rounded-xl
-                        border
-                        px-5
-                        py-2.5
-                        text-sm
-                        font-black
-                        uppercase
-                        tracking-wider
-                        transition-all
-                        ${
-                          active
-                            ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-300 shadow-[0_0_20px_rgba(34,211,238,.12)]"
-                            : "border-white/10 bg-white/5 text-slate-400 hover:border-cyan-500/30 hover:text-cyan-300"
-                        }
-                      `}
+                  <div className="w-full lg:max-w-md">
+                    <label
+                      htmlFor="game-search"
+                      className="sr-only"
                     >
-                      {label}
-                    </button>
-                  );
-                })}
+                      Search games
+                    </label>
 
+                    <div className="relative">
+                      <span
+                        className="
+                          pointer-events-none
+                          absolute
+                          left-4
+                          top-1/2
+                          -translate-y-1/2
+                          text-cyan-400
+                        "
+                      >
+                        ⌕
+                      </span>
+
+                      <input
+                        id="game-search"
+                        type="search"
+                        value={search}
+                        onChange={(event) =>
+                          setSearch(
+                            event.target.value
+                          )
+                        }
+                        placeholder="Search games, genres, platforms..."
+                        className="
+                          w-full
+                          rounded-xl
+                          border
+                          border-cyan-500/20
+                          bg-black/30
+                          py-3
+                          pl-10
+                          pr-5
+                          text-white
+                          outline-none
+                          transition
+                          placeholder:text-slate-600
+                          focus:border-cyan-400/50
+                          focus:ring-2
+                          focus:ring-cyan-500/10
+                        "
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {(
+                    [
+                      ["all", "All Games"],
+                      ["featured", "★ Featured"],
+                      ["upcoming", "Coming Soon"],
+                      ["released", "Released"],
+                    ] as const
+                  ).map(([value, label]) => {
+                    const active = filter === value;
+
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          setFilter(value)
+                        }
+                        className={`
+                          rounded-xl
+                          border
+                          px-5
+                          py-2.5
+                          text-xs
+                          font-black
+                          uppercase
+                          tracking-[0.15em]
+                          transition-all
+                          ${
+                            active
+                              ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-300 shadow-[0_0_20px_rgba(34,211,238,.12)]"
+                              : "border-white/10 bg-white/5 text-slate-400 hover:border-cyan-500/30 hover:text-cyan-300"
+                          }
+                        `}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {filteredGames.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <>
+                  <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-600">
+                      {filteredGames.length}{" "}
+                      {filteredGames.length === 1
+                        ? "Game"
+                        : "Games"}{" "}
+                      Located
+                    </p>
 
-                  {filteredGames.map((game) => (
-                    <GameCard
-                      key={game.id}
-                      game={game}
-                      featured={
-                        game.featured === true
-                      }
-                    />
-                  ))}
+                    {(search || filter !== "all") && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearch("");
+                          setFilter("all");
+                        }}
+                        className="
+                          text-[10px]
+                          font-black
+                          uppercase
+                          tracking-widest
+                          text-cyan-400
+                          transition
+                          hover:text-cyan-300
+                        "
+                      >
+                        Reset Filters →
+                      </button>
+                    )}
+                  </div>
 
-                </div>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {filteredGames.map((game) => (
+                      <GameCard
+                        key={game.id}
+                        game={game}
+                        featured={
+                          game.featured === true
+                        }
+                      />
+                    ))}
+                  </div>
+                </>
               ) : (
-                <BrandCard status="NO MATCHES">
-                  <div className="py-10 text-center">
+                <BrandCard
+                  scan
+                  status="NO MATCHES"
+                >
+                  <div className="py-12 text-center">
+                    <div className="text-4xl">⌕</div>
 
-                    <h3 className="text-2xl font-black text-white">
+                    <h3 className="mt-5 text-2xl font-black text-white">
                       No Games Found
                     </h3>
 
                     <p className="mt-3 text-slate-400">
-                      Try another search or change the
-                      library filter.
+                      Try another search term or change
+                      the active library filter.
                     </p>
 
                     <button
@@ -1002,6 +1160,7 @@ export default function Games() {
                         bg-cyan-500/10
                         px-6
                         py-3
+                        text-xs
                         font-black
                         uppercase
                         tracking-wider
@@ -1012,16 +1171,12 @@ export default function Games() {
                     >
                       Reset Library
                     </button>
-
                   </div>
                 </BrandCard>
               )}
-
             </section>
-
           </>
         )}
-
       </div>
     </main>
   );
