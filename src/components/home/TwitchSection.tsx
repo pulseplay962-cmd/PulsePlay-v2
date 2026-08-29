@@ -85,7 +85,9 @@ export default function TwitchSection({
 
 
         setStream(
-          data?.stream ?? null
+          data?.stream?.live
+            ? data.stream.stream
+            : null
         );
 
 
