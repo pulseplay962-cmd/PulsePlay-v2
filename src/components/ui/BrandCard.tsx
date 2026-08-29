@@ -13,6 +13,8 @@ type BrandCardProps = {
 
   hud?: boolean;
 
+  status?: string;
+
 };
 
 
@@ -29,6 +31,8 @@ export default function BrandCard({
   scan = false,
 
   hud = true,
+
+  status = "SYSTEM ONLINE",
 
 }: BrandCardProps) {
 
@@ -93,7 +97,7 @@ export default function BrandCard({
 
         >
 
-          SYSTEM ONLINE
+          {status}
 
         </div>
 

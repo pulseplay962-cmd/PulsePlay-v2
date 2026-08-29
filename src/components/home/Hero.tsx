@@ -293,7 +293,7 @@ export default function Hero() {
 
           >
 
-            Explore The Gaming Universe
+            COMMAND CENTER ONLINE
 
 
           </h2>
@@ -312,9 +312,9 @@ export default function Hero() {
 
           >
 
-            Access streams, gaming news,
-            community events, featured games,
-            and premium gamer equipment.
+            Your gaming network is active.
+            Launch broadcasts, track missions,
+            access gaming intel, and connect with the squad.
 
 
           </p>
@@ -410,99 +410,77 @@ export default function Hero() {
 
 
 
-          <BrandCard>
+          <NavLink to="/streams" className="block">
 
+            <BrandCard className="transition-transform duration-300 hover:-translate-y-1">
 
-            <h3
+              <h3
+                className="
+                  text-4xl
+                  font-black
+                  text-cyan-400
+                "
+              >
+                BROADCAST
+              </h3>
 
-              className="
-                text-4xl
-                font-black
-                text-cyan-400
-              "
+              <p className="text-slate-400 mt-2">
+                Live Transmission
+              </p>
 
-            >
+            </BrandCard>
 
-              LIVE
-
-
-            </h3>
-
-
-            <p className="text-slate-400 mt-2">
-
-              Broadcast Center
-
-            </p>
-
-
-          </BrandCard>
+          </NavLink>
 
 
 
 
+          <NavLink to="/games" className="block">
 
+            <BrandCard className="transition-transform duration-300 hover:-translate-y-1">
 
-          <BrandCard>
+              <h3
+                className="
+                  text-4xl
+                  font-black
+                  text-purple-400
+                "
+              >
+                MISSIONS
+              </h3>
 
+              <p className="text-slate-400 mt-2">
+                Mission Database
+              </p>
 
-            <h3
+            </BrandCard>
 
-              className="
-                text-4xl
-                font-black
-                text-purple-400
-              "
-
-            >
-
-              XP+
-
-
-            </h3>
-
-
-            <p className="text-slate-400 mt-2">
-
-              Gaming Intelligence
-
-            </p>
-
-
-          </BrandCard>
+          </NavLink>
 
 
 
 
+          <NavLink to="/news" className="block">
 
+            <BrandCard className="transition-transform duration-300 hover:-translate-y-1">
 
-          <BrandCard>
+              <h3
+                className="
+                  text-4xl
+                  font-black
+                  text-pink-400
+                "
+              >
+                INTEL
+              </h3>
 
+              <p className="text-slate-400 mt-2">
+                Gaming Intelligence
+              </p>
 
-            <h3
+            </BrandCard>
 
-              className="
-                text-4xl
-                font-black
-                text-pink-400
-              "
-
-            >
-
-              ONLINE
-
-
-            </h3>
-
-
-            <p className="text-slate-400 mt-2">
-
-              Player Community
-
-            </p>
-
-
-          </BrandCard>
+          </NavLink>
 
 
 
