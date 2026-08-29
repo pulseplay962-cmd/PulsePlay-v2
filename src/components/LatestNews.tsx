@@ -36,19 +36,24 @@ export default function LatestNews() {
 
   if (loading) {
     return (
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <BrandCard scan>
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <BrandCard scan className="p-8 md:p-10">
           <div className="flex items-center gap-4">
-            <span className="pp-live-dot h-3 w-3 rounded-full bg-cyan-400" />
+            <span className="pp-live-dot h-3 w-3 rounded-full bg-pink-400" />
 
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.3em] text-cyan-400">
-                PulsePlay Network
+              <p className="text-xs font-black uppercase tracking-[0.35em] text-pink-400">
+                PulsePlay Intelligence Network
               </p>
 
-              <h2 className="mt-2 text-3xl font-black text-white">
+              <h2 className="mt-2 text-3xl font-black uppercase text-white md:text-4xl">
                 LOADING INTELLIGENCE...
               </h2>
+
+              <p className="mt-2 text-sm text-slate-500">
+                Establishing secure connection to the latest gaming
+                transmissions.
+              </p>
             </div>
           </div>
         </BrandCard>
@@ -60,11 +65,15 @@ export default function LatestNews() {
     return null;
   }
 
+  const featured = articles[0];
+  const secondary = articles.slice(1, 6);
+
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16">
-      <BrandCard scan>
+    <section className="mx-auto max-w-7xl px-6 py-20">
+      <BrandCard scan className="p-6 md:p-8 lg:p-10">
+
         {/* =========================
-            HEADER
+            COMMAND HEADER
         ========================= */}
 
         <div
@@ -91,7 +100,7 @@ export default function LatestNews() {
                   text-pink-400
                 "
               >
-                Intelligence Feed
+                Intelligence Network
               </p>
             </div>
 
@@ -110,56 +119,64 @@ export default function LatestNews() {
             </h2>
 
             <p className="mt-3 max-w-2xl text-slate-400">
-              Gaming updates, industry developments,
-              reviews, and PulsePlay transmissions.
+              Real-time gaming news, industry developments,
+              announcements, and critical PulsePlay transmissions.
             </p>
           </div>
 
           <Link to="/news">
-            <BrandButton>
-              View All Intelligence →
+            <BrandButton variant="secondary">
+              Access Full Intel →
             </BrandButton>
           </Link>
         </div>
 
         {/* =========================
-            ARTICLE GRID
+            INTELLIGENCE GRID
         ========================= */}
 
         <div
           className="
             grid
             gap-6
-            md:grid-cols-2
-            lg:grid-cols-3
+            lg:grid-cols-2
           "
         >
-          {articles.slice(0, 6).map((article) => (
+
+          {/* =========================
+              PRIMARY TRANSMISSION
+          ========================= */}
+
+          <Link
+            to={`/news/${featured.slug}`}
+            className="group block"
+          >
             <BrandCard
-              key={article.id}
+              hover={false}
+              status="PRIORITY TRANSMISSION"
               className="
-                group
                 h-full
-                overflow-hidden
+                border-pink-400/20
                 p-0
                 transition-all
                 duration-300
-                hover:-translate-y-2
+                group-hover:-translate-y-2
+                group-hover:border-pink-400/50
+                group-hover:shadow-[0_0_40px_rgba(236,72,153,.15)]
               "
             >
-              {/* IMAGE */}
-
               <div className="relative overflow-hidden">
-                {article.image ? (
+
+                {featured.image ? (
                   <img
-                    src={article.image}
-                    alt={article.title}
+                    src={featured.image}
+                    alt={featured.title}
                     className="
-                      h-56
+                      h-[340px]
                       w-full
                       object-cover
                       transition-transform
-                      duration-500
+                      duration-700
                       group-hover:scale-105
                     "
                   />
@@ -167,7 +184,7 @@ export default function LatestNews() {
                   <div
                     className="
                       flex
-                      h-56
+                      h-[340px]
                       items-center
                       justify-center
                       bg-black/50
@@ -182,28 +199,25 @@ export default function LatestNews() {
                   </div>
                 )}
 
-                {/* IMAGE OVERLAY */}
-
                 <div
                   className="
                     pointer-events-none
                     absolute
                     inset-0
                     bg-gradient-to-t
-                    from-black/80
-                    via-transparent
+                    from-black
+                    via-black/30
                     to-transparent
                   "
                 />
 
-                {/* CATEGORY */}
-
-                <div className="absolute bottom-4 left-4">
+                <div className="absolute bottom-5 left-5 right-5">
                   <span
                     className="
+                      inline-flex
                       rounded-full
                       border
-                      border-cyan-400/30
+                      border-pink-400/30
                       bg-black/70
                       px-3
                       py-1
@@ -211,94 +225,274 @@ export default function LatestNews() {
                       font-black
                       uppercase
                       tracking-[0.2em]
-                      text-cyan-300
+                      text-pink-300
                       backdrop-blur-md
                     "
                   >
-                    {article.category || "Gaming Intel"}
+                    {featured.category || "Gaming Intel"}
                   </span>
                 </div>
               </div>
 
-              {/* CONTENT */}
+              <div className="p-6 md:p-7">
 
-              <div className="flex h-full flex-col p-6">
-                <p
-                  className="
-                    text-[10px]
-                    font-black
-                    uppercase
-                    tracking-[0.3em]
-                    text-pink-400
-                  "
-                >
-                  Intelligence Transmission
-                </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-400">
+                    Priority Intel
+                  </span>
+
+                  <span className="h-px flex-1 bg-white/10" />
+                </div>
 
                 <h3
                   className="
-                    mt-3
-                    line-clamp-2
-                    text-xl
+                    mt-4
+                    text-2xl
                     font-black
                     leading-tight
                     text-white
                     transition-colors
                     duration-300
                     group-hover:text-cyan-300
+                    md:text-3xl
                   "
                 >
-                  {article.title}
+                  {featured.title}
                 </h3>
 
-                {article.excerpt && (
+                {featured.excerpt && (
                   <p
                     className="
                       mt-4
-                      line-clamp-3
-                      text-sm
+                      line-clamp-4
                       leading-relaxed
                       text-slate-400
                     "
                   >
-                    {article.excerpt}
+                    {featured.excerpt}
                   </p>
                 )}
 
-                <div className="mt-auto pt-6">
-                  <Link
-                    to={`/news/${article.slug}`}
-                    className="
-                      inline-flex
-                      items-center
-                      gap-2
-                      rounded-xl
-                      border
-                      border-cyan-500/30
-                      bg-slate-950/70
-                      px-5
-                      py-3
-                      text-xs
-                      font-black
-                      uppercase
-                      tracking-widest
-                      text-cyan-300
-                      shadow-[0_0_20px_rgba(34,211,238,.12)]
-                      transition-all
-                      duration-300
-                      hover:-translate-y-1
-                      hover:border-cyan-400/60
-                      hover:bg-cyan-500/10
-                    "
-                  >
-                    Read Intelligence
-                    <span>→</span>
-                  </Link>
+                <div
+                  className="
+                    mt-6
+                    inline-flex
+                    items-center
+                    gap-2
+                    text-xs
+                    font-black
+                    uppercase
+                    tracking-widest
+                    text-cyan-300
+                  "
+                >
+                  Open Transmission
+                  <span className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
                 </div>
+
               </div>
             </BrandCard>
-          ))}
+          </Link>
+
+
+          {/* =========================
+              SECONDARY TRANSMISSIONS
+          ========================= */}
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            {secondary.map((article) => (
+              <Link
+                key={article.id}
+                to={`/news/${article.slug}`}
+                className="group block"
+              >
+                <BrandCard
+                  hover={false}
+                  status="INTEL"
+                  className="
+                    h-full
+                    p-0
+                    transition-all
+                    duration-300
+                    group-hover:-translate-y-1
+                    group-hover:border-cyan-400/40
+                  "
+                >
+
+                  <div className="relative overflow-hidden">
+
+                    {article.image ? (
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="
+                          h-40
+                          w-full
+                          object-cover
+                          transition-transform
+                          duration-500
+                          group-hover:scale-105
+                        "
+                      />
+                    ) : (
+                      <div
+                        className="
+                          flex
+                          h-40
+                          items-center
+                          justify-center
+                          bg-black/50
+                          text-[10px]
+                          font-black
+                          uppercase
+                          tracking-widest
+                          text-slate-600
+                        "
+                      >
+                        No Image
+                      </div>
+                    )}
+
+                    <div
+                      className="
+                        pointer-events-none
+                        absolute
+                        inset-0
+                        bg-gradient-to-t
+                        from-black/70
+                        to-transparent
+                      "
+                    />
+
+                    <div className="absolute bottom-3 left-3">
+                      <span
+                        className="
+                          rounded-full
+                          border
+                          border-cyan-400/20
+                          bg-black/70
+                          px-2
+                          py-1
+                          text-[9px]
+                          font-black
+                          uppercase
+                          tracking-widest
+                          text-cyan-300
+                          backdrop-blur-md
+                        "
+                      >
+                        {article.category || "Gaming Intel"}
+                      </span>
+                    </div>
+
+                  </div>
+
+                  <div className="p-5">
+
+                    <p
+                      className="
+                        text-[9px]
+                        font-black
+                        uppercase
+                        tracking-[0.3em]
+                        text-slate-500
+                      "
+                    >
+                      Intelligence Transmission
+                    </p>
+
+                    <h3
+                      className="
+                        mt-2
+                        line-clamp-2
+                        text-lg
+                        font-black
+                        leading-tight
+                        text-white
+                        transition-colors
+                        group-hover:text-cyan-300
+                      "
+                    >
+                      {article.title}
+                    </h3>
+
+                    {article.excerpt && (
+                      <p
+                        className="
+                          mt-3
+                          line-clamp-2
+                          text-sm
+                          leading-relaxed
+                          text-slate-500
+                        "
+                      >
+                        {article.excerpt}
+                      </p>
+                    )}
+
+                    <div
+                      className="
+                        mt-4
+                        text-[10px]
+                        font-black
+                        uppercase
+                        tracking-widest
+                        text-cyan-400
+                      "
+                    >
+                      Read Intel →
+                    </div>
+
+                  </div>
+
+                </BrandCard>
+              </Link>
+            ))}
+          </div>
+
         </div>
+
+        {/* =========================
+            NETWORK FOOTER
+        ========================= */}
+
+        <div
+          className="
+            mt-8
+            flex
+            flex-col
+            gap-3
+            border-t
+            border-white/10
+            pt-6
+            text-xs
+            font-black
+            uppercase
+            tracking-[0.2em]
+            text-slate-600
+            sm:flex-row
+            sm:items-center
+            sm:justify-between
+          "
+        >
+          <span>
+            INTELLIGENCE NETWORK // ONLINE
+          </span>
+
+          <Link
+            to="/news"
+            className="
+              text-cyan-500
+              transition-colors
+              hover:text-cyan-300
+            "
+          >
+            Browse All Transmissions →
+          </Link>
+        </div>
+
       </BrandCard>
     </section>
   );
