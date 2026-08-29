@@ -390,6 +390,60 @@ export default function GameDetails() {
           </div>
         </BrandCard>
 
+        {/* =====================================================
+            MISSION STATUS STRIP
+        ====================================================== */}
+
+        <section className="mt-8">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+            <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/5 p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                Mission Status
+              </p>
+
+              <div className="mt-3 flex items-center gap-3">
+                <span className="pp-live-dot" />
+
+                <span className="text-sm font-black uppercase tracking-wider text-green-400">
+                  Intelligence Online
+                </span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-blue-400/20 bg-blue-500/5 p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                Release State
+              </p>
+
+              <p className="mt-3 text-sm font-black uppercase tracking-wider text-blue-300">
+                {statusLabel}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-purple-400/20 bg-purple-500/5 p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                Deployment
+              </p>
+
+              <p className="mt-3 text-sm font-black uppercase tracking-wider text-purple-300">
+                {game.platform || "MULTI-PLATFORM"}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-yellow-400/20 bg-yellow-500/5 p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                PulsePlay Intel
+              </p>
+
+              <p className="mt-3 text-sm font-black uppercase tracking-wider text-yellow-300">
+                {isFeatured ? "PRIORITY TARGET" : "ACTIVE FILE"}
+              </p>
+            </div>
+
+          </div>
+        </section>
+
         {/* ABOUT */}
 
         {game.article_content && (
