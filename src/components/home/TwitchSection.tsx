@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import BrandButton from "../ui/BrandButton";
+import { getTwitchStatus } from "../../services/twitch";
 
 
 type TwitchSectionProps = {
@@ -33,97 +34,34 @@ export default function TwitchSection({
 
   useEffect(() => {
 
-
     async function checkStream() {
-
 
       try {
 
+        const data = await getTwitchStatus(channel);
 
-        const api =
-          import.meta.env.VITE_API_URL;
-
-
-
-        if (!api) {
-
-          console.warn(
-            "VITE_API_URL is missing. Twitch status disabled."
-          );
-
-          setStream(null);
-
-          return;
-
-        }
-
-
-
-        const response = await fetch(
-          `${api}/api/twitch/status?channel=${channel}`,
-          {
-            headers: {
-              Accept: "application/json",
-            },
-          }
-        );
-
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            `Twitch API error: ${response.status}`
-          );
-
-        }
-
-
-
-        const data = await response.json();
-
-
-
-        setStream(
-          data?.stream?.live
-            ? data.stream.stream
-            : null
-        );
-
-
+        setStream(data.stream);
 
       } catch (error) {
-
 
         console.error(
           "Failed to load Twitch status:",
           error
         );
 
-
         setStream(null);
-
-
 
       } finally {
 
-
         setLoading(false);
-
 
       }
 
-
     }
-
-
 
     checkStream();
 
-
-
   }, [channel]);
-
 
 
 
