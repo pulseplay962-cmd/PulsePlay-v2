@@ -54,138 +54,341 @@ export default function FeaturedGames() {
   if (loading) {
     return (
       <section className="mx-auto max-w-7xl px-6 py-16">
-        <h2 className="text-4xl font-black pp-gradient-text">
-          Featured Games
-        </h2>
+        <BrandCard scan={true}>
+          <div className="flex items-center gap-3">
+            <span className="pp-live-dot h-3 w-3 rounded-full bg-cyan-400" />
 
-        <p className="mt-4 text-slate-400">
-          Loading featured games...
-        </p>
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-cyan-400">
+              PULSEPLAY GAME DATABASE
+            </p>
+          </div>
+
+          <h2 className="mt-3 text-4xl font-black pp-gradient-text">
+            FEATURED GAMES
+          </h2>
+
+          <p className="mt-4 text-slate-400">
+            Loading mission data...
+          </p>
+        </BrandCard>
       </section>
     );
   }
 
   return (
-    <section
-      className="
-        mx-auto
-        max-w-7xl
-        px-6
-        py-16
-      "
-    >
+    <section className="mx-auto max-w-7xl px-6 py-16">
+
       {/* =========================
-          HEADER
+          COMMAND HEADER
       ========================= */}
 
-      <div
-        className="
-          flex
-          flex-col
-          justify-between
-          gap-6
-          md:flex-row
-          md:items-center
-        "
-      >
-        <div>
-          <h2
-            className="
-              text-4xl
-              font-black
-              pp-gradient-text
-            "
-          >
-            Featured Games
-          </h2>
+      <BrandCard scan={true}>
 
-          <p
-            className="
-              mt-3
-              text-slate-400
-            "
-          >
-            Discover the latest adventures,
-            releases, and games worth playing.
-          </p>
+        <div
+          className="
+            flex
+            flex-col
+            gap-6
+            md:flex-row
+            md:items-end
+            md:justify-between
+          "
+        >
+
+          <div>
+
+            <div className="flex items-center gap-3">
+
+              <span
+                className="
+                  pp-live-dot
+                  h-3
+                  w-3
+                  rounded-full
+                  bg-cyan-400
+                "
+              />
+
+              <p
+                className="
+                  text-xs
+                  font-black
+                  uppercase
+                  tracking-[0.3em]
+                  text-cyan-400
+                "
+              >
+                PULSEPLAY GAME DATABASE
+              </p>
+
+            </div>
+
+            <h2
+              className="
+                mt-3
+                text-4xl
+                font-black
+                uppercase
+                md:text-5xl
+                pp-gradient-text
+              "
+            >
+              Featured Games
+            </h2>
+
+            <p className="mt-3 max-w-2xl text-slate-400">
+              Active missions, upcoming releases, and games
+              currently tracked by the PulsePlay network.
+            </p>
+
+          </div>
+
+
+          <div className="flex items-center gap-4">
+
+            <div
+              className="
+                rounded-xl
+                border
+                border-cyan-500/20
+                bg-black/30
+                px-5
+                py-3
+                text-center
+              "
+            >
+
+              <p
+                className="
+                  text-2xl
+                  font-black
+                  text-white
+                "
+              >
+                {games.length}
+              </p>
+
+              <p
+                className="
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.25em]
+                  text-slate-500
+                "
+              >
+                Featured
+              </p>
+
+            </div>
+
+            <Link to="/games">
+              <BrandButton>
+                Browse Games
+              </BrandButton>
+            </Link>
+
+          </div>
+
         </div>
 
-        <Link to="/games">
-          <BrandButton>
-            Browse Games
-          </BrandButton>
-        </Link>
-      </div>
+      </BrandCard>
+
 
       {/* =========================
           EMPTY STATE
       ========================= */}
 
       {games.length === 0 && (
-        <BrandCard className="mt-10">
-          <h3 className="text-xl font-bold text-white">
+        <BrandCard className="mt-8">
+
+          <div className="flex items-center gap-3">
+
+            <span className="h-3 w-3 rounded-full bg-slate-600" />
+
+            <p
+              className="
+                text-xs
+                font-black
+                uppercase
+                tracking-[0.25em]
+                text-slate-500
+              "
+            >
+              DATABASE STANDBY
+            </p>
+
+          </div>
+
+          <h3 className="mt-4 text-2xl font-black text-white">
             No Featured Games
           </h3>
 
           <p className="mt-2 text-slate-400">
-            Featured games will appear here when
-            they are added through the PulsePlay
-            Admin Dashboard.
+            Featured games will appear here when they are
+            added through the PulsePlay Admin Dashboard.
           </p>
+
         </BrandCard>
       )}
 
+
       {/* =========================
-          FEATURED GAMES
+          GAME GRID
       ========================= */}
 
       {games.length > 0 && (
         <div
           className="
-            mt-10
+            mt-8
             grid
-            gap-8
+            gap-6
             md:grid-cols-2
             lg:grid-cols-3
           "
         >
+
           {games.map((game) => (
+
             <BrandCard
               key={game.id}
-              className="card-hover"
+              className="
+                group
+                flex
+                h-full
+                flex-col
+                card-hover
+              "
             >
+
               {/* IMAGE */}
 
-              {game.image ? (
-                <img
-                  src={game.image}
-                  alt={game.title}
-                  className="
-                    h-64
-                    w-full
-                    rounded-xl
-                    object-cover
-                  "
-                />
-              ) : (
+              <div
+                className="
+                  relative
+                  overflow-hidden
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-black
+                "
+              >
+
+                {game.image ? (
+                  <img
+                    src={game.image}
+                    alt={game.title}
+                    className="
+                      h-64
+                      w-full
+                      object-cover
+                      transition-transform
+                      duration-500
+                      group-hover:scale-105
+                    "
+                  />
+                ) : (
+                  <div
+                    className="
+                      flex
+                      h-64
+                      items-center
+                      justify-center
+                      bg-black/40
+                      text-sm
+                      font-bold
+                      uppercase
+                      tracking-widest
+                      text-slate-500
+                    "
+                  >
+                    No Image
+                  </div>
+                )}
+
+                {/* IMAGE STATUS */}
+
                 <div
                   className="
-                    flex
-                    h-64
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-black/40
-                    text-slate-500
+                    absolute
+                    left-3
+                    top-3
+                    rounded-lg
+                    border
+                    border-cyan-400/30
+                    bg-black/75
+                    px-3
+                    py-1.5
+                    backdrop-blur-md
                   "
                 >
-                  No Image
-                </div>
-              )}
 
-              {/* CATEGORY / GENRE */}
+                  <span
+                    className="
+                      text-[10px]
+                      font-black
+                      uppercase
+                      tracking-[0.2em]
+                      text-cyan-300
+                    "
+                  >
+                    FEATURED
+                  </span>
+
+                </div>
+
+                {/* GAME STATUS */}
+
+                {game.status && (
+                  <div
+                    className={`
+                      absolute
+                      right-3
+                      top-3
+                      rounded-lg
+                      border
+                      bg-black/75
+                      px-3
+                      py-1.5
+                      backdrop-blur-md
+                      ${
+                        game.status === "upcoming"
+                          ? "border-blue-400/30"
+                          : game.status === "released"
+                            ? "border-green-400/30"
+                            : "border-white/10"
+                      }
+                    `}
+                  >
+
+                    <span
+                      className={`
+                        text-[10px]
+                        font-black
+                        uppercase
+                        tracking-[0.2em]
+                        ${
+                          game.status === "upcoming"
+                            ? "text-blue-400"
+                            : game.status === "released"
+                              ? "text-green-400"
+                              : "text-slate-400"
+                        }
+                      `}
+                    >
+                      {game.status}
+                    </span>
+
+                  </div>
+                )}
+
+              </div>
+
+
+              {/* METADATA */}
 
               <div className="mt-5 flex flex-wrap gap-2">
+
                 {game.category && (
                   <span
                     className="
@@ -195,8 +398,8 @@ export default function FeaturedGames() {
                       bg-cyan-500/10
                       px-3
                       py-1
-                      text-xs
-                      font-bold
+                      text-[10px]
+                      font-black
                       uppercase
                       tracking-wider
                       text-cyan-300
@@ -215,8 +418,8 @@ export default function FeaturedGames() {
                       bg-purple-500/10
                       px-3
                       py-1
-                      text-xs
-                      font-bold
+                      text-[10px]
+                      font-black
                       uppercase
                       tracking-wider
                       text-purple-300
@@ -225,7 +428,9 @@ export default function FeaturedGames() {
                     {game.genre}
                   </span>
                 )}
+
               </div>
+
 
               {/* TITLE */}
 
@@ -233,12 +438,16 @@ export default function FeaturedGames() {
                 className="
                   mt-4
                   text-2xl
-                  font-bold
+                  font-black
                   text-white
+                  transition-colors
+                  duration-300
+                  group-hover:text-cyan-300
                 "
               >
                 {game.title}
               </h3>
+
 
               {/* DESCRIPTION */}
 
@@ -247,6 +456,8 @@ export default function FeaturedGames() {
                   className="
                     mt-3
                     line-clamp-3
+                    text-sm
+                    leading-6
                     text-slate-400
                   "
                 >
@@ -254,73 +465,93 @@ export default function FeaturedGames() {
                 </p>
               )}
 
-              {/* PLATFORM */}
 
-              {game.platform && (
-                <p
-                  className="
-                    mt-4
-                    text-sm
-                    font-bold
-                    text-slate-400
-                  "
-                >
-                  Platform:{" "}
-                  <span className="text-white">
-                    {game.platform}
-                  </span>
-                </p>
-              )}
+              {/* DATA READOUT */}
 
-              {/* RELEASE DATE */}
+              <div
+                className="
+                  mt-5
+                  grid
+                  grid-cols-2
+                  gap-3
+                  border-y
+                  border-white/10
+                  py-4
+                "
+              >
 
-              {game.release_date && (
-                <p
-                  className="
-                    mt-2
-                    text-xs
-                    uppercase
-                    tracking-widest
-                    text-slate-500
-                  "
-                >
-                  Release Date:{" "}
-                  {new Date(
-                    game.release_date
-                  ).toLocaleDateString()}
-                </p>
-              )}
+                {game.platform && (
+                  <div>
 
-              {/* STATUS */}
+                    <p
+                      className="
+                        text-[9px]
+                        font-black
+                        uppercase
+                        tracking-[0.2em]
+                        text-slate-600
+                      "
+                    >
+                      Platform
+                    </p>
 
-              {game.status && (
-                <p
-                  className={`
-                    mt-3
-                    text-xs
-                    font-black
-                    uppercase
-                    tracking-widest
-                    ${
-                      game.status === "upcoming"
-                        ? "text-blue-400"
-                        : game.status === "released"
-                          ? "text-green-400"
-                          : "text-slate-500"
-                    }
-                  `}
-                >
-                  {game.status}
-                </p>
-              )}
+                    <p
+                      className="
+                        mt-1
+                        text-sm
+                        font-bold
+                        text-white
+                      "
+                    >
+                      {game.platform}
+                    </p>
 
-              {/* VIEW GAME */}
+                  </div>
+                )}
 
-              <div className="mt-6">
+                {game.release_date && (
+                  <div>
+
+                    <p
+                      className="
+                        text-[9px]
+                        font-black
+                        uppercase
+                        tracking-[0.2em]
+                        text-slate-600
+                      "
+                    >
+                      Release
+                    </p>
+
+                    <p
+                      className="
+                        mt-1
+                        text-sm
+                        font-bold
+                        text-white
+                      "
+                    >
+                      {new Date(
+                        game.release_date
+                      ).toLocaleDateString()}
+                    </p>
+
+                  </div>
+                )}
+
+              </div>
+
+
+              {/* CTA */}
+
+              <div className="mt-auto pt-5">
+
                 <Link
                   to={`/games/${game.id}`}
                   className="
                     inline-flex
+                    w-full
                     items-center
                     justify-center
                     rounded-xl
@@ -331,23 +562,30 @@ export default function FeaturedGames() {
                     py-3
                     font-black
                     uppercase
-                    tracking-wider
+                    tracking-[0.15em]
                     text-cyan-300
-                    shadow-[0_0_20px_rgba(34,211,238,.2)]
+                    shadow-[0_0_20px_rgba(34,211,238,.15)]
                     transition-all
                     duration-300
                     hover:-translate-y-1
+                    hover:border-cyan-400/60
                     hover:bg-cyan-500/10
+                    hover:text-cyan-200
                     active:scale-95
                   "
                 >
-                  View Game
+                  View Mission
                 </Link>
+
               </div>
+
             </BrandCard>
+
           ))}
+
         </div>
       )}
+
     </section>
   );
 }
