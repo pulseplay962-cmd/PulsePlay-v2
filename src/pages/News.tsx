@@ -322,8 +322,15 @@ export default function News() {
     });
   }, [articles, category, search]);
 
-  const featuredArticle = filteredArticles[0];
-  const secondaryArticles = filteredArticles.slice(1);
+  const featuredArticle =
+  filteredArticles.find(
+    (article) => article.featured === true
+  ) || filteredArticles[0];
+
+const secondaryArticles =
+  filteredArticles.filter(
+    (article) => article.id !== featuredArticle?.id
+  );
 
   if (loading) {
     return (
