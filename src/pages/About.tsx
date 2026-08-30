@@ -59,7 +59,7 @@ const values = [
 
 export default function About() {
   return (
-    <main className="min-h-[72vh] px-6 py-12">
+    <main className="min-h-[72vh] px-4 py-10 sm:px-6 sm:py-12 lg:py-14">
       <div className="mx-auto max-w-7xl">
 
         {/* =====================================
@@ -73,13 +73,13 @@ export default function About() {
             overflow-hidden
             rounded-[2rem]
             border
-            border-cyan-500/20
+            border-cyan-400/25
             bg-gradient-to-br
-            from-cyan-950/30
-            via-[#060a14]
-            to-purple-950/40
-            p-8
-            shadow-[0_0_90px_rgba(34,211,238,.08)]
+            from-cyan-950/40
+            via-[#050914]
+            to-purple-950/50
+            p-7
+            shadow-[0_0_100px_rgba(34,211,238,.10)]
             md:p-12
             lg:p-14
           "
@@ -106,7 +106,7 @@ export default function About() {
                   Intelligence Network // System Origin
                 </p>
 
-                <h1 className="mt-4 text-5xl font-black leading-[0.9] pp-gradient-text md:text-7xl lg:text-8xl">
+                <h1 className="mt-4 max-w-4xl text-5xl font-black leading-[0.86] tracking-[-0.04em] pp-gradient-text sm:text-6xl md:text-7xl lg:text-8xl">
                   BUILT FOR
                   <br />
                   THE NEXT
@@ -120,7 +120,16 @@ export default function About() {
                   experience together in one place.
                 </p>
 
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <div className="mt-8 flex flex-wrap items-center gap-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee]" />
+                  NETWORK CORE INITIALIZED
+                  <span className="text-slate-700">//</span>
+                  PLAYER FIRST
+                  <span className="text-slate-700">//</span>
+                  COMMUNITY DRIVEN
+                </div>
+
+                <div className="mt-7 flex flex-col gap-4 sm:flex-row">
                   <Link to="/games">
                     <BrandButton>
                       EXPLORE THE NETWORK
@@ -242,14 +251,14 @@ export default function About() {
             MISSION + PHILOSOPHY
         ====================================== */}
 
-        <section className="mb-14">
+        <section className="mb-16">
 
           <div className="mb-8">
             <p className="text-xs font-black uppercase tracking-[0.4em] text-purple-400">
               Core Directive
             </p>
 
-            <h2 className="mt-3 text-4xl font-black pp-gradient-text md:text-5xl">
+            <h2 className="mt-3 text-4xl font-black leading-none tracking-[-0.02em] pp-gradient-text md:text-5xl">
               Why PulsePlay Exists
             </h2>
 
@@ -262,8 +271,8 @@ export default function About() {
           <div className="grid gap-6 lg:grid-cols-2">
 
             <BrandCard
-              status="MISSION PROTOCOL"
-              className="group relative h-full overflow-hidden border-cyan-500/20"
+              status="MISSION PROTOCOL // 01"
+              className="group relative h-full overflow-hidden border-cyan-400/25 bg-gradient-to-br from-cyan-950/10 via-transparent to-transparent shadow-[0_0_45px_rgba(34,211,238,.04)]"
             >
               <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl transition group-hover:bg-cyan-500/20" />
 
@@ -318,8 +327,8 @@ export default function About() {
 
 
             <BrandCard
-              status="PLAYER PHILOSOPHY"
-              className="group relative h-full overflow-hidden border-purple-500/20"
+              status="PLAYER PHILOSOPHY // 02"
+              className="group relative h-full overflow-hidden border-purple-400/25 bg-gradient-to-br from-purple-950/10 via-transparent to-transparent shadow-[0_0_45px_rgba(168,85,247,.04)]"
             >
               <div className="pointer-events-none absolute -left-20 -top-20 h-48 w-48 rounded-full bg-purple-500/10 blur-3xl transition group-hover:bg-purple-500/20" />
 
@@ -379,7 +388,7 @@ export default function About() {
             CORE SYSTEMS
         ====================================== */}
 
-        <section className="mb-14">
+        <section className="mb-16">
 
           <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
 
@@ -388,7 +397,7 @@ export default function About() {
                 Network Architecture
               </p>
 
-              <h2 className="mt-3 text-4xl font-black pp-gradient-text md:text-5xl">
+              <h2 className="mt-3 text-4xl font-black leading-none tracking-[-0.02em] pp-gradient-text md:text-5xl">
                 Core Systems
               </h2>
 
@@ -419,6 +428,7 @@ export default function About() {
                   relative
                   h-full
                   overflow-hidden
+                  shadow-[0_0_35px_rgba(34,211,238,.03)]
                   ${
                     system.color === "purple"
                       ? "border-purple-500/20"
@@ -562,11 +572,11 @@ export default function About() {
             PLAYER VALUES
         ====================================== */}
 
-        <section className="mb-14">
+        <section className="mb-16">
 
           <BrandCard
-            status="PLAYER PROTOCOL"
-            className="overflow-hidden border-purple-500/20 p-0"
+            status="PLAYER PROTOCOL // CORE VALUES"
+            className="overflow-hidden border-purple-400/25 bg-gradient-to-br from-purple-950/10 via-transparent to-cyan-950/10 p-0 shadow-[0_0_55px_rgba(168,85,247,.05)]"
           >
 
             <div className="grid lg:grid-cols-[0.9fr_2.1fr]">
@@ -707,14 +717,14 @@ export default function About() {
             overflow-hidden
             rounded-[2rem]
             border
-            border-cyan-500/20
+            border-cyan-400/25
             bg-gradient-to-br
-            from-cyan-950/20
-            via-[#060a14]
-            to-purple-950/40
-            p-8
+            from-cyan-950/30
+            via-[#050914]
+            to-purple-950/50
+            p-7
             text-center
-            shadow-[0_0_90px_rgba(34,211,238,.08)]
+            shadow-[0_0_100px_rgba(34,211,238,.09)]
             md:p-14
           "
         >
@@ -740,7 +750,7 @@ export default function About() {
             </p>
 
 
-            <h2 className="mt-4 text-5xl font-black leading-[0.9] pp-gradient-text md:text-7xl">
+            <h2 className="mt-4 text-5xl font-black leading-[0.86] tracking-[-0.04em] pp-gradient-text md:text-7xl">
               THE NEXT
               <br />
               LEVEL STARTS
