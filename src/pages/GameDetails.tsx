@@ -527,60 +527,24 @@ export default function GameDetails() {
             border
             border-cyan-400/20
             bg-gradient-to-br
-            from-purple-950/50
-            via-[#070b16]
-            to-cyan-950/30
-            shadow-[0_0_80px_rgba(34,211,238,.08)]
+            from-cyan-950/30
+            via-[#050811]
+            to-purple-950/50
+            shadow-[0_0_100px_rgba(34,211,238,.08)]
           "
         >
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -right-32
-              -top-32
-              h-96
-              w-96
-              rounded-full
-              bg-purple-500/10
-              blur-3xl
-            "
-          />
+          <div className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-purple-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-40 -left-40 h-[32rem] w-[32rem] rounded-full bg-cyan-500/10 blur-3xl" />
 
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -bottom-40
-              -left-32
-              h-96
-              w-96
-              rounded-full
-              bg-cyan-500/10
-              blur-3xl
-            "
-          />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.025)_1px,transparent_1px)] bg-[size:48px_48px] opacity-30" />
 
-          <div
-            className="
-              pointer-events-none
-              absolute
-              inset-x-0
-              top-0
-              h-px
-              bg-gradient-to-r
-              from-transparent
-              via-cyan-400
-              to-transparent
-              opacity-70
-            "
-          />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-80" />
 
-          <div className="relative grid lg:grid-cols-[1.08fr_.92fr]">
+          <div className="relative grid lg:grid-cols-[1.05fr_.95fr]">
 
             {/* COVER */}
 
-            <div className="relative min-h-[430px] overflow-hidden lg:min-h-[650px]">
+            <div className="group relative min-h-[460px] overflow-hidden border-b border-white/10 lg:min-h-[680px] lg:border-b-0 lg:border-r">
               {imageUrl ? (
                 <img
                   src={imageUrl}
@@ -592,127 +556,86 @@ export default function GameDetails() {
                     w-full
                     object-cover
                     transition-transform
-                    duration-1000
-                    hover:scale-[1.02]
+                    duration-[1200ms]
+                    group-hover:scale-[1.04]
                   "
                   onError={(event) => {
-                    console.error(
-                      "GAME IMAGE FAILED:",
-                      imageUrl
-                    );
-
-                    event.currentTarget.style.display =
-                      "none";
+                    console.error("GAME IMAGE FAILED:", imageUrl);
+                    event.currentTarget.style.display = "none";
                   }}
                 />
               ) : (
-                <div
-                  className="
-                    flex
-                    h-full
-                    min-h-[430px]
-                    items-center
-                    justify-center
-                    bg-black/50
-                    text-[10px]
-                    font-black
-                    uppercase
-                    tracking-[0.3em]
-                    text-slate-600
-                  "
-                >
+                <div className="flex h-full min-h-[460px] items-center justify-center bg-black/50 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
                   NO COVER IMAGE
                 </div>
               )}
 
-              <div
-                className="
-                  pointer-events-none
-                  absolute
-                  inset-0
-                  bg-gradient-to-t
-                  from-[#05070d]
-                  via-black/10
-                  to-transparent
-                  lg:bg-gradient-to-r
-                "
-              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#03050a] via-black/20 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#050811]/80" />
 
-              <div
-                className="
-                  absolute
-                  left-6
-                  right-6
-                  top-6
-                  flex
-                  flex-wrap
-                  gap-3
-                "
-              >
-                {isFeatured && (
-                  <span
-                    className="
-                      rounded-full
-                      border
-                      border-yellow-400/30
-                      bg-yellow-500/15
-                      px-4
-                      py-2
-                      text-[10px]
-                      font-black
-                      uppercase
-                      tracking-[0.18em]
-                      text-yellow-300
-                      backdrop-blur-md
-                    "
-                  >
-                    ★ PRIORITY TARGET
-                  </span>
-                )}
+              <div className="absolute left-6 right-6 top-6 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap gap-3">
+                  {isFeatured && (
+                    <span className="rounded-full border border-yellow-400/30 bg-yellow-500/15 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-300 backdrop-blur-md">
+                      ★ PRIORITY TARGET
+                    </span>
+                  )}
 
-                <StatusBadge status={status} />
-              </div>
-
-              <div
-                className="
-                  absolute
-                  bottom-6
-                  left-6
-                  right-6
-                  flex
-                  items-end
-                  justify-between
-                  gap-4
-                "
-              >
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-[0.3em] text-cyan-300/80">
-                    PulsePlay Mission File
-                  </p>
-
-                  <p className="mt-1 text-xs font-black uppercase tracking-widest text-white/70">
-                    {game.platform || "MULTI-PLATFORM"}
-                  </p>
+                  <StatusBadge status={status} />
                 </div>
 
-                <span className="hidden rounded-full border border-white/10 bg-black/50 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-300 backdrop-blur-md sm:inline-flex">
-                  {game.genre || "GAME INTELLIGENCE"}
+                <span className="rounded-full border border-white/10 bg-black/40 px-3 py-2 text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 backdrop-blur-md">
+                  FILE // ACTIVE
                 </span>
+              </div>
+
+              <div className="absolute bottom-6 left-6 right-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.35em] text-cyan-300">
+                      PulsePlay Mission File
+                    </p>
+
+                    <p className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-white/70">
+                      {game.platform || "MULTI-PLATFORM"}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 backdrop-blur-md">
+                    <p className="text-[8px] font-black uppercase tracking-[0.25em] text-slate-600">
+                      Release
+                    </p>
+
+                    <p className="mt-1 text-sm font-black text-white">
+                      {releaseDate}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* CORE INTEL */}
 
             <div className="relative flex flex-col justify-center p-7 md:p-10 lg:p-12">
-              <div className="flex items-center gap-3">
-                <span className="pp-live-dot" />
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="pp-live-dot" />
 
-                <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
-                  Game Intelligence Online
-                </p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400">
+                    Game Intelligence Online
+                  </p>
+                </div>
+
+                <span className="hidden font-mono text-[9px] uppercase tracking-widest text-slate-600 sm:block">
+                  PP // INTEL
+                </span>
               </div>
 
-              <h1 className="mt-5 text-5xl font-black leading-[0.95] pp-gradient-text md:text-6xl lg:text-7xl">
+              <p className="mt-7 text-xs font-black uppercase tracking-[0.4em] text-purple-400">
+                Mission Database // Active File
+              </p>
+
+              <h1 className="mt-3 text-5xl font-black leading-[0.9] pp-gradient-text md:text-6xl lg:text-7xl">
                 {game.title}
               </h1>
 
@@ -742,7 +665,19 @@ export default function GameDetails() {
                 )}
               </div>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <div className="mt-8 flex items-center gap-3 border-y border-white/10 py-4">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee]" />
+
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+                  Intelligence File Active
+                </span>
+
+                <span className="ml-auto font-mono text-[9px] uppercase tracking-widest text-slate-600">
+                  {isFeatured ? "PRIORITY" : "STANDARD"}
+                </span>
+              </div>
+
+              <div className="mt-7 grid gap-3 sm:grid-cols-2">
                 <DataCard
                   label="Release Date"
                   value={releaseDate}
@@ -752,29 +687,18 @@ export default function GameDetails() {
                 <DataCard
                   label="Library Status"
                   value={statusLabel}
-                  tone={
-                    status === "released"
-                      ? "green"
-                      : "blue"
-                  }
+                  tone={status === "released" ? "green" : "blue"}
                 />
 
                 <DataCard
                   label="Deployment"
-                  value={
-                    game.platform ||
-                    "MULTI-PLATFORM"
-                  }
+                  value={game.platform || "MULTI-PLATFORM"}
                   tone="purple"
                 />
 
                 <DataCard
                   label="PulsePlay Intel"
-                  value={
-                    isFeatured
-                      ? "PRIORITY TARGET"
-                      : "ACTIVE FILE"
-                  }
+                  value={isFeatured ? "PRIORITY TARGET" : "ACTIVE FILE"}
                   tone="yellow"
                 />
               </div>
