@@ -747,41 +747,109 @@ export default function GameDetails() {
 
         <section className="mb-10">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <DataCard
-              label="Mission Status"
-              value="INTELLIGENCE ONLINE"
-              tone="green"
-            />
+
+            <div className="group relative overflow-hidden rounded-2xl border border-green-400/20 bg-green-500/[0.04] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-green-400/40 hover:bg-green-500/[0.07]">
+              <div className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-green-400/10 blur-2xl" />
+
+              <div className="relative">
+                <div className="flex items-center justify-between">
+                  <p className="text-[9px] font-black uppercase tracking-[0.28em] text-slate-600">
+                    Mission Status
+                  </p>
+
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-green-400 shadow-[0_0_12px_#22c55e]" />
+                </div>
+
+                <p className="mt-3 text-sm font-black uppercase tracking-wider text-green-300">
+                  Intelligence Online
+                </p>
+              </div>
+            </div>
 
             <DataCard
               label="Release State"
               value={statusLabel}
-              tone={
-                status === "released"
-                  ? "green"
-                  : "blue"
-              }
+              tone={status === "released" ? "green" : "blue"}
             />
 
             <DataCard
               label="Platform"
-              value={
-                game.platform ||
-                "MULTI-PLATFORM"
-              }
+              value={game.platform || "MULTI-PLATFORM"}
               tone="purple"
             />
 
-            <DataCard
-              label="Network Priority"
-              value={
-                isFeatured
-                  ? "PRIORITY TARGET"
-                  : "ACTIVE FILE"
-              }
-              tone="yellow"
-            />
+            <div className="group relative overflow-hidden rounded-2xl border border-yellow-400/20 bg-yellow-500/[0.04] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-yellow-400/40 hover:bg-yellow-500/[0.07]">
+              <div className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-yellow-400/10 blur-2xl" />
+
+              <div className="relative">
+                <div className="flex items-center justify-between">
+                  <p className="text-[9px] font-black uppercase tracking-[0.28em] text-slate-600">
+                    Network Priority
+                  </p>
+
+                  <span className="text-sm text-yellow-300">
+                    ★
+                  </span>
+                </div>
+
+                <p className="mt-3 text-sm font-black uppercase tracking-wider text-yellow-300">
+                  {isFeatured ? "Priority Target" : "Active File"}
+                </p>
+              </div>
+            </div>
+
           </div>
+        </section>
+
+        {/* =====================================================
+            MISSION SIGNAL
+        ====================================================== */}
+
+        <section className="mb-10">
+          <BrandCard
+            status="MISSION SIGNAL"
+            className="overflow-hidden border-cyan-400/20"
+          >
+            <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+
+              <div>
+                <div className="flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_14px_#22d3ee]" />
+
+                  <p className="text-[10px] font-black uppercase tracking-[0.35em] text-cyan-400">
+                    Active Mission File
+                  </p>
+                </div>
+
+                <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
+                  {status === "upcoming"
+                    ? "Prepare for Deployment"
+                    : "Mission Intelligence Available"}
+                </h2>
+
+                <p className="mt-3 max-w-3xl leading-7 text-slate-400">
+                  {status === "upcoming"
+                    ? `${game.title} is currently tracked as an upcoming release in the PulsePlay database.`
+                    : `PulsePlay is tracking ${game.title} as an active game file within the network.`}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-6 py-5 text-center">
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">
+                  File Status
+                </p>
+
+                <p className="mt-2 text-lg font-black uppercase tracking-wider text-cyan-300">
+                  {statusLabel}
+                </p>
+
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-slate-600">
+                  PP // {isFeatured ? "PRIORITY" : "STANDARD"}
+                </p>
+              </div>
+
+            </div>
+          </BrandCard>
         </section>
 
         {/* =====================================================
