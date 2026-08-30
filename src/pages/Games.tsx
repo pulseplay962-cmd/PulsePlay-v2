@@ -16,17 +16,13 @@ type GameFilter =
   | "featured";
 
 function cleanImageUrl(image?: string | null) {
-  if (!image) {
-    return "";
-  }
+  if (!image) return "";
 
   if (image.startsWith("[")) {
-    const markdownMatch = image.match(
-      /\((https?:\/\/[^)]+)\)/
-    );
+    const match = image.match(/\((https?:\/\/[^)]+)\)/);
 
-    if (markdownMatch?.[1]) {
-      return markdownMatch[1];
+    if (match?.[1]) {
+      return match[1];
     }
   }
 
@@ -34,17 +30,9 @@ function cleanImageUrl(image?: string | null) {
 }
 
 function getGameStatus(game: Game) {
-  if (game.status === "archived") {
-    return "archived";
-  }
-
-  if (game.status === "released") {
-    return "released";
-  }
-
-  if (game.status === "upcoming") {
-    return "upcoming";
-  }
+  if (game.status === "archived") return "archived";
+  if (game.status === "released") return "released";
+  if (game.status === "upcoming") return "upcoming";
 
   if (game.release_date) {
     return new Date(game.release_date) <= new Date()
@@ -56,9 +44,7 @@ function getGameStatus(game: Game) {
 }
 
 function formatReleaseDate(date?: string | null) {
-  if (!date) {
-    return null;
-  }
+  if (!date) return null;
 
   const parsed = new Date(date);
 
@@ -73,11 +59,7 @@ function formatReleaseDate(date?: string | null) {
   });
 }
 
-function StatusBadge({
-  status,
-}: {
-  status: string;
-}) {
+function StatusBadge({ status }: { status: string }) {
   const styles =
     status === "released"
       ? "border-green-400/30 bg-green-500/10 text-green-300"
@@ -125,9 +107,7 @@ function GameCard({
 }) {
   const imageUrl = cleanImageUrl(game.image);
   const status = getGameStatus(game);
-  const releaseDate = formatReleaseDate(
-    game.release_date
-  );
+  const releaseDate = formatReleaseDate(game.release_date);
 
   return (
     <Link
@@ -136,11 +116,7 @@ function GameCard({
     >
       <BrandCard
         hover={false}
-        status={
-          featured
-            ? "FEATURED GAME"
-            : "GAME INTELLIGENCE"
-        }
+        status={featured ? "FEATURED GAME" : "GAME INTELLIGENCE"}
         className={`
           h-full
           overflow-hidden
@@ -149,7 +125,7 @@ function GameCard({
           duration-300
           group-hover:-translate-y-2
           group-hover:border-cyan-400/40
-          group-hover:shadow-[0_0_35px_rgba(34,211,238,.10)]
+          group-hover:shadow-[0_0_40px_rgba(34,211,238,.12)]
         `}
       >
         <div className="relative overflow-hidden">
@@ -189,72 +165,21 @@ function GameCard({
             </div>
           )}
 
-          <div
-            className="
-              pointer-events-none
-              absolute
-              inset-0
-              bg-gradient-to-t
-              from-black
-              via-black/20
-              to-transparent
-            "
-          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-          {featured && (
-            <span
-              className="
-                absolute
-                left-4
-                top-4
-                rounded-full
-                border
-                border-yellow-400/30
-                bg-yellow-500/15
-                px-3
-                py-1
-                text-[10px]
-                font-black
-                uppercase
-                tracking-[0.18em]
-                text-yellow-300
-                backdrop-blur-md
-              "
-            >
-              ★ FEATURED
-            </span>
-          )}
+          <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+            {featured && (
+              <span className="rounded-full border border-yellow-400/30 bg-yellow-500/15 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-300 backdrop-blur-md">
+                ★ FEATURED
+              </span>
+            )}
+          </div>
 
-          <div
-            className="
-              absolute
-              bottom-4
-              left-4
-              right-4
-              flex
-              flex-wrap
-              gap-2
-            "
-          >
+          <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
             <StatusBadge status={status} />
 
             {game.platform && (
-              <span
-                className="
-                  rounded-full
-                  border
-                  border-white/10
-                  bg-black/60
-                  px-3
-                  py-1
-                  text-[10px]
-                  font-black
-                  uppercase
-                  tracking-[0.18em]
-                  text-slate-200
-                  backdrop-blur-md
-                "
-              >
+              <span className="rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-200 backdrop-blur-md">
                 {game.platform}
               </span>
             )}
@@ -264,41 +189,13 @@ function GameCard({
         <div className={compact ? "p-5" : "p-6"}>
           <div className="flex flex-wrap gap-2">
             {game.category && (
-              <span
-                className="
-                  rounded-full
-                  border
-                  border-cyan-500/20
-                  bg-cyan-500/5
-                  px-3
-                  py-1
-                  text-[10px]
-                  font-black
-                  uppercase
-                  tracking-wider
-                  text-cyan-300
-                "
-              >
+              <span className="rounded-full border border-cyan-500/20 bg-cyan-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-300">
                 {game.category}
               </span>
             )}
 
             {game.genre && (
-              <span
-                className="
-                  rounded-full
-                  border
-                  border-purple-500/20
-                  bg-purple-500/5
-                  px-3
-                  py-1
-                  text-[10px]
-                  font-black
-                  uppercase
-                  tracking-wider
-                  text-purple-300
-                "
-              >
+              <span className="rounded-full border border-purple-500/20 bg-purple-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-purple-300">
                 {game.genre}
               </span>
             )}
@@ -319,41 +216,14 @@ function GameCard({
           </h3>
 
           {game.description && !compact && (
-            <p
-              className="
-                mt-3
-                line-clamp-3
-                text-sm
-                leading-7
-                text-slate-400
-              "
-            >
+            <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-400">
               {game.description}
             </p>
           )}
 
-          <div
-            className="
-              mt-5
-              flex
-              items-center
-              justify-between
-              gap-4
-              border-t
-              border-white/10
-              pt-5
-            "
-          >
+          <div className="mt-5 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
             <div>
-              <p
-                className="
-                  text-[9px]
-                  font-black
-                  uppercase
-                  tracking-[0.25em]
-                  text-slate-600
-                "
-              >
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-600">
                 Release
               </p>
 
@@ -362,20 +232,7 @@ function GameCard({
               </p>
             </div>
 
-            <span
-              className="
-                inline-flex
-                items-center
-                gap-2
-                text-[10px]
-                font-black
-                uppercase
-                tracking-[0.2em]
-                text-cyan-400
-                transition
-                group-hover:text-cyan-300
-              "
-            >
+            <span className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 transition group-hover:text-cyan-300">
               Open File
               <span className="transition-transform group-hover:translate-x-1">
                 →
@@ -436,14 +293,7 @@ function StatCard({
         {label}
       </p>
 
-      <p
-        className={`
-          mt-2
-          text-3xl
-          font-black
-          ${style.text}
-        `}
-      >
+      <p className={`mt-2 text-3xl font-black ${style.text}`}>
         {value}
       </p>
     </div>
@@ -453,8 +303,7 @@ function StatCard({
 export default function Games() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] =
-    useState<GameFilter>("all");
+  const [filter, setFilter] = useState<GameFilter>("all");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -466,11 +315,7 @@ export default function Games() {
 
         setGames(data || []);
       } catch (error) {
-        console.error(
-          "FAILED TO LOAD GAMES:",
-          error
-        );
-
+        console.error("FAILED TO LOAD GAMES:", error);
         setGames([]);
       } finally {
         setLoading(false);
@@ -482,10 +327,7 @@ export default function Games() {
 
   const categorizedGames = useMemo(() => {
     const upcoming = games
-      .filter(
-        (game) =>
-          getGameStatus(game) === "upcoming"
-      )
+      .filter((game) => getGameStatus(game) === "upcoming")
       .sort((a, b) => {
         const aDate = a.release_date
           ? new Date(a.release_date).getTime()
@@ -499,10 +341,7 @@ export default function Games() {
       });
 
     const released = games
-      .filter(
-        (game) =>
-          getGameStatus(game) === "released"
-      )
+      .filter((game) => getGameStatus(game) === "released")
       .sort((a, b) => {
         const aDate = a.release_date
           ? new Date(a.release_date).getTime()
@@ -551,9 +390,7 @@ export default function Games() {
         return getGameStatus(game) !== "archived";
       })
       .filter((game) => {
-        if (!query) {
-          return true;
-        }
+        if (!query) return true;
 
         return [
           game.title,
@@ -564,9 +401,7 @@ export default function Games() {
         ]
           .filter(Boolean)
           .some((value) =>
-            value!
-              .toLowerCase()
-              .includes(query)
+            value!.toLowerCase().includes(query)
           );
       });
   }, [games, filter, search]);
@@ -575,11 +410,7 @@ export default function Games() {
     return (
       <main className="min-h-[72vh] px-6 py-16">
         <div className="mx-auto max-w-7xl">
-          <BrandCard
-            scan
-            status="GAME SYSTEM"
-            className="p-8 md:p-10"
-          >
+          <BrandCard scan status="GAME SYSTEM" className="p-8 md:p-10">
             <div className="flex items-center gap-4">
               <span className="pp-live-dot" />
 
@@ -593,8 +424,7 @@ export default function Games() {
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-500">
-                  Loading mission database and release
-                  intelligence.
+                  Loading mission database and release intelligence.
                 </p>
               </div>
             </div>
@@ -605,181 +435,71 @@ export default function Games() {
   }
 
   return (
-    <main className="min-h-[72vh] px-6 py-12 text-white">
+    <main className="min-h-[72vh] px-6 py-12 text-white md:py-16">
       <div className="mx-auto max-w-7xl">
 
-        {/* =====================================================
-            COMMAND HERO
-        ====================================================== */}
-
-        <section
-          className="
-            relative
-            mb-14
-            overflow-hidden
-            rounded-[2rem]
-            border
-            border-cyan-400/20
-            bg-gradient-to-br
-            from-purple-950/50
-            via-[#070b16]
-            to-cyan-950/30
-            p-8
-            shadow-[0_0_70px_rgba(34,211,238,.08)]
-            md:p-12
-          "
-        >
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -right-24
-              -top-24
-              h-80
-              w-80
-              rounded-full
-              bg-purple-500/10
-              blur-3xl
-            "
-          />
-
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -bottom-40
-              -left-24
-              h-80
-              w-80
-              rounded-full
-              bg-cyan-500/10
-              blur-3xl
-            "
-          />
-
-          <div
-            className="
-              pointer-events-none
-              absolute
-              inset-x-0
-              top-0
-              h-px
-              bg-gradient-to-r
-              from-transparent
-              via-cyan-400
-              to-transparent
-              opacity-70
-            "
-          />
+        <section className="relative mb-14 overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-gradient-to-br from-purple-950/50 via-[#070b16] to-cyan-950/30 p-8 shadow-[0_0_70px_rgba(34,211,238,.08)] md:p-12">
+          <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-40 -left-24 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-70" />
 
           <div className="relative">
-            <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-              <div>
-                <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="max-w-4xl">
+                <div className="inline-flex items-center gap-3 rounded-full border border-cyan-400/20 bg-cyan-500/5 px-4 py-2">
                   <span className="pp-live-dot" />
 
-                  <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
-                    PulsePlay Mission Database
-                  </p>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-300">
+                    GAME DATABASE ONLINE
+                  </span>
                 </div>
 
-                <h1
-                  className="
-                    mt-4
-                    text-5xl
-                    font-black
-                    leading-none
-                    pp-gradient-text
-                    md:text-7xl
-                  "
-                >
-                  GAME
-                  <span className="block">
-                    COMMAND CENTER
-                  </span>
+                <p className="mt-8 text-xs font-black uppercase tracking-[0.45em] text-purple-400">
+                  PulsePlay Mission Database
+                </p>
+
+                <h1 className="mt-3 text-5xl font-black leading-none pp-gradient-text md:text-7xl">
+                  Game Command
+                  <span className="block">Center</span>
                 </h1>
 
-                <p
-                  className="
-                    mt-6
-                    max-w-3xl
-                    text-base
-                    leading-8
-                    text-slate-300
-                    md:text-lg
-                  "
-                >
-                  Track the games driving the PulsePlay
-                  network — from upcoming launches and
-                  featured missions to recently released
-                  titles.
+                <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+                  Track the games driving the PulsePlay network — from
+                  upcoming launches and featured missions to recently
+                  released titles.
                 </p>
               </div>
 
-              <div
-                className="
-                  w-fit
-                  rounded-2xl
-                  border
-                  border-green-400/20
-                  bg-green-400/5
-                  px-5
-                  py-4
-                  text-right
-                "
-              >
-                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+              <div className="rounded-2xl border border-green-400/20 bg-green-400/5 p-5 backdrop-blur-xl lg:min-w-[190px]">
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">
                   DATABASE STATUS
                 </p>
 
-                <div className="mt-2 flex items-center justify-end gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-green-400 shadow-[0_0_14px_rgba(74,222,128,.7)]" />
+                <div className="mt-3 flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-400 shadow-[0_0_15px_rgba(34,197,94,.8)]" />
 
-                  <span className="text-xs font-black uppercase tracking-widest text-green-400">
+                  <span className="text-sm font-black uppercase text-green-300">
                     ONLINE
                   </span>
                 </div>
+
+                <p className="mt-3 text-xs text-slate-500">
+                  {games.length} indexed games
+                </p>
               </div>
             </div>
 
             <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-              <StatCard
-                label="Total Games"
-                value={games.length}
-                tone="cyan"
-              />
-
-              <StatCard
-                label="Upcoming"
-                value={categorizedGames.upcoming.length}
-                tone="blue"
-              />
-
-              <StatCard
-                label="Released"
-                value={categorizedGames.released.length}
-                tone="green"
-              />
-
-              <StatCard
-                label="Featured"
-                value={categorizedGames.featured.length}
-                tone="yellow"
-              />
+              <StatCard label="Total Games" value={games.length} tone="cyan" />
+              <StatCard label="Upcoming" value={categorizedGames.upcoming.length} tone="blue" />
+              <StatCard label="Released" value={categorizedGames.released.length} tone="green" />
+              <StatCard label="Featured" value={categorizedGames.featured.length} tone="yellow" />
             </div>
           </div>
         </section>
 
-        {/* =====================================================
-            EMPTY DATABASE
-        ====================================================== */}
-
         {games.length === 0 && (
-          <BrandCard
-            scan
-            status="DATABASE EMPTY"
-            className="mb-14"
-          >
+          <BrandCard scan status="DATABASE EMPTY" className="mb-14">
             <div className="py-14 text-center">
               <div className="text-5xl">🎮</div>
 
@@ -792,9 +512,8 @@ export default function Games() {
               </h2>
 
               <p className="mx-auto mt-4 max-w-xl text-slate-400">
-                Add games through the PulsePlay Admin
-                Dashboard to populate the public mission
-                database.
+                Add games through the PulsePlay Admin Dashboard to
+                populate the public mission database.
               </p>
             </div>
           </BrandCard>
@@ -802,10 +521,6 @@ export default function Games() {
 
         {games.length > 0 && (
           <>
-            {/* =================================================
-                FEATURED MISSIONS
-            ================================================== */}
-
             {categorizedGames.featured.length > 0 && (
               <section className="mb-16">
                 <div className="mb-7 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -819,39 +534,30 @@ export default function Games() {
                     </h2>
 
                     <p className="mt-3 max-w-3xl text-slate-400">
-                      Current games receiving the
-                      PulsePlay network spotlight.
+                      Current games receiving the PulsePlay network spotlight.
                     </p>
                   </div>
 
                   <BrandButton
                     variant="secondary"
                     type="button"
-                    onClick={() =>
-                      setFilter("featured")
-                    }
+                    onClick={() => setFilter("featured")}
                   >
                     ★ View Featured
                   </BrandButton>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {categorizedGames.featured
-                    .slice(0, 3)
-                    .map((game) => (
-                      <GameCard
-                        key={game.id}
-                        game={game}
-                        featured
-                      />
-                    ))}
+                  {categorizedGames.featured.slice(0, 3).map((game) => (
+                    <GameCard
+                      key={game.id}
+                      game={game}
+                      featured
+                    />
+                  ))}
                 </div>
               </section>
             )}
-
-            {/* =================================================
-                RELEASE RADAR
-            ================================================== */}
 
             <section className="mb-16">
               <div className="mb-7 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -865,17 +571,14 @@ export default function Games() {
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-slate-400">
-                    Monitor the next games entering the
-                    PulsePlay operational zone.
+                    Monitor the next games entering the PulsePlay operational zone.
                   </p>
                 </div>
 
                 <BrandButton
                   variant="secondary"
                   type="button"
-                  onClick={() =>
-                    setFilter("upcoming")
-                  }
+                  onClick={() => setFilter("upcoming")}
                 >
                   View Upcoming
                 </BrandButton>
@@ -883,33 +586,20 @@ export default function Games() {
 
               {categorizedGames.upcoming.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {categorizedGames.upcoming
-                    .slice(0, 3)
-                    .map((game) => (
-                      <GameCard
-                        key={game.id}
-                        game={game}
-                      />
-                    ))}
+                  {categorizedGames.upcoming.slice(0, 3).map((game) => (
+                    <GameCard key={game.id} game={game} />
+                  ))}
                 </div>
               ) : (
-                <BrandCard
-                  scan
-                  status="RELEASE RADAR"
-                >
+                <BrandCard scan status="RELEASE RADAR">
                   <div className="py-6">
                     <p className="text-sm text-slate-400">
-                      No upcoming releases are currently
-                      listed.
+                      No upcoming releases are currently listed.
                     </p>
                   </div>
                 </BrandCard>
               )}
             </section>
-
-            {/* =================================================
-                RECENT RELEASES
-            ================================================== */}
 
             <section className="mb-16">
               <div className="mb-7 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -923,17 +613,14 @@ export default function Games() {
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-slate-400">
-                    Review the latest titles that have
-                    entered the active game library.
+                    Review the latest titles that have entered the active game library.
                   </p>
                 </div>
 
                 <BrandButton
                   variant="secondary"
                   type="button"
-                  onClick={() =>
-                    setFilter("released")
-                  }
+                  onClick={() => setFilter("released")}
                 >
                   View Released
                 </BrandButton>
@@ -941,37 +628,24 @@ export default function Games() {
 
               {categorizedGames.released.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {categorizedGames.released
-                    .slice(0, 3)
-                    .map((game) => (
-                      <GameCard
-                        key={game.id}
-                        game={game}
-                      />
-                    ))}
+                  {categorizedGames.released.slice(0, 3).map((game) => (
+                    <GameCard key={game.id} game={game} />
+                  ))}
                 </div>
               ) : (
-                <BrandCard
-                  scan
-                  status="LAUNCH ARCHIVE"
-                >
+                <BrandCard scan status="LAUNCH ARCHIVE">
                   <div className="py-6">
                     <p className="text-sm text-slate-400">
-                      No released games are currently
-                      listed.
+                      No released games are currently listed.
                     </p>
                   </div>
                 </BrandCard>
               )}
             </section>
 
-            {/* =================================================
-                FULL DATABASE
-            ================================================== */}
-
             <section className="pb-16">
               <div className="mb-8">
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                   <div>
                     <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
                       Complete Database
@@ -982,31 +656,18 @@ export default function Games() {
                     </h2>
 
                     <p className="mt-3 max-w-3xl text-slate-400">
-                      Search, filter, and open any game
-                      intelligence file in the PulsePlay
-                      database.
+                      Search, filter, and open any game intelligence file in
+                      the PulsePlay database.
                     </p>
                   </div>
 
                   <div className="w-full lg:max-w-md">
-                    <label
-                      htmlFor="game-search"
-                      className="sr-only"
-                    >
+                    <label htmlFor="game-search" className="sr-only">
                       Search games
                     </label>
 
                     <div className="relative">
-                      <span
-                        className="
-                          pointer-events-none
-                          absolute
-                          left-4
-                          top-1/2
-                          -translate-y-1/2
-                          text-cyan-400
-                        "
-                      >
+                      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400">
                         ⌕
                       </span>
 
@@ -1014,29 +675,9 @@ export default function Games() {
                         id="game-search"
                         type="search"
                         value={search}
-                        onChange={(event) =>
-                          setSearch(
-                            event.target.value
-                          )
-                        }
+                        onChange={(event) => setSearch(event.target.value)}
                         placeholder="Search games, genres, platforms..."
-                        className="
-                          w-full
-                          rounded-xl
-                          border
-                          border-cyan-500/20
-                          bg-black/30
-                          py-3
-                          pl-10
-                          pr-5
-                          text-white
-                          outline-none
-                          transition
-                          placeholder:text-slate-600
-                          focus:border-cyan-400/50
-                          focus:ring-2
-                          focus:ring-cyan-500/10
-                        "
+                        className="w-full rounded-xl border border-cyan-500/20 bg-black/30 py-3.5 pl-10 pr-5 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-500/10"
                       />
                     </div>
                   </div>
@@ -1057,9 +698,7 @@ export default function Games() {
                       <button
                         key={value}
                         type="button"
-                        onClick={() =>
-                          setFilter(value)
-                        }
+                        onClick={() => setFilter(value)}
                         className={`
                           rounded-xl
                           border
@@ -1089,10 +728,7 @@ export default function Games() {
                   <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
                     <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-600">
                       {filteredGames.length}{" "}
-                      {filteredGames.length === 1
-                        ? "Game"
-                        : "Games"}{" "}
-                      Located
+                      {filteredGames.length === 1 ? "Game" : "Games"} Located
                     </p>
 
                     {(search || filter !== "all") && (
@@ -1102,15 +738,7 @@ export default function Games() {
                           setSearch("");
                           setFilter("all");
                         }}
-                        className="
-                          text-[10px]
-                          font-black
-                          uppercase
-                          tracking-widest
-                          text-cyan-400
-                          transition
-                          hover:text-cyan-300
-                        "
+                        className="text-[10px] font-black uppercase tracking-widest text-cyan-400 transition hover:text-cyan-300"
                       >
                         Reset Filters →
                       </button>
@@ -1122,18 +750,13 @@ export default function Games() {
                       <GameCard
                         key={game.id}
                         game={game}
-                        featured={
-                          game.featured === true
-                        }
+                        featured={game.featured === true}
                       />
                     ))}
                   </div>
                 </>
               ) : (
-                <BrandCard
-                  scan
-                  status="NO MATCHES"
-                >
+                <BrandCard scan status="NO MATCHES">
                   <div className="py-12 text-center">
                     <div className="text-4xl">⌕</div>
 
@@ -1142,8 +765,7 @@ export default function Games() {
                     </h3>
 
                     <p className="mt-3 text-slate-400">
-                      Try another search term or change
-                      the active library filter.
+                      Try another search term or change the active library filter.
                     </p>
 
                     <button
@@ -1152,22 +774,7 @@ export default function Games() {
                         setSearch("");
                         setFilter("all");
                       }}
-                      className="
-                        mt-6
-                        rounded-xl
-                        border
-                        border-cyan-500/30
-                        bg-cyan-500/10
-                        px-6
-                        py-3
-                        text-xs
-                        font-black
-                        uppercase
-                        tracking-wider
-                        text-cyan-300
-                        transition
-                        hover:bg-cyan-500/20
-                      "
+                      className="mt-6 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-6 py-3 text-xs font-black uppercase tracking-wider text-cyan-300 transition hover:bg-cyan-500/20"
                     >
                       Reset Library
                     </button>
