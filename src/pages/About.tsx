@@ -73,74 +73,127 @@ export default function About() {
             overflow-hidden
             rounded-[2rem]
             border
-            border-purple-500/20
+            border-cyan-500/20
             bg-gradient-to-br
-            from-purple-950/50
-            via-[#070b16]
-            to-cyan-950/30
+            from-cyan-950/30
+            via-[#060a14]
+            to-purple-950/40
             p-8
-            shadow-[0_0_70px_rgba(147,51,234,.10)]
+            shadow-[0_0_90px_rgba(34,211,238,.08)]
             md:p-12
+            lg:p-14
           "
         >
-          <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-purple-500/10 blur-3xl" />
 
-          <div className="pointer-events-none absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.025)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40" />
 
           <div className="relative">
-            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
 
               <div className="max-w-4xl">
-                <div className="inline-flex items-center gap-3 rounded-full border border-purple-400/20 bg-purple-500/5 px-5 py-2">
-                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-purple-400 shadow-[0_0_15px_#c084fc]" />
 
-                  <span className="text-xs font-black uppercase tracking-[0.35em] text-purple-300">
-                    System Origin Found
+                <div className="inline-flex items-center gap-3 rounded-full border border-cyan-400/20 bg-cyan-500/5 px-5 py-2">
+                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-green-400 shadow-[0_0_15px_#22c55e]" />
+
+                  <span className="text-xs font-black uppercase tracking-[0.35em] text-cyan-300">
+                    PulsePlay Network Online
                   </span>
                 </div>
 
-                <p className="mt-8 text-xs font-black uppercase tracking-[0.45em] text-cyan-400">
-                  PulsePlay Intelligence Network
+                <p className="mt-8 text-xs font-black uppercase tracking-[0.45em] text-purple-400">
+                  Intelligence Network // System Origin
                 </p>
 
-                <h1 className="mt-4 text-5xl font-black leading-none pp-gradient-text md:text-7xl">
-                  PULSEPLAY
+                <h1 className="mt-4 text-5xl font-black leading-[0.9] pp-gradient-text md:text-7xl lg:text-8xl">
+                  BUILT FOR
                   <br />
-                  ORIGIN
+                  THE NEXT
+                  <br />
+                  LEVEL
                 </h1>
 
-                <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-                  A gaming network created for players, creators, and
-                  communities who believe every adventure is better when
-                  the experience is shared.
+                <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl">
+                  PulsePlay is a gaming network built for players, creators,
+                  broadcasts, games, and communities — bringing the entire
+                  experience together in one place.
                 </p>
+
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                  <Link to="/games">
+                    <BrandButton>
+                      EXPLORE THE NETWORK
+                    </BrandButton>
+                  </Link>
+
+                  <Link to="/community">
+                    <BrandButton variant="secondary">
+                      JOIN THE COMMUNITY
+                    </BrandButton>
+                  </Link>
+                </div>
+
               </div>
 
-              <div className="rounded-2xl border border-cyan-500/20 bg-black/20 p-5 backdrop-blur-sm lg:min-w-[280px]">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
-                  Network Status
-                </p>
+              <div className="w-full rounded-2xl border border-green-500/20 bg-black/30 p-6 backdrop-blur-sm lg:max-w-[310px]">
 
-                <div className="mt-4 flex items-center gap-3">
-                  <span className="h-3 w-3 animate-pulse rounded-full bg-green-400 shadow-[0_0_15px_#22c55e]" />
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+                    Network Diagnostics
+                  </p>
 
-                  <span className="text-lg font-black text-white">
-                    COMMUNITY ONLINE
+                  <span className="text-[10px] font-black uppercase tracking-widest text-green-400">
+                    LIVE
                   </span>
                 </div>
 
-                <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                  Building the next level of the PulsePlay gaming network.
-                </p>
+                <div className="mt-5 flex items-center gap-3">
+                  <span className="h-3 w-3 animate-pulse rounded-full bg-green-400 shadow-[0_0_18px_#22c55e]" />
+
+                  <span className="text-xl font-black text-white">
+                    SYSTEM ONLINE
+                  </span>
+                </div>
+
+                <div className="mt-5 space-y-3 border-t border-white/10 pt-5">
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Game Intelligence
+                    </span>
+                    <span className="text-xs font-black text-cyan-300">
+                      ACTIVE
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Broadcast Network
+                    </span>
+                    <span className="text-xs font-black text-purple-300">
+                      ACTIVE
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Community
+                    </span>
+                    <span className="text-xs font-black text-green-300">
+                      ONLINE
+                    </span>
+                  </div>
+
+                </div>
+
               </div>
 
             </div>
 
-            {/* HERO STATS */}
-
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
                   Core Mission
                 </p>
@@ -181,7 +234,6 @@ export default function About() {
               </div>
 
             </div>
-
           </div>
         </section>
 
