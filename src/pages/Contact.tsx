@@ -58,8 +58,13 @@ const statuses = [
 
 export default function Contact() {
   return (
-    <main className="min-h-[72vh] px-6 py-12">
-      <div className="mx-auto max-w-7xl">
+    <main className="relative min-h-[72vh] overflow-hidden px-6 py-12 text-white md:py-16">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-[8%] top-20 h-72 w-72 rounded-full bg-cyan-500/5 blur-3xl" />
+        <div className="absolute right-[5%] top-[30%] h-96 w-96 rounded-full bg-purple-500/5 blur-3xl" />
+        <div className="absolute bottom-20 left-1/3 h-80 w-80 rounded-full bg-pink-500/5 blur-3xl" />
+      </div>
+      <div className="relative mx-auto max-w-7xl">
 
         {/* =====================================
             COMMAND HEADER
@@ -72,19 +77,21 @@ export default function Contact() {
             overflow-hidden
             rounded-[2rem]
             border
-            border-cyan-500/20
+            border-cyan-400/25
             bg-gradient-to-br
             from-cyan-950/30
             via-[#070b16]
             to-purple-950/30
             p-8
-            shadow-[0_0_70px_rgba(34,211,238,.08)]
+            shadow-[0_0_90px_rgba(34,211,238,.10)]
             md:p-12
           "
         >
           <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
           <div className="pointer-events-none absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl" />
+
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-80" />
 
           <div className="relative">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
@@ -253,7 +260,7 @@ export default function Contact() {
                 key={channel.label}
                 hover
                 status={channel.label}
-                className="group flex h-full flex-col"
+                className="group flex h-full flex-col transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400/30 hover:shadow-[0_0_40px_rgba(34,211,238,.08)]"
               >
 
                 <div className="flex items-center justify-between">
@@ -357,7 +364,7 @@ export default function Contact() {
 
           <BrandCard
             status="DIRECT COMMUNICATION"
-            className="overflow-hidden border-cyan-500/20 p-0"
+            className="overflow-hidden border-cyan-400/25 p-0 shadow-[0_0_60px_rgba(34,211,238,.06)]"
           >
 
             <div className="grid lg:grid-cols-[1fr_1.2fr]">
@@ -540,7 +547,7 @@ export default function Contact() {
             to-cyan-950/20
             p-8
             text-center
-            shadow-[0_0_60px_rgba(147,51,234,.08)]
+            shadow-[0_0_80px_rgba(147,51,234,.10)]
             md:p-14
           "
         >
