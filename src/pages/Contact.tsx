@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import BrandCard from "../components/ui/BrandCard";
 import BrandButton from "../components/ui/BrandButton";
 
+const CONTACT_EMAIL = "pulseplay962@gmail.com";
+
 const channels = [
   {
     icon: "🎮",
@@ -21,7 +23,7 @@ const channels = [
     description:
       "Interested in collaborations, creator opportunities, partnerships, or working with the PulsePlay gaming network?",
     action: "OPEN CONTACT CHANNEL",
-    to: "mailto:pulseplay962@gmail.com",
+    to: `mailto:${CONTACT_EMAIL}`,
     accent: "purple",
   },
   {
@@ -112,6 +114,35 @@ export default function Contact() {
                   the PulsePlay network? Choose a communication channel and
                   transmit your message.
                 </p>
+
+                <div className="mt-7 grid max-w-3xl gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-500">
+                      Response Channel
+                    </p>
+                    <p className="mt-2 text-sm font-black uppercase text-cyan-300">
+                      Email + Community
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-3">
+                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-500">
+                      Availability
+                    </p>
+                    <p className="mt-2 text-sm font-black uppercase text-green-300">
+                      Open
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 px-4 py-3">
+                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-500">
+                      Priority
+                    </p>
+                    <p className="mt-2 text-sm font-black uppercase text-purple-300">
+                      Player + Creator
+                    </p>
+                  </div>
+                </div>
 
               </div>
 
@@ -361,7 +392,7 @@ export default function Contact() {
                   </p>
 
                   <a
-                    href="mailto:pulseplay962@gmail.com"
+                    href={`mailto:${CONTACT_EMAIL}`}
                     className="
                       mt-3
                       block
