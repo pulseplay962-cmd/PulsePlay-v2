@@ -242,23 +242,60 @@ export default function About() {
             MISSION + PHILOSOPHY
         ====================================== */}
 
-        <section className="mb-14 grid gap-6 lg:grid-cols-2">
+        <section className="mb-14">
 
-          <BrandCard
-            status="MISSION PROTOCOL"
-            className="h-full border-cyan-500/20"
-          >
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.35em] text-cyan-400">
-                  Primary Objective
-                </p>
+          <div className="mb-8">
+            <p className="text-xs font-black uppercase tracking-[0.4em] text-purple-400">
+              Core Directive
+            </p>
 
-                <h2 className="mt-3 text-3xl font-black text-white md:text-4xl">
-                  Build a Better Place to Play
-                </h2>
+            <h2 className="mt-3 text-4xl font-black pp-gradient-text md:text-5xl">
+              Why PulsePlay Exists
+            </h2>
 
-                <p className="mt-5 leading-relaxed text-slate-400">
+            <p className="mt-4 max-w-3xl text-slate-400">
+              Two principles drive the network: build a better place to play
+              and make sure every kind of player has a place within it.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+
+            <BrandCard
+              status="MISSION PROTOCOL"
+              className="group relative h-full overflow-hidden border-cyan-500/20"
+            >
+              <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl transition group-hover:bg-cyan-500/20" />
+
+              <div className="relative">
+
+                <div className="flex items-start justify-between gap-6">
+
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-xl">
+                        🎯
+                      </span>
+
+                      <p className="text-xs font-black uppercase tracking-[0.35em] text-cyan-400">
+                        Primary Objective
+                      </p>
+                    </div>
+
+                    <h3 className="mt-6 text-3xl font-black text-white md:text-4xl">
+                      Build a Better Place to Play
+                    </h3>
+                  </div>
+
+                  <span className="hidden text-[10px] font-black uppercase tracking-widest text-cyan-400 sm:block">
+                    DIRECTIVE 01
+                  </span>
+
+                </div>
+
+                <div className="mt-6 h-px bg-gradient-to-r from-cyan-500/30 via-white/10 to-transparent" />
+
+                <p className="mt-6 leading-relaxed text-slate-400">
                   PulsePlay was created to bring together live broadcasts,
                   gaming intelligence, community interaction, and player
                   experiences under one evolving network.
@@ -270,28 +307,51 @@ export default function About() {
                   connecting with other players feels like part of the same
                   experience.
                 </p>
+
+                <div className="mt-7 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee]" />
+                  Mission Active
+                </div>
+
               </div>
-
-              <span className="text-4xl">🎯</span>
-            </div>
-          </BrandCard>
+            </BrandCard>
 
 
-          <BrandCard
-            status="PLAYER PHILOSOPHY"
-            className="h-full border-purple-500/20"
-          >
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.35em] text-purple-400">
-                  Player First
-                </p>
+            <BrandCard
+              status="PLAYER PHILOSOPHY"
+              className="group relative h-full overflow-hidden border-purple-500/20"
+            >
+              <div className="pointer-events-none absolute -left-20 -top-20 h-48 w-48 rounded-full bg-purple-500/10 blur-3xl transition group-hover:bg-purple-500/20" />
 
-                <h2 className="mt-3 text-3xl font-black text-white md:text-4xl">
-                  Every Player Has a Story
-                </h2>
+              <div className="relative">
 
-                <p className="mt-5 leading-relaxed text-slate-400">
+                <div className="flex items-start justify-between gap-6">
+
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 text-xl">
+                        🎮
+                      </span>
+
+                      <p className="text-xs font-black uppercase tracking-[0.35em] text-purple-400">
+                        Player First
+                      </p>
+                    </div>
+
+                    <h3 className="mt-6 text-3xl font-black text-white md:text-4xl">
+                      Every Player Has a Story
+                    </h3>
+                  </div>
+
+                  <span className="hidden text-[10px] font-black uppercase tracking-widest text-purple-400 sm:block">
+                    DIRECTIVE 02
+                  </span>
+
+                </div>
+
+                <div className="mt-6 h-px bg-gradient-to-r from-purple-500/30 via-white/10 to-transparent" />
+
+                <p className="mt-6 leading-relaxed text-slate-400">
                   Some players compete. Some create. Some explore massive
                   worlds one mission at a time.
                 </p>
@@ -301,11 +361,16 @@ export default function About() {
                   create a network where players can discover, share, and
                   level up together.
                 </p>
-              </div>
 
-              <span className="text-4xl">🎮</span>
-            </div>
-          </BrandCard>
+                <div className="mt-7 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-purple-400">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-purple-400 shadow-[0_0_12px_#c084fc]" />
+                  Player First
+                </div>
+
+              </div>
+            </BrandCard>
+
+          </div>
 
         </section>
 
@@ -316,85 +381,175 @@ export default function About() {
 
         <section className="mb-14">
 
-          <div className="mb-8">
-            <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
-              Network Architecture
-            </p>
+          <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
 
-            <h2 className="mt-3 text-4xl font-black pp-gradient-text md:text-5xl">
-              Core Systems
-            </h2>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
+                Network Architecture
+              </p>
 
-            <p className="mt-4 max-w-3xl text-slate-400">
-              The PulsePlay network is built around the experiences that keep
-              players connected to the games and communities they care about.
-            </p>
+              <h2 className="mt-3 text-4xl font-black pp-gradient-text md:text-5xl">
+                Core Systems
+              </h2>
+
+              <p className="mt-4 max-w-3xl text-slate-400">
+                The PulsePlay network is built around the experiences that keep
+                players connected to the games, broadcasts, stories, and
+                communities they care about.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-green-400">
+              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-green-400 shadow-[0_0_15px_#22c55e]" />
+              All Systems Active
+            </div>
+
           </div>
 
 
           <div className="grid gap-6 lg:grid-cols-3">
 
-            {systems.map((system) => (
+            {systems.map((system, index) => (
               <BrandCard
                 key={system.label}
                 hover
                 status={system.label}
-                className="group h-full"
+                className={`
+                  group
+                  relative
+                  h-full
+                  overflow-hidden
+                  ${
+                    system.color === "purple"
+                      ? "border-purple-500/20"
+                      : system.color === "pink"
+                        ? "border-pink-500/20"
+                        : "border-cyan-500/20"
+                  }
+                `}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-4xl">
-                    {system.icon}
-                  </span>
 
-                  <span
-                    className={`
-                      text-[10px]
-                      font-black
-                      uppercase
-                      tracking-widest
-                      ${
-                        system.color === "purple"
-                          ? "text-purple-400"
-                          : system.color === "pink"
-                            ? "text-pink-400"
-                            : "text-cyan-400"
-                      }
-                    `}
-                  >
-                    SYSTEM ACTIVE
-                  </span>
+                <div
+                  className={`
+                    pointer-events-none
+                    absolute
+                    -right-16
+                    -top-16
+                    h-40
+                    w-40
+                    rounded-full
+                    blur-3xl
+                    ${
+                      system.color === "purple"
+                        ? "bg-purple-500/10 group-hover:bg-purple-500/20"
+                        : system.color === "pink"
+                          ? "bg-pink-500/10 group-hover:bg-pink-500/20"
+                          : "bg-cyan-500/10 group-hover:bg-cyan-500/20"
+                    }
+                  `}
+                />
+
+                <div className="relative">
+
+                  <div className="flex items-center justify-between">
+
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
+                      SYSTEM {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <span
+                      className={`
+                        flex
+                        items-center
+                        gap-2
+                        text-[10px]
+                        font-black
+                        uppercase
+                        tracking-widest
+                        ${
+                          system.color === "purple"
+                            ? "text-purple-400"
+                            : system.color === "pink"
+                              ? "text-pink-400"
+                              : "text-cyan-400"
+                        }
+                      `}
+                    >
+                      <span
+                        className={`
+                          h-2
+                          w-2
+                          animate-pulse
+                          rounded-full
+                          ${
+                            system.color === "purple"
+                              ? "bg-purple-400 shadow-[0_0_12px_#c084fc]"
+                              : system.color === "pink"
+                                ? "bg-pink-400 shadow-[0_0_12px_#f472b6]"
+                                : "bg-cyan-400 shadow-[0_0_12px_#22d3ee]"
+                          }
+                        `}
+                      />
+                      ACTIVE
+                    </span>
+
+                  </div>
+
+
+                  <div className="mt-7 flex items-center justify-between">
+
+                    <span className="text-5xl transition-transform duration-300 group-hover:scale-110">
+                      {system.icon}
+                    </span>
+
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-600">
+                      PULSEPLAY // NODE
+                    </span>
+
+                  </div>
+
+
+                  <h3 className="mt-7 text-2xl font-black text-white md:text-3xl">
+                    {system.title}
+                  </h3>
+
+
+                  <p className="mt-4 leading-relaxed text-slate-400">
+                    {system.description}
+                  </p>
+
+
+                  <div className="mt-7 border-t border-white/10 pt-5">
+
+                    <Link
+                      to={system.to}
+                      className={`
+                        inline-flex
+                        items-center
+                        gap-3
+                        text-xs
+                        font-black
+                        uppercase
+                        tracking-[0.2em]
+                        transition-all
+                        group-hover:gap-4
+                        ${
+                          system.color === "purple"
+                            ? "text-purple-400 hover:text-purple-300"
+                            : system.color === "pink"
+                              ? "text-pink-400 hover:text-pink-300"
+                              : "text-cyan-400 hover:text-cyan-300"
+                        }
+                      `}
+                    >
+                      {system.action}
+                      <span>→</span>
+                    </Link>
+
+                  </div>
+
                 </div>
 
-                <h3 className="mt-7 text-2xl font-black text-white">
-                  {system.title}
-                </h3>
-
-                <p className="mt-4 leading-relaxed text-slate-400">
-                  {system.description}
-                </p>
-
-                <Link
-                  to={system.to}
-                  className="
-                    mt-7
-                    inline-flex
-                    items-center
-                    gap-2
-                    text-xs
-                    font-black
-                    uppercase
-                    tracking-widest
-                    text-cyan-400
-                    transition
-                    hover:text-cyan-300
-                  "
-                >
-                  {system.action}
-
-                  <span className="transition-transform group-hover:translate-x-1">
-                    →
-                  </span>
-                </Link>
               </BrandCard>
             ))}
 
@@ -411,63 +566,132 @@ export default function About() {
 
           <BrandCard
             status="PLAYER PROTOCOL"
-            className="overflow-hidden border-white/10 p-0"
+            className="overflow-hidden border-purple-500/20 p-0"
           >
-            <div className="grid lg:grid-cols-[1fr_2fr]">
 
-              <div className="border-b border-white/10 bg-white/[0.02] p-8 lg:border-b-0 lg:border-r lg:p-10">
-                <p className="text-xs font-black uppercase tracking-[0.4em] text-purple-400">
-                  Network Principles
-                </p>
+            <div className="grid lg:grid-cols-[0.9fr_2.1fr]">
 
-                <h2 className="mt-4 text-4xl font-black pp-gradient-text">
-                  PLAY.
-                  <br />
-                  CONNECT.
-                  <br />
-                  LEVEL UP.
-                </h2>
+              <div
+                className="
+                  relative
+                  overflow-hidden
+                  border-b
+                  border-white/10
+                  bg-gradient-to-br
+                  from-purple-950/30
+                  via-white/[0.02]
+                  to-cyan-950/20
+                  p-8
+                  lg:border-b-0
+                  lg:border-r
+                  lg:p-10
+                "
+              >
 
-                <p className="mt-6 leading-relaxed text-slate-400">
-                  These principles shape the PulsePlay experience and the
-                  direction of the network as it continues to grow.
-                </p>
+                <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-500/10 blur-3xl" />
+
+                <div className="relative">
+
+                  <div className="flex items-center justify-between">
+
+                    <p className="text-xs font-black uppercase tracking-[0.4em] text-purple-400">
+                      Network Principles
+                    </p>
+
+                    <span className="text-[10px] font-black uppercase tracking-widest text-green-400">
+                      ACTIVE
+                    </span>
+
+                  </div>
+
+                  <h2 className="mt-5 text-4xl font-black leading-[0.95] pp-gradient-text md:text-5xl">
+                    PLAY.
+                    <br />
+                    CONNECT.
+                    <br />
+                    LEVEL UP.
+                  </h2>
+
+                  <div className="mt-7 h-px bg-gradient-to-r from-purple-500/40 via-cyan-500/20 to-transparent" />
+
+                  <p className="mt-6 leading-relaxed text-slate-400">
+                    These principles shape the PulsePlay experience and guide
+                    the direction of the network as it continues to grow.
+                  </p>
+
+                  <div className="mt-8 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-purple-400">
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-purple-400 shadow-[0_0_12px_#c084fc]" />
+                    Player First Protocol
+                  </div>
+
+                </div>
+
               </div>
 
 
               <div className="divide-y divide-white/10">
 
-                {values.map((value) => (
+                {values.map((value, index) => (
+
                   <div
                     key={value.number}
                     className="
+                      group
+                      relative
                       grid
-                      gap-5
+                      gap-6
+                      overflow-hidden
                       p-7
+                      transition-colors
+                      hover:bg-white/[0.025]
                       sm:grid-cols-[80px_1fr]
                       sm:items-start
                       md:p-9
                     "
                   >
-                    <span className="text-3xl font-black text-cyan-400/70">
-                      {value.number}
-                    </span>
+
+                    <div className="flex items-center gap-4 sm:block">
+
+                      <span className="text-3xl font-black text-cyan-400/60 transition-colors group-hover:text-cyan-300">
+                        {value.number}
+                      </span>
+
+                      <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-600 sm:mt-3 sm:block">
+                        PROTOCOL {String(index + 1).padStart(2, "0")}
+                      </span>
+
+                    </div>
+
 
                     <div>
-                      <h3 className="text-2xl font-black text-white">
-                        {value.title}
-                      </h3>
 
-                      <p className="mt-3 leading-relaxed text-slate-400">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+
+                        <h3 className="text-2xl font-black text-white md:text-3xl">
+                          {value.title}
+                        </h3>
+
+                        <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-green-400">
+                          <span className="h-2 w-2 animate-pulse rounded-full bg-green-400 shadow-[0_0_10px_#22c55e]" />
+                          ACTIVE
+                        </span>
+
+                      </div>
+
+                      <p className="mt-3 max-w-3xl leading-relaxed text-slate-400">
                         {value.description}
                       </p>
+
                     </div>
+
                   </div>
+
                 ))}
 
               </div>
 
             </div>
+
           </BrandCard>
 
         </section>
@@ -485,42 +709,103 @@ export default function About() {
             border
             border-cyan-500/20
             bg-gradient-to-br
-            from-[#07131d]
-            via-[#080b14]
-            to-purple-950/30
+            from-cyan-950/20
+            via-[#060a14]
+            to-purple-950/40
             p-8
             text-center
-            shadow-[0_0_60px_rgba(34,211,238,.07)]
+            shadow-[0_0_90px_rgba(34,211,238,.08)]
             md:p-14
           "
         >
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/5 blur-3xl" />
+          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
 
-          <div className="relative mx-auto max-w-4xl">
+          <div className="pointer-events-none absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-purple-500/10 blur-3xl" />
+
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.025)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40" />
+
+          <div className="relative mx-auto max-w-5xl">
 
             <div className="inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-green-500/5 px-5 py-2">
-              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-green-400" />
+              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-green-400 shadow-[0_0_15px_#22c55e]" />
 
               <span className="text-xs font-black uppercase tracking-[0.35em] text-green-400">
                 Future Protocol Active
               </span>
             </div>
 
+
             <p className="mt-8 text-xs font-black uppercase tracking-[0.45em] text-pink-400">
-              The Next Level
+              Intelligence Network // Next Phase
             </p>
 
-            <h2 className="mt-4 text-4xl font-black pp-gradient-text md:text-6xl">
-              The Future of PulsePlay
+
+            <h2 className="mt-4 text-5xl font-black leading-[0.9] pp-gradient-text md:text-7xl">
+              THE NEXT
+              <br />
+              LEVEL STARTS
+              <br />
+              HERE
             </h2>
 
-            <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-              PulsePlay is becoming more than a website. The vision is an
-              evolving gaming network built around games, live content,
-              intelligence, merchandise, creators, and communities.
+
+            <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl">
+              PulsePlay is growing beyond a website into an evolving gaming
+              network built around games, broadcasts, intelligence,
+              merchandise, creators, and community.
             </p>
 
-            <p className="mx-auto mt-5 max-w-3xl leading-relaxed text-slate-400">
+
+            <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-3">
+
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+                <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-500/10 text-lg">
+                  🎮
+                </span>
+
+                <p className="mt-4 text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                  Game Network
+                </p>
+
+                <p className="mt-2 text-sm font-black text-cyan-300">
+                  EXPANDING
+                </p>
+              </div>
+
+
+              <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-5">
+                <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-purple-400/20 bg-purple-500/10 text-lg">
+                  📡
+                </span>
+
+                <p className="mt-4 text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                  Creator Network
+                </p>
+
+                <p className="mt-2 text-sm font-black text-purple-300">
+                  ACTIVATING
+                </p>
+              </div>
+
+
+              <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-5">
+                <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-green-400/20 bg-green-500/10 text-lg">
+                  🌐
+                </span>
+
+                <p className="mt-4 text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                  Community
+                </p>
+
+                <p className="mt-2 text-sm font-black text-green-300">
+                  LEVELING UP
+                </p>
+              </div>
+
+            </div>
+
+
+            <p className="mx-auto mt-8 max-w-3xl leading-relaxed text-slate-400">
               The network will continue to grow, evolve, and level up — one
               game, one broadcast, one player, and one new adventure at a
               time.
@@ -550,13 +835,15 @@ export default function About() {
                 PLAYER POWERED // COMMUNITY DRIVEN
               </span>
 
-              <span className="text-cyan-400">
+              <span className="flex items-center justify-center gap-2 text-cyan-400">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
                 PULSEPLAY NETWORK ONLINE
               </span>
 
             </div>
 
           </div>
+
         </section>
 
       </div>
