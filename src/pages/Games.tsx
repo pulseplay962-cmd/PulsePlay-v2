@@ -128,27 +128,28 @@ function GameCard({
           group-hover:shadow-[0_0_40px_rgba(34,211,238,.12)]
         `}
       >
-        <div className="relative overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden bg-black/60">
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={game.title}
-              className={`
+              className="
+                h-full
                 w-full
                 object-cover
                 transition-transform
                 duration-700
                 group-hover:scale-105
-                ${compact ? "h-44" : "h-60"}
-              `}
+              "
               onError={(event) => {
                 event.currentTarget.style.display = "none";
               }}
             />
           ) : (
             <div
-              className={`
+              className="
                 flex
+                h-full
                 w-full
                 items-center
                 justify-center
@@ -158,14 +159,15 @@ function GameCard({
                 uppercase
                 tracking-[0.25em]
                 text-slate-600
-                ${compact ? "h-44" : "h-60"}
-              `}
+              "
             >
               NO COVER IMAGE
             </div>
           )}
 
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px -translate-x-full bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 
           <div className="absolute left-4 top-4 flex flex-wrap gap-2">
             {featured && (
@@ -203,6 +205,7 @@ function GameCard({
 
           <h3
             className={`
+              min-h-[2.5rem]
               font-black
               leading-tight
               text-white
@@ -232,9 +235,9 @@ function GameCard({
               </p>
             </div>
 
-            <span className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 transition group-hover:text-cyan-300">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/10 bg-cyan-500/5 px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 transition-all group-hover:border-cyan-400/30 group-hover:bg-cyan-500/10 group-hover:text-cyan-300">
               Open File
-              <span className="transition-transform group-hover:translate-x-1">
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
                 →
               </span>
             </span>
