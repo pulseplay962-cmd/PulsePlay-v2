@@ -409,7 +409,7 @@ export default function Games() {
   if (loading) {
     return (
       <main className="min-h-[72vh] px-6 py-16">
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto w-full max-w-[1500px]">
           <BrandCard scan status="GAME SYSTEM" className="p-8 md:p-10">
             <div className="flex items-center gap-4">
               <span className="pp-live-dot" />
@@ -435,7 +435,7 @@ export default function Games() {
   }
 
   return (
-    <main className="min-h-[72vh] px-6 py-12 text-white md:py-16">
+    <main className="min-h-[72vh] px-4 py-10 text-white sm:px-6 sm:py-12 md:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl">
 
         <section
@@ -451,7 +451,9 @@ export default function Games() {
             via-[#060a14]
             to-purple-950/40
             p-8
-            shadow-[0_0_90px_rgba(34,211,238,.08)]
+            shadow-[0_0_100px_rgba(34,211,238,.10)]
+            ring-1
+            ring-white/5
             md:p-12
             lg:p-14
           "
@@ -479,7 +481,7 @@ export default function Games() {
                   PulsePlay Intelligence Network // Game Database
                 </p>
 
-                <h1 className="mt-4 text-5xl font-black leading-[0.9] pp-gradient-text md:text-7xl lg:text-8xl">
+                <h1 className="mt-4 text-5xl font-black leading-[0.86] tracking-[-0.04em] pp-gradient-text md:text-7xl lg:text-8xl">
                   GAME
                   <br />
                   COMMAND
@@ -487,7 +489,7 @@ export default function Games() {
                   CENTER
                 </h1>
 
-                <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl">
+                <p className="mt-7 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8 md:text-xl">
                   Discover the games powering the PulsePlay network. Track
                   upcoming releases, featured missions, and the worlds players
                   are exploring right now.
@@ -571,7 +573,7 @@ export default function Games() {
             </div>
 
 
-            <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
               <StatCard
                 label="Total Games"
                 value={games.length}
@@ -749,11 +751,15 @@ export default function Games() {
               <div className="mb-8">
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
-                      Complete Database
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <span className="pp-live-dot" />
 
-                    <h2 className="mt-2 text-4xl font-black pp-gradient-text md:text-5xl">
+                      <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">
+                        Complete Database
+                      </p>
+                    </div>
+
+                    <h2 className="mt-3 text-4xl font-black tracking-[-0.03em] pp-gradient-text md:text-5xl">
                       Full Game Library
                     </h2>
 
@@ -768,8 +774,8 @@ export default function Games() {
                       Search games
                     </label>
 
-                    <div className="relative">
-                      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400">
+                    <div className="relative rounded-2xl border border-cyan-500/20 bg-black/30 p-1 shadow-[0_0_30px_rgba(34,211,238,.05)]">
+                      <span className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400">
                         ⌕
                       </span>
 
@@ -779,10 +785,41 @@ export default function Games() {
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                         placeholder="Search games, genres, platforms..."
-                        className="w-full rounded-xl border border-cyan-500/20 bg-black/30 py-3.5 pl-10 pr-5 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-500/10"
+                        className="w-full rounded-xl bg-transparent py-3.5 pl-11 pr-5 text-sm font-semibold text-white outline-none transition placeholder:text-slate-600 focus:ring-2 focus:ring-cyan-500/10"
                       />
                     </div>
                   </div>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-4 border-y border-white/10 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-green-400 shadow-[0_0_10px_#22c55e]" />
+
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                      Query Results
+                    </span>
+
+                    <span className="font-mono text-sm font-black text-cyan-300">
+                      {filteredGames.length}
+                    </span>
+
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
+                      FILES
+                    </span>
+                  </div>
+
+                  {(search || filter !== "all") && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearch("");
+                        setFilter("all");
+                      }}
+                      className="text-left text-[10px] font-black uppercase tracking-[0.2em] text-purple-400 transition hover:text-purple-300 sm:text-right"
+                    >
+                      Reset Query →
+                    </button>
+                  )}
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-3">
