@@ -390,7 +390,7 @@ export default function GameDetails() {
 
   if (loading) {
     return (
-      <main className="min-h-[72vh] px-6 py-16 text-white">
+      <main className="min-h-[72vh] px-4 py-10 text-white sm:px-6 sm:py-12 md:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <BrandCard
             scan
@@ -422,7 +422,7 @@ export default function GameDetails() {
 
   if (!game) {
     return (
-      <main className="min-h-[72vh] px-6 py-16 text-white">
+      <main className="min-h-[72vh] px-4 py-10 text-white sm:px-6 sm:py-12 md:py-16 lg:py-20">
         <div className="mx-auto max-w-4xl">
           <BrandCard
             scan
@@ -491,7 +491,7 @@ export default function GameDetails() {
   );
 
   return (
-    <main className="min-h-[72vh] px-6 py-12 text-white">
+    <main className="min-h-[72vh] px-4 py-10 text-white sm:px-6 sm:py-12 md:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl">
 
         {/* =====================================================
@@ -616,7 +616,7 @@ export default function GameDetails() {
 
             {/* CORE INTEL */}
 
-            <div className="relative flex flex-col justify-center p-7 md:p-10 lg:p-12">
+            <div className="relative flex flex-col justify-center p-6 sm:p-8 md:p-10 lg:p-12">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <span className="pp-live-dot" />
@@ -635,12 +635,12 @@ export default function GameDetails() {
                 Mission Database // Active File
               </p>
 
-              <h1 className="mt-3 text-5xl font-black leading-[0.9] pp-gradient-text md:text-6xl lg:text-7xl">
+              <h1 className="mt-3 max-w-4xl text-5xl font-black leading-[0.86] tracking-[-0.04em] pp-gradient-text sm:text-6xl md:text-7xl lg:text-8xl">
                 {game.title}
               </h1>
 
               {game.description && (
-                <p className="mt-7 text-base leading-8 text-slate-300 md:text-lg">
+                <p className="mt-7 max-w-3xl text-base leading-8 text-slate-300 md:text-lg lg:text-xl">
                   {game.description}
                 </p>
               )}
@@ -677,7 +677,7 @@ export default function GameDetails() {
                 </span>
               </div>
 
-              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
                 <DataCard
                   label="Release Date"
                   value={releaseDate}
@@ -808,7 +808,7 @@ export default function GameDetails() {
         <section className="mb-10">
           <BrandCard
             status="MISSION SIGNAL"
-            className="overflow-hidden border-cyan-400/20"
+            className="overflow-hidden border-cyan-400/20 bg-gradient-to-br from-cyan-950/10 via-black/20 to-purple-950/10 shadow-[0_0_60px_rgba(34,211,238,.05)]"
           >
             <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
 
@@ -821,20 +821,20 @@ export default function GameDetails() {
                   </p>
                 </div>
 
-                <h2 className="mt-3 text-2xl font-black text-white md:text-3xl">
+                <h2 className="mt-3 text-2xl font-black tracking-tight text-white md:text-3xl lg:text-4xl">
                   {status === "upcoming"
                     ? "Prepare for Deployment"
                     : "Mission Intelligence Available"}
                 </h2>
 
-                <p className="mt-3 max-w-3xl leading-7 text-slate-400">
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-400 md:text-base">
                   {status === "upcoming"
                     ? `${game.title} is currently tracked as an upcoming release in the PulsePlay database.`
                     : `PulsePlay is tracking ${game.title} as an active game file within the network.`}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-6 py-5 text-center">
+              <div className="rounded-2xl border border-cyan-400/10 bg-black/30 px-6 py-5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
                 <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">
                   File Status
                 </p>
@@ -861,18 +861,18 @@ export default function GameDetails() {
             <BrandCard
               scan
               status="GAME INTELLIGENCE"
-              className="p-7 md:p-10"
+              className="relative overflow-hidden p-6 sm:p-8 md:p-10 lg:p-12"
             >
               <div className="max-w-4xl">
                 <p className="text-xs font-black uppercase tracking-[0.4em] text-purple-400">
                   Mission Briefing
                 </p>
 
-                <h2 className="mt-3 text-3xl font-black pp-gradient-text md:text-4xl">
+                <h2 className="mt-3 text-3xl font-black tracking-tight pp-gradient-text md:text-4xl lg:text-5xl">
                   About {game.title}
                 </h2>
 
-                <div className="mt-7 whitespace-pre-line border-l border-cyan-400/30 pl-5 text-base leading-8 text-slate-300 md:text-lg">
+                <div className="mt-8 whitespace-pre-line border-l-2 border-cyan-400/30 pl-5 text-base leading-8 text-slate-300 md:pl-7 md:text-lg md:leading-9">
                   {game.article_content}
                 </div>
               </div>
