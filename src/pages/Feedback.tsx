@@ -404,7 +404,10 @@ export default function Feedback(){
 
 
 
-                        <BrandButton>
+                        <BrandButton
+                            type="submit"
+                            disabled={loading}
+>
 
                             {
                                 loading
