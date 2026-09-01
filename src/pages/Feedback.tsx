@@ -44,6 +44,7 @@ export default function Feedback(){
     ){
 
         e.preventDefault();
+        console.log("🚀 FEEDBACK SUBMIT STARTED");
 
         setLoading(true);
         setError("");
