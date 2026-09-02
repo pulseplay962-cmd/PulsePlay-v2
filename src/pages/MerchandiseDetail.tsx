@@ -68,7 +68,7 @@ export default function MerchandiseDetail() {
     try {
       const apiUrl =
         import.meta.env.VITE_API_URL ||
-        "http://localhost:5000";
+        "https://pulseplay-api-yubf.onrender.com";
 
       const response = await fetch(
         `${apiUrl}/api/checkout/create-session`,
