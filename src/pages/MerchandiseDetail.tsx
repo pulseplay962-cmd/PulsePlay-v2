@@ -23,6 +23,31 @@ type MerchandiseItem = {
   status?: string;
   feature?: boolean;
   featured?: boolean;
+  printful_id?: number | null;
+  printful_external_id?: string | null;
+  variants?: MerchandiseVariant[];
+};
+
+type MerchandiseVariant = {
+  id: number;
+  external_id?: string;
+  name: string;
+  retail_price?: string;
+  currency?: string;
+  sku?: string;
+  product?: {
+    variant_id?: number;
+    product_id?: number;
+    image?: string;
+    name?: string;
+  };
+  files?: {
+    id?: number;
+    type?: string;
+    preview_url?: string;
+    thumbnail_url?: string;
+    filename?: string;
+  }[];
 };
 
 export default function MerchandiseDetail() {
@@ -32,6 +57,48 @@ export default function MerchandiseDetail() {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
   const [imageError, setImageError] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
+
+  async function handleCheckout() {
+    if (!item || !selectedVariant) {
+      return;
+    }
+
+    try {
+      const apiUrl =
+        import.meta.env.VITE_API_URL ||
+        "http://localhost:5000";
+
+      const response = await fetch(
+        `${apiUrl}/api/checkout/create-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            merchandiseId: item.id,
+            variantId: selectedVariant.id,
+            quantity: 1,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success || !data.checkout_url) {
+        throw new Error(
+          data.error || "Unable to start checkout."
+        );
+      }
+
+      window.location.href = data.checkout_url;
+    } catch (error) {
+      console.error("Stripe checkout failed:", error);
+      alert("Unable to start checkout. Please try again.");
+    }
+  }
 
   useEffect(() => {
     async function loadProduct() {
@@ -47,6 +114,15 @@ export default function MerchandiseDetail() {
         }
 
         setItem(data as MerchandiseItem);
+
+        const firstVariant = data?.variants?.[0];
+
+        if (firstVariant?.name) {
+          const parts = firstVariant.name.split(" / ");
+
+          setSelectedColor(parts[1] || "");
+          setSelectedSize(parts[2] || "");
+        }
 
         setSelectedImage(
           data?.image_url ||
@@ -90,6 +166,47 @@ export default function MerchandiseDetail() {
   const isFeatured =
     Boolean(item?.featured) ||
     Boolean(item?.feature);
+
+  const variantOptions = useMemo(() => {
+    const variants = item?.variants || [];
+
+    const colors = Array.from(
+      new Set(
+        variants
+          .map((variant) => variant.name.split(" / ")[1])
+          .filter(Boolean)
+      )
+    );
+
+    const sizes = Array.from(
+      new Set(
+        variants
+          .map((variant) => variant.name.split(" / ")[2])
+          .filter(Boolean)
+      )
+    );
+
+    return { colors, sizes };
+  }, [item]);
+
+  const selectedVariant = useMemo(() => {
+    const variants = item?.variants || [];
+
+    if (!selectedColor || !selectedSize) {
+      return variants[0];
+    }
+
+    return (
+      variants.find((variant) => {
+        const parts = variant.name.split(" / ");
+        return parts[1] === selectedColor && parts[2] === selectedSize;
+      }) || variants[0]
+    );
+  }, [item, selectedColor, selectedSize]);
+
+  const displayPrice = Number(
+    selectedVariant?.retail_price || item?.price || 0
+  );
 
   const displayImage =
     imageError || !selectedImage
@@ -497,6 +614,56 @@ export default function MerchandiseDetail() {
 
             <BrandCard className="card-hover">
 
+              {variantOptions.colors.length > 0 && (
+                <div className="mb-6">
+                  <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+                    Select Color
+                  </p>
+
+                  <div className="flex flex-wrap gap-3">
+                    {variantOptions.colors.map((color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => setSelectedColor(color)}
+                        className={`rounded-xl border px-4 py-3 text-sm font-bold transition duration-300 ${
+                          selectedColor === color
+                            ? "border-cyan-300 bg-cyan-400/10 text-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.18)]"
+                            : "border-purple-500/30 bg-black/20 text-slate-300 hover:border-purple-300/60"
+                        }`}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {variantOptions.sizes.length > 0 && (
+                <div className="mb-7">
+                  <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+                    Select Size
+                  </p>
+
+                  <div className="flex flex-wrap gap-3">
+                    {variantOptions.sizes.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        className={`min-w-14 rounded-xl border px-4 py-3 text-sm font-bold transition duration-300 ${
+                          selectedSize === size
+                            ? "border-pink-300 bg-pink-400/10 text-pink-300 shadow-[0_0_20px_rgba(244,114,182,0.18)]"
+                            : "border-purple-500/30 bg-black/20 text-slate-300 hover:border-purple-300/60"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
 
                 <div>
@@ -505,7 +672,7 @@ export default function MerchandiseDetail() {
                   </p>
 
                   <p className="mt-2 text-5xl font-black text-purple-300">
-                    ${Number(item.price || 0).toFixed(2)}
+                    ${displayPrice.toFixed(2)}
                   </p>
                 </div>
 
@@ -522,31 +689,17 @@ export default function MerchandiseDetail() {
               </div>
 
               <div className="mt-7">
-                {item.product_url ? (
-                  <a
-                    href={item.product_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block"
-                  >
-                    <BrandButton className="w-full">
-                      🛒 ACQUIRE LOADOUT
-                    </BrandButton>
-                  </a>
-                ) : (
-                  <BrandButton
-                    variant="secondary"
-                    disabled
-                    className="w-full"
-                  >
-                    PURCHASE LINK OFFLINE
-                  </BrandButton>
-                )}
+                <BrandButton
+                  className="w-full"
+                  onClick={handleCheckout}
+                  disabled={!selectedVariant}
+                >
+                  🛒 ACQUIRE LOADOUT
+                </BrandButton>
               </div>
 
               <p className="mt-4 text-center text-xs leading-relaxed text-slate-500">
-                Purchase processing is handled through the
-                external merchandise provider.
+                Secure checkout is handled through Stripe.
               </p>
 
             </BrandCard>

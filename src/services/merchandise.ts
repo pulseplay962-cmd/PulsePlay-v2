@@ -27,6 +27,58 @@ export type MerchandiseItem = {
 
   status?: string;
 
+  printful_id?: number;
+
+  printful_external_id?: string | null;
+
+  variants?: {
+
+    id: number;
+
+    external_id?: string;
+
+    sync_product_id?: number;
+
+    name: string;
+
+    synced?: boolean;
+
+    variant_id?: number;
+
+    retail_price?: string;
+
+    currency?: string;
+
+    sku?: string;
+
+    product?: {
+
+      variant_id?: number;
+
+      product_id?: number;
+
+      image?: string;
+
+      name?: string;
+
+    };
+
+    files?: {
+
+      id?: number;
+
+      type?: string;
+
+      preview_url?: string;
+
+      thumbnail_url?: string;
+
+      filename?: string;
+
+    }[];
+
+  }[];
+
   created_at?: string;
 
 };
