@@ -29,6 +29,7 @@ import Streams from "../pages/Streams";
 import Store from "../pages/Store";
 import Merchandise from "../pages/Merchandise";
 import MerchandiseDetail from "../pages/MerchandiseDetail";
+import MerchandiseSuccess from "../pages/MerchandiseSuccess";
 import Community from "../pages/Community";
 import News from "../pages/News";
 import NewsArticle from "../pages/NewsArticle";
@@ -98,6 +99,12 @@ const router = createBrowserRouter([
         path: "merchandise",
 
         element: <Merchandise />,
+      },
+
+      {
+        path: "merchandise/success",
+
+        element: <MerchandiseSuccess />,
       },
 
       {
