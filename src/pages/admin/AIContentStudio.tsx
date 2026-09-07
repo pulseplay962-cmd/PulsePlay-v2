@@ -12,6 +12,7 @@ import {
 } from "../../services/aiContent";
 
 import AIContentCalendar from "../../components/admin/AIContentCalendar";
+import { testAIImage } from "../../services/aiImageTest";
 
 export default function AIContentStudio() {
   console.log("🔥 AIContentStudio LOADED");
@@ -42,6 +43,17 @@ export default function AIContentStudio() {
 
   const [publishedArticles, setPublishedArticles] =
     useState<Record<string, string>>({});
+
+  const [testingImage, setTestingImage] =
+    useState(false);
+
+  const [testImageUrl, setTestImageUrl] =
+    useState("");
+
+  const [testImagePrompt, setTestImagePrompt] =
+    useState(
+      "A cinematic futuristic gaming setup with dark neon purple and cyan lighting, premium editorial gaming aesthetic, no logos, no text."
+    );
 
 
   // =====================================
@@ -82,6 +94,44 @@ export default function AIContentStudio() {
   useEffect(() => {
     loadContent();
   }, []);
+
+
+  // =====================================
+  // REAL OPENAI IMAGE TEST
+  // =====================================
+
+  async function handleTestImage() {
+    try {
+      setTestingImage(true);
+      setError("");
+      setTestImageUrl("");
+
+      const result =
+        await testAIImage(testImagePrompt);
+
+      if (!result?.imageUrl) {
+        throw new Error(
+          "OpenAI image generation returned no image URL."
+        );
+      }
+
+      setTestImageUrl(result.imageUrl);
+
+    } catch (error: any) {
+      console.error(
+        "REAL OPENAI IMAGE TEST ERROR:",
+        error
+      );
+
+      setError(
+        error.message ||
+        "Real OpenAI image generation failed."
+      );
+
+    } finally {
+      setTestingImage(false);
+    }
+  }
 
 
   // =====================================
@@ -386,6 +436,120 @@ export default function AIContentStudio() {
           🖼 Generate or regenerate featured
           images for your AI content.
         </p>
+
+        {/* =====================================
+            REAL OPENAI IMAGE TEST LAB
+        ===================================== */}
+
+        <div className="
+          mt-6
+          rounded-2xl
+          border
+          border-pink-500/30
+          bg-black/20
+          p-5
+        ">
+
+          <h2 className="
+            text-xl
+            font-black
+            text-pink-400
+          ">
+            🧪 OpenAI Image Test Lab
+          </h2>
+
+          <p className="
+            mt-2
+            text-sm
+            text-slate-400
+          ">
+            Test real OpenAI image generation without
+            creating or modifying an AI content item.
+          </p>
+
+          <textarea
+            className="
+              mt-4
+              min-h-[110px]
+              w-full
+              rounded-xl
+              bg-black/40
+              p-4
+              text-white
+              outline-none
+              ring-pink-500/40
+              focus:ring-2
+            "
+            value={testImagePrompt}
+            onChange={(e) =>
+              setTestImagePrompt(e.target.value)
+            }
+            placeholder="Enter an image prompt..."
+          />
+
+          <div className="mt-4 flex flex-wrap gap-3">
+
+            <button
+              onClick={handleTestImage}
+              disabled={
+                testingImage ||
+                !testImagePrompt.trim()
+              }
+              className="
+                rounded-xl
+                bg-pink-500/20
+                px-5
+                py-3
+                font-bold
+                text-pink-300
+                hover:bg-pink-500/30
+                disabled:opacity-40
+              "
+            >
+              {testingImage
+                ? "🖼 Generating Real OpenAI Image..."
+                : "🧪 Test Real OpenAI Image"}
+            </button>
+
+          </div>
+
+          {testImageUrl && (
+            <div className="mt-5">
+
+              <h3 className="
+                mb-3
+                font-bold
+                text-cyan-400
+              ">
+                ✅ Real OpenAI Image Result
+              </h3>
+
+              <img
+                src={testImageUrl}
+                alt="Real OpenAI generated test"
+                className="
+                  w-full
+                  rounded-xl
+                  border
+                  border-pink-500/30
+                  object-cover
+                "
+              />
+
+              <p className="
+                mt-3
+                text-xs
+                text-slate-500
+              ">
+                Generated through the protected
+                PulsePlay API and stored in Supabase.
+              </p>
+
+            </div>
+          )}
+
+        </div>
+
 
         <div className="mt-5 flex flex-wrap gap-3">
 
