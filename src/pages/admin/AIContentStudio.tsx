@@ -529,11 +529,13 @@ export default function AIContentStudio() {
                 src={testImageUrl}
                 alt="Real OpenAI generated test"
                 className="
+                  h-64
                   w-full
                   rounded-xl
                   border
                   border-pink-500/30
                   object-cover
+                  md:h-80
                 "
               />
 
@@ -1093,11 +1095,13 @@ export default function AIContentStudio() {
                             src={item.image_url}
                             alt={item.title}
                             className="
+                              h-64
                               w-full
                               rounded-xl
                               border
                               border-cyan-500/20
                               object-cover
+                              md:h-80
                             "
                           />
 
