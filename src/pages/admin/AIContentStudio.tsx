@@ -203,8 +203,6 @@ export default function AIContentStudio() {
         );
       }
 
-      // Safely merge the updated queue item
-      // into the existing content list.
       setContent((currentContent) =>
         currentContent.map((item) =>
           item.id === id
@@ -525,19 +523,34 @@ export default function AIContentStudio() {
                 ✅ Real OpenAI Image Result
               </h3>
 
-              <img
-                src={testImageUrl}
-                alt="Real OpenAI generated test"
+              <div
                 className="
-                  h-64
                   w-full
+                  overflow-hidden
                   rounded-xl
-                  border
-                  border-pink-500/30
-                  object-cover
-                  md:h-80
                 "
-              />
+                style={{
+                  height: "320px",
+                }}
+              >
+                <img
+                  src={testImageUrl}
+                  alt="Real OpenAI generated test"
+                  className="
+                    block
+                    w-full
+                    rounded-xl
+                    border
+                    border-pink-500/30
+                  "
+                  style={{
+                    width: "100%",
+                    height: "320px",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+              </div>
 
               <p className="
                 mt-3
@@ -1089,20 +1102,34 @@ export default function AIContentStudio() {
                       {/* EXISTING IMAGE */}
 
                       {item.image_url && (
-                        <div className="mt-5">
+                        <div
+                          className="
+                            mt-5
+                            w-full
+                            overflow-hidden
+                            rounded-xl
+                          "
+                          style={{
+                            height: "320px",
+                          }}
+                        >
 
                           <img
                             src={item.image_url}
                             alt={item.title}
                             className="
-                              h-64
+                              block
                               w-full
                               rounded-xl
                               border
                               border-cyan-500/20
-                              object-cover
-                              md:h-80
                             "
+                            style={{
+                              width: "100%",
+                              height: "320px",
+                              objectFit: "cover",
+                              display: "block",
+                            }}
                           />
 
                         </div>
