@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { Link } from "react-router-dom";
 
 import {
@@ -995,15 +996,62 @@ export default function AIContentStudio() {
 
                       {/* BODY */}
 
-                      <p
-                        className="
-                          mt-4
-                          whitespace-pre-line
-                          text-slate-300
-                        "
-                      >
-                        {item.body}
-                      </p>
+                      <div className="mt-4 text-slate-300">
+                        <ReactMarkdown
+                          components={{
+                            h1: ({ children }) => (
+                              <h1 className="mt-6 mb-3 text-2xl font-bold text-white">
+                                {children}
+                              </h1>
+                            ),
+                            h2: ({ children }) => (
+                              <h2 className="mt-6 mb-3 text-xl font-bold text-white">
+                                {children}
+                              </h2>
+                            ),
+                            h3: ({ children }) => (
+                              <h3 className="mt-5 mb-2 text-lg font-bold text-cyan-400">
+                                {children}
+                              </h3>
+                            ),
+                            p: ({ children }) => (
+                              <p className="mb-4 leading-7">
+                                {children}
+                              </p>
+                            ),
+                            ul: ({ children }) => (
+                              <ul className="mb-4 list-disc space-y-1 pl-6">
+                                {children}
+                              </ul>
+                            ),
+                            ol: ({ children }) => (
+                              <ol className="mb-4 list-decimal space-y-1 pl-6">
+                                {children}
+                              </ol>
+                            ),
+                            li: ({ children }) => (
+                              <li>{children}</li>
+                            ),
+                            strong: ({ children }) => (
+                              <strong className="font-bold text-white">
+                                {children}
+                              </strong>
+                            ),
+                            a: ({ children, href }) => (
+                              <a
+                                href={href}
+                                className="text-cyan-400 underline"
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {children}
+                              </a>
+                            ),
+                          }}
+                        >
+                          {item.body}
+                        </ReactMarkdown>
+                      </div>
 
 
                       {/* SOCIAL CAPTION */}
