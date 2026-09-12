@@ -345,7 +345,7 @@ export type GameReleaseScanResult = {
   year: number;
   month: number;
   requested_limit: number;
-  candidates: GameReleaseCandidate[];
+  releases: GameReleaseCandidate[];
 };
 
 export type GameReleasePublishResult = {

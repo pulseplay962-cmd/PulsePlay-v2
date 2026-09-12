@@ -140,12 +140,12 @@ export default function Games() {
         );
 
       setReleaseCandidates(
-        result.candidates || []
+        result.releases || []
       );
 
       setReleaseMessage(
         `Found ${
-          result.candidates?.length || 0
+          result.releases?.length || 0
         } game releases for ${
           releaseMonth
         }/${releaseYear}.`
