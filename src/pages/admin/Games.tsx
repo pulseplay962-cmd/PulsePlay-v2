@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 
 import {
+  scanGameReleases,
+  generateGameReleasePackage,
+  publishGameRelease,
+  type GameReleaseCandidate,
+  type GameReleasePackage,
+} from "../../services/aiContent";
+
+import {
   addGame,
   getGames,
   updateGame,
@@ -22,6 +30,44 @@ export default function Games() {
   const [statusFilter, setStatusFilter] = useState<
     "all" | "upcoming" | "released" | "archived"
   >("all");
+
+    /*
+   * =========================
+   * AI GAME RELEASE COMMAND CENTER
+   * =========================
+   */
+
+  const currentDate = new Date();
+
+  const [releaseYear, setReleaseYear] =
+    useState(currentDate.getFullYear());
+
+  const [releaseMonth, setReleaseMonth] =
+    useState(currentDate.getMonth() + 1);
+
+  const [releaseLimit, setReleaseLimit] =
+    useState(10);
+
+  const [releaseCandidates, setReleaseCandidates] =
+    useState<GameReleaseCandidate[]>([]);
+
+  const [releasePackages, setReleasePackages] =
+    useState<GameReleasePackage[]>([]);
+
+  const [selectedReleaseIndex, setSelectedReleaseIndex] =
+    useState<number | null>(null);
+
+  const [releaseScanning, setReleaseScanning] =
+    useState(false);
+
+  const [releaseGenerating, setReleaseGenerating] =
+    useState(false);
+
+  const [releasePublishing, setReleasePublishing] =
+    useState(false);
+
+  const [releaseMessage, setReleaseMessage] =
+    useState("");
 
   /*
    * =========================
@@ -72,6 +118,178 @@ export default function Games() {
   const [hashtags, setHashtags] =
     useState("");
 
+    /*
+   * =========================
+   * SCAN GAME RELEASES
+   * =========================
+   */
+
+  async function handleScanGameReleases() {
+    try {
+      setReleaseScanning(true);
+      setReleaseMessage("");
+      setReleaseCandidates([]);
+      setReleasePackages([]);
+      setSelectedReleaseIndex(null);
+
+      const result =
+        await scanGameReleases(
+          releaseYear,
+          releaseMonth,
+          releaseLimit
+        );
+
+      setReleaseCandidates(
+        result.candidates || []
+      );
+
+      setReleaseMessage(
+        `Found ${
+          result.candidates?.length || 0
+        } game releases for ${
+          releaseMonth
+        }/${releaseYear}.`
+      );
+
+    } catch (error) {
+      console.error(
+        "Game release scan error:",
+        error
+      );
+
+      setReleaseMessage(
+        error instanceof Error
+          ? error.message
+          : "Failed scanning game releases."
+      );
+
+    } finally {
+      setReleaseScanning(false);
+    }
+  }
+
+
+  /*
+   * =========================
+   * GENERATE GAME PACKAGE
+   * =========================
+   */
+
+  async function handleGenerateGamePackage(
+    candidate: GameReleaseCandidate,
+    index: number
+  ) {
+    try {
+      setReleaseGenerating(true);
+      setReleaseMessage("");
+      setSelectedReleaseIndex(index);
+
+      const packageData =
+        await generateGameReleasePackage(
+          candidate
+        );
+
+      setReleasePackages(
+        (current) => {
+          const next = [...current];
+
+          next[index] = packageData;
+
+          return next;
+        }
+      );
+
+      setReleaseMessage(
+        `AI package generated for ${candidate.title}.`
+      );
+
+    } catch (error) {
+      console.error(
+        "Game package generation error:",
+        error
+      );
+
+      setReleaseMessage(
+        error instanceof Error
+          ? error.message
+          : "Failed generating game package."
+      );
+
+    } finally {
+      setReleaseGenerating(false);
+    }
+  }
+
+
+  /*
+   * =========================
+   * APPROVE & PUBLISH
+   * =========================
+   */
+
+  async function handlePublishGamePackage(
+    packageData: GameReleasePackage,
+    index: number
+  ) {
+    const confirmed =
+      window.confirm(
+        `Approve and publish "${packageData.title}" to the PulsePlay Games library?`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setReleasePublishing(true);
+      setReleaseMessage("");
+
+      const result =
+        await publishGameRelease(
+          packageData,
+          releaseYear,
+          releaseMonth,
+          releaseLimit
+        );
+
+      console.log(
+        "GAME RELEASE PUBLISHED:",
+        result
+      );
+
+      setReleaseMessage(
+        `${packageData.title} was published successfully.`
+      );
+
+      setReleasePackages(
+        (current) =>
+          current.map(
+            (item, packageIndex) =>
+              packageIndex === index
+                ? undefined as never
+                : item
+          )
+      );
+
+      await loadGames();
+
+    } catch (error) {
+      console.error(
+        "Game release publish error:",
+        error
+      );
+
+      setReleaseMessage(
+        error instanceof Error
+          ? error.message
+          : "Failed publishing game release."
+      );
+
+    } finally {
+      setReleasePublishing(false);
+    }
+  }
+  
   /*
    * =========================
    * LOAD GAMES
@@ -573,6 +791,519 @@ export default function Games() {
           social content, and visual prompts
           throughout PulsePlay.
         </p>
+
+      </section>
+
+      {/* =========================
+          AI GAME RELEASE COMMAND CENTER
+      ========================= */}
+
+      <section className="pp-panel rounded-2xl p-6 mb-8 border border-cyan-400/20">
+
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+
+          <div>
+
+            <div className="flex items-center gap-2 mb-2">
+
+              <span className="text-cyan-400 text-xl">
+                ⚡
+              </span>
+
+              <h2 className="text-2xl font-black text-white">
+                Game Release Command Center
+              </h2>
+
+            </div>
+
+            <p className="text-sm text-slate-400 max-w-3xl">
+              Scan upcoming releases, generate a complete PulsePlay game
+              package with AI, review it, then approve and publish it to
+              the Game Library.
+            </p>
+
+          </div>
+
+          <div className="px-4 py-2 rounded-xl bg-cyan-400/10 border border-cyan-400/20 text-cyan-300 text-sm font-bold">
+            🤖 AI RELEASE SYSTEM
+          </div>
+
+        </div>
+
+
+        {/* RELEASE SCANNER CONTROLS */}
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+          <div>
+
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              Release Month
+            </label>
+
+            <select
+              value={releaseMonth}
+              onChange={(e) => setReleaseMonth(Number(e.target.value))}
+              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white focus:border-cyan-400 focus:outline-none"
+            >
+
+              {[
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+              ].map((month, index) => (
+                <option key={month} value={index + 1}>
+                  {month}
+                </option>
+              ))}
+
+            </select>
+
+          </div>
+
+
+          <div>
+
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              Release Year
+            </label>
+
+            <select
+              value={releaseYear}
+              onChange={(e) => setReleaseYear(Number(e.target.value))}
+              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white focus:border-cyan-400 focus:outline-none"
+            >
+
+              {Array.from(
+                { length: 5 },
+                (_, index) => new Date().getFullYear() - 1 + index
+              ).map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+
+            </select>
+
+          </div>
+
+
+          <div>
+
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              Maximum Games
+            </label>
+
+            <select
+              value={releaseLimit}
+              onChange={(e) => setReleaseLimit(Number(e.target.value))}
+              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white focus:border-cyan-400 focus:outline-none"
+            >
+
+              {Array.from(
+                { length: 10 },
+                (_, index) => index + 1
+              ).map((number) => (
+                <option key={number} value={number}>
+                  {number} {number === 1 ? "game" : "games"}
+                </option>
+              ))}
+
+            </select>
+
+          </div>
+
+
+          <div className="flex items-end">
+
+            <button
+              type="button"
+              onClick={handleScanGameReleases}
+              disabled={releaseScanning}
+              className="w-full rounded-xl px-5 py-3 font-black text-black bg-cyan-400 hover:bg-cyan-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+
+              {releaseScanning
+                ? "🔎 SCANNING..."
+                : "🔎 SCAN RELEASES"}
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        {/* STATUS MESSAGE */}
+
+        {releaseMessage && (
+
+          <div className="mb-6 rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3 text-sm text-cyan-200">
+            {releaseMessage}
+          </div>
+
+        )}
+
+
+        {/* RELEASE CANDIDATES */}
+
+        {releaseCandidates.length > 0 && (
+
+          <div className="mb-8">
+
+            <div className="flex items-center justify-between mb-4">
+
+              <div>
+
+                <h3 className="text-lg font-black text-white">
+                  Release Candidates
+                </h3>
+
+                <p className="text-xs text-slate-500 mt-1">
+                  Research results for the selected release month.
+                </p>
+
+              </div>
+
+              <span className="px-3 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-bold">
+                {releaseCandidates.length} FOUND
+              </span>
+
+            </div>
+
+
+            <div className="space-y-3">
+
+              {releaseCandidates.map((candidate, index) => {
+
+                const packageData = releasePackages[index];
+
+                return (
+
+                  <div
+                    key={`${candidate.title}-${candidate.release_date}-${index}`}
+                    className="rounded-xl border border-white/10 bg-black/20 p-4"
+                  >
+
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+                      <div className="min-w-0">
+
+                        <h4 className="font-black text-white text-lg">
+                          {candidate.title}
+                        </h4>
+
+                        <div className="flex flex-wrap gap-2 mt-2 text-xs">
+
+                          <span className="px-2 py-1 rounded-md bg-white/5 text-slate-300">
+                            📅 {candidate.release_date}
+                          </span>
+
+                          {candidate.platform && (
+                            <span className="px-2 py-1 rounded-md bg-white/5 text-slate-300">
+                              🎮 {candidate.platform}
+                            </span>
+                          )}
+
+                          {candidate.genre && (
+                            <span className="px-2 py-1 rounded-md bg-white/5 text-slate-300">
+                              🎯 {candidate.genre}
+                            </span>
+                          )}
+
+                          {candidate.source && (
+                            <span className="px-2 py-1 rounded-md bg-white/5 text-slate-400">
+                              Source: {candidate.source}
+                            </span>
+                          )}
+
+                        </div>
+
+                      </div>
+
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleGenerateGamePackage(candidate, index)
+                        }
+                        disabled={releaseGenerating}
+                        className="shrink-0 rounded-xl px-4 py-3 font-bold bg-purple-500/20 border border-purple-400/30 text-purple-200 hover:bg-purple-500/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+
+                        {selectedReleaseIndex === index &&
+                        releaseGenerating
+                          ? "🤖 GENERATING..."
+                          : packageData
+                            ? "🔄 REGENERATE PACKAGE"
+                            : "🤖 GENERATE PACKAGE"}
+
+                      </button>
+
+                    </div>
+
+
+                    {/* GENERATED PACKAGE REVIEW */}
+
+                    {packageData && (
+
+                      <div className="mt-5 pt-5 border-t border-white/10">
+
+                        <div className="flex items-center justify-between gap-3 mb-4">
+
+                          <div>
+
+                            <h5 className="font-black text-cyan-300">
+                              AI Package Review
+                            </h5>
+
+                            <p className="text-xs text-slate-500">
+                              Review the generated content before publishing.
+                            </p>
+
+                          </div>
+
+                          <span className="px-3 py-1 rounded-lg bg-green-500/10 border border-green-400/20 text-green-300 text-xs font-bold">
+                            READY FOR REVIEW
+                          </span>
+
+                        </div>
+
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+
+                          <div>
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Game Title
+                            </label>
+
+                            <input
+                              value={packageData.title || ""}
+                              readOnly
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white"
+                            />
+
+                          </div>
+
+
+                          <div>
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Release Date
+                            </label>
+
+                            <input
+                              value={packageData.release_date || ""}
+                              readOnly
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white"
+                            />
+
+                          </div>
+
+
+                          <div className="lg:col-span-2">
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Description
+                            </label>
+
+                            <textarea
+                              value={packageData.description || ""}
+                              readOnly
+                              rows={4}
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white resize-y"
+                            />
+
+                          </div>
+
+
+                          <div>
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Article Title
+                            </label>
+
+                            <input
+                              value={packageData.article_title || ""}
+                              readOnly
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white"
+                            />
+
+                          </div>
+
+
+                          <div>
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Category
+                            </label>
+
+                            <input
+                              value={packageData.category || ""}
+                              readOnly
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white"
+                            />
+
+                          </div>
+
+
+                          <div className="lg:col-span-2">
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Meta Description
+                            </label>
+
+                            <textarea
+                              value={packageData.meta_description || ""}
+                              readOnly
+                              rows={2}
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white resize-y"
+                            />
+
+                          </div>
+
+
+                          <div className="lg:col-span-2">
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Article Content
+                            </label>
+
+                            <textarea
+                              value={packageData.article_content || ""}
+                              readOnly
+                              rows={10}
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white resize-y"
+                            />
+
+                          </div>
+
+
+                          <div className="lg:col-span-2">
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Facebook Post
+                            </label>
+
+                            <textarea
+                              value={packageData.facebook_post || ""}
+                              readOnly
+                              rows={5}
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white resize-y"
+                            />
+
+                          </div>
+
+
+                          <div className="lg:col-span-2">
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Image Prompt
+                            </label>
+
+                            <textarea
+                              value={packageData.image_prompt || ""}
+                              readOnly
+                              rows={4}
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white resize-y"
+                            />
+
+                          </div>
+
+
+                          <div className="lg:col-span-2">
+
+                            <label className="block text-xs font-semibold text-slate-400 mb-2">
+                              Hashtags
+                            </label>
+
+                            <input
+                              value={packageData.hashtags || ""}
+                              readOnly
+                              className="w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-white"
+                            />
+
+                          </div>
+
+                        </div>
+
+
+                        <div className="mt-5 rounded-xl border border-yellow-400/20 bg-yellow-400/5 p-4">
+
+                          <p className="text-sm text-yellow-200">
+                            ⚠️ Review the package before publishing. The
+                            selected month and maximum-game limit are also
+                            enforced by the API.
+                          </p>
+
+                        </div>
+
+
+                        <div className="mt-5 flex flex-col sm:flex-row gap-3">
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handlePublishGamePackage(
+                                packageData,
+                                index
+                              )
+                            }
+                            disabled={releasePublishing}
+                            className="flex-1 rounded-xl px-5 py-4 font-black text-black bg-cyan-400 hover:bg-cyan-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+
+                            {releasePublishing
+                              ? "🚀 PUBLISHING..."
+                              : "🚀 APPROVE & PUBLISH GAME"}
+
+                          </button>
+
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setReleasePackages((current) =>
+                                current.filter(
+                                  (_, packageIndex) =>
+                                    packageIndex !== index
+                                )
+                              )
+                            }
+                            disabled={releasePublishing}
+                            className="rounded-xl px-5 py-4 font-bold bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 transition disabled:opacity-50"
+                          >
+                            Clear Package
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    )}
+
+                  </div>
+
+                );
+
+              })}
+
+            </div>
+
+          </div>
+
+        )}
 
       </section>
 

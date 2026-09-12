@@ -1163,8 +1163,6 @@ export default function AIContentStudio() {
                         >
                           ✏️ Edit
                         </button>
-
-
                         {/* GENERATE IMAGE */}
 
                         <button

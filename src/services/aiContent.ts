@@ -306,3 +306,190 @@ export async function publishAIContent(
   return data.article;
 
 }
+
+// =====================================
+// GAME RELEASE AI
+// =====================================
+
+export type GameReleaseCandidate = {
+  title: string;
+  release_date: string;
+  platform?: string;
+  genre?: string;
+  category?: string;
+  source?: string;
+  source_url?: string;
+};
+
+export type GameReleasePackage = {
+  title: string;
+  description: string;
+  release_date: string;
+  genre?: string;
+  platform?: string;
+  category?: string;
+  status?: string;
+  featured?: boolean;
+  article_title?: string;
+  meta_description?: string;
+  article_content?: string;
+  facebook_post?: string;
+  image_prompt?: string;
+  hashtags?: string;
+  research_source?: string;
+  research_source_url?: string;
+};
+
+export type GameReleaseScanResult = {
+  success: boolean;
+  year: number;
+  month: number;
+  requested_limit: number;
+  candidates: GameReleaseCandidate[];
+};
+
+export type GameReleasePublishResult = {
+  success: boolean;
+  action?: string;
+  game?: unknown;
+  social_queue?: unknown;
+};
+
+
+// =====================================
+// Scan Game Releases
+// =====================================
+
+export async function scanGameReleases(
+  year: number,
+  month: number,
+  limit = 10
+): Promise<GameReleaseScanResult> {
+
+  const response = await fetch(
+    `${API_URL}/api/ai/game-releases/scan`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        year,
+        month,
+        limit,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ||
+      "Failed scanning game releases."
+    );
+  }
+
+  return data;
+}
+
+
+// =====================================
+// Generate Game Release Package
+// =====================================
+
+export async function generateGameReleasePackage(
+  release: GameReleaseCandidate
+): Promise<GameReleasePackage> {
+
+  const response = await fetch(
+    `${API_URL}/api/ai/game-releases/generate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        release,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ||
+      "Failed generating game release package."
+    );
+  }
+
+  if (!data?.package) {
+    throw new Error(
+      "Game release package was not returned."
+    );
+  }
+
+  return data.package;
+}
+
+
+// =====================================
+// Publish Game Release Package
+// =====================================
+
+export async function publishGameRelease(
+  packageData: GameReleasePackage,
+  selectedYear: number,
+  selectedMonth: number,
+  maxGames = 10
+): Promise<GameReleasePublishResult> {
+
+  /*
+   * Get the currently authenticated Supabase
+   * session. The backend requireAdmin middleware
+   * validates this access token and confirms
+   * profiles.role === "admin".
+   */
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    throw new Error(
+      "You must be logged in as an administrator."
+    );
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/ai/game-releases/publish`,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          `Bearer ${session.access_token}`,
+      },
+
+      body: JSON.stringify({
+        package: packageData,
+        selectedYear,
+        selectedMonth,
+        maxGames,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ||
+      "Failed publishing game release."
+    );
+  }
+
+  return data;
+}
