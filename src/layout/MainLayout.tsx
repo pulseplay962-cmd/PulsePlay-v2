@@ -6,6 +6,7 @@ import {
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import RelatedAffiliateProducts from "../components/monetization/RelatedAffiliateProducts";
 
 import { trackPageView } from "../services/analytics";
 
@@ -37,6 +38,11 @@ export default function MainLayout() {
   }, [location.pathname]);
 
 
+  const showAffiliateRecommendations =
+    location.pathname.startsWith("/news/") ||
+    location.pathname.startsWith("/games/");
+
+
   return (
 
     <div className="relative min-h-screen overflow-x-hidden">
@@ -44,7 +50,7 @@ export default function MainLayout() {
 
       {/* ======================================
           Animated Background
-      ======================================= */}
+      ======================================= */
 
       {/* Main Gradient */}
 
@@ -130,14 +136,14 @@ export default function MainLayout() {
 
       {/* ======================================
           Navigation
-      ======================================= */}
+      ======================================= */
 
       <Navbar />
 
 
       {/* ======================================
           Main Content
-      ======================================= */}
+      ======================================= */
 
       <main className="relative z-10 flex-1 py-8">
 
@@ -199,6 +205,10 @@ export default function MainLayout() {
 
               <Outlet />
 
+              {showAffiliateRecommendations && (
+                <RelatedAffiliateProducts path={location.pathname} />
+              )}
+
             </div>
 
           </div>
@@ -210,7 +220,7 @@ export default function MainLayout() {
 
       {/* ======================================
           HUD Status Bar
-      ======================================= */}
+      ======================================= */
 
       <div
         className="
@@ -273,7 +283,7 @@ export default function MainLayout() {
 
       {/* ======================================
           Footer
-      ======================================= */}
+      ======================================= */
 
       <div className="relative z-10">
 
