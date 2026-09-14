@@ -49,6 +49,7 @@ import Videos from "../pages/admin/Videos";
 import Products from "../pages/admin/Products";
 import MerchandiseAdmin from "../pages/admin/Merchandise";
 import NewsAdmin from "../pages/admin/News";
+import Monetization from "../pages/admin/Monetization";
 import Settings from "../pages/admin/Settings";
 import Login from "../pages/admin/Login";
 
@@ -59,95 +60,22 @@ const router = createBrowserRouter([
 
   {
     path: "/",
-
     element: <MainLayout />,
-
     children: [
-      {
-        index: true,
-
-        element: <Home />,
-      },
-
-      {
-        path: "games",
-
-        element: <GamesPage />,
-      },
-
-      // Game Details
-      // Uses the database game ID.
-      {
-        path: "games/:id",
-
-        element: <GameDetails />,
-      },
-
-      {
-        path: "streams",
-
-        element: <Streams />,
-      },
-
-      {
-        path: "store",
-
-        element: <Store />,
-      },
-
-      {
-        path: "merchandise",
-
-        element: <Merchandise />,
-      },
-
-      {
-        path: "merchandise/success",
-
-        element: <MerchandiseSuccess />,
-      },
-
-      {
-        path: "merchandise/:id",
-
-        element: <MerchandiseDetail />,
-      },
-
-      {
-        path: "community",
-
-        element: <Community />,
-      },
-
-      {
-        path: "news",
-
-        element: <News />,
-      },
-
-      {
-        path: "news/:slug",
-
-        element: <NewsArticle />,
-      },
-
-      {
-        path: "feedback",
-
-        element: <Feedback />,
-      },
-
-      {
-        path: "about",
-
-        element: <About />,
-      },
-
-      {
-        path: "contact",
-
-        element: <Contact />,
-      },
+      { index: true, element: <Home /> },
+      { path: "games", element: <GamesPage /> },
+      { path: "games/:id", element: <GameDetails /> },
+      { path: "streams", element: <Streams /> },
+      { path: "store", element: <Store /> },
+      { path: "merchandise", element: <Merchandise /> },
+      { path: "merchandise/success", element: <MerchandiseSuccess /> },
+      { path: "merchandise/:id", element: <MerchandiseDetail /> },
+      { path: "community", element: <Community /> },
+      { path: "news", element: <News /> },
+      { path: "news/:slug", element: <NewsArticle /> },
+      { path: "feedback", element: <Feedback /> },
+      { path: "about", element: <About /> },
+      { path: "contact", element: <Contact /> },
     ],
   },
 
@@ -157,7 +85,6 @@ const router = createBrowserRouter([
 
   {
     path: "/admin/login",
-
     element: <Login />,
   },
 
@@ -167,87 +94,24 @@ const router = createBrowserRouter([
 
   {
     path: "/admin",
-
     element: (
       <ProtectedRoute>
         <AdminLayout />
       </ProtectedRoute>
     ),
-
     children: [
-      {
-        index: true,
-
-        element: <Dashboard />,
-      },
-
-      // =========================
-      // 📈 ANALYTICS
-      // =========================
-
-      {
-        path: "analytics",
-
-        element: <Analytics />,
-      },
-
-      {
-        path: "games",
-
-        element: <AdminGames />,
-      },
-
-      {
-        path: "videos",
-
-        element: <Videos />,
-      },
-
-      {
-        path: "products",
-
-        element: <Products />,
-      },
-
-      {
-        path: "merchandise",
-
-        element: <MerchandiseAdmin />,
-      },
-
-      {
-        path: "news",
-
-        element: <NewsAdmin />,
-      },
-
-      {
-        path: "social-queue",
-
-        element: <SocialQueue />,
-      },
-
-      {
-        path: "community-signups",
-
-        element: <CommunitySignups />,
-      },
-
-      // =========================
-      // 🤖 AI CONTENT MANAGER
-      // =========================
-
-      {
-        path: "ai-content",
-
-        element: <AIContentStudio />,
-      },
-
-      {
-        path: "settings",
-
-        element: <Settings />,
-      },
+      { index: true, element: <Dashboard /> },
+      { path: "analytics", element: <Analytics /> },
+      { path: "games", element: <AdminGames /> },
+      { path: "videos", element: <Videos /> },
+      { path: "products", element: <Products /> },
+      { path: "merchandise", element: <MerchandiseAdmin /> },
+      { path: "news", element: <NewsAdmin /> },
+      { path: "social-queue", element: <SocialQueue /> },
+      { path: "community-signups", element: <CommunitySignups /> },
+      { path: "ai-content", element: <AIContentStudio /> },
+      { path: "monetization", element: <Monetization /> },
+      { path: "settings", element: <Settings /> },
     ],
   },
 
@@ -257,7 +121,6 @@ const router = createBrowserRouter([
 
   {
     path: "*",
-
     element: <NotFound />,
   },
 ]);
