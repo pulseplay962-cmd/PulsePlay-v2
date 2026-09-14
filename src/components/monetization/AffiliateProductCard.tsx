@@ -1,5 +1,3 @@
-import React from "react";
-
 type AffiliateProduct = {
   id: string;
   name: string;
