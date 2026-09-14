@@ -29,6 +29,40 @@ export interface AffiliateLinkStats {
   created_at: string;
 }
 
+export interface AffiliateLink {
+  id: string;
+  product_id: string | null;
+  network: string;
+  merchant: string | null;
+  affiliate_url: string;
+  tracking_code: string | null;
+  status: "active" | "inactive" | string;
+  clicks: number;
+  conversions: number;
+  revenue: number;
+  created_at: string;
+  updated_at?: string;
+  product?: AffiliateProduct | null;
+}
+
+export interface AffiliateProduct {
+  id: string;
+  name: string;
+  description?: string | null;
+  price?: string | number | null;
+  image?: string | null;
+  category?: string | null;
+}
+
+export interface AffiliateLinkInput {
+  product_id?: string | null;
+  network: string;
+  merchant?: string | null;
+  affiliate_url: string;
+  tracking_code?: string | null;
+  status?: "active" | "inactive";
+}
+
 export interface MonetizationStatsResponse {
   success: boolean;
   summary: MonetizationSummary;
@@ -61,43 +95,86 @@ export function getAffiliateRedirectUrl(
   return `${API_URL}/api/monetization/go/${encodeURIComponent(linkId)}${query ? `?${query}` : ""}`;
 }
 
-export async function getMonetizationStats(token: string) {
-  const response = await fetch(`${API_URL}/api/monetization/stats`, {
-    headers: { Authorization: `Bearer ${token}` },
+async function authorizedRequest<T>(token: string, path: string, options: RequestInit = {}) {
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
   });
 
-  if (!response.ok) throw new Error("Unable to load monetization stats.");
-  return (await response.json()) as MonetizationStatsResponse;
+  const body = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(body?.error || "Monetization request failed.");
+  }
+
+  return body as T;
+}
+
+export async function getMonetizationStats(token: string) {
+  return authorizedRequest<MonetizationStatsResponse>(token, "/api/monetization/stats");
 }
 
 export async function getMonetizationSettings(token: string) {
-  const response = await fetch(`${API_URL}/api/monetization/settings`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!response.ok) throw new Error("Unable to load monetization settings.");
-  return (await response.json()) as {
+  return authorizedRequest<{
     success: boolean;
     settings: MonetizationSettings | null;
-  };
+  }>(token, "/api/monetization/settings");
 }
 
 export async function updateMonetizationSettings(
   token: string,
   settings: Partial<MonetizationSettings>,
 ) {
-  const response = await fetch(`${API_URL}/api/monetization/settings`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(settings),
-  });
-
-  if (!response.ok) throw new Error("Unable to update monetization settings.");
-  return (await response.json()) as {
+  return authorizedRequest<{
     success: boolean;
     settings: MonetizationSettings;
-  };
+  }>(token, "/api/monetization/settings", {
+    method: "PUT",
+    body: JSON.stringify(settings),
+  });
+}
+
+export async function getAffiliateLinks(token: string) {
+  return authorizedRequest<{ success: boolean; links: AffiliateLink[] }>(
+    token,
+    "/api/monetization/links",
+  );
+}
+
+export async function createAffiliateLink(token: string, input: AffiliateLinkInput) {
+  return authorizedRequest<{ success: boolean; link: AffiliateLink }>(
+    token,
+    "/api/monetization/links",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function updateAffiliateLink(
+  token: string,
+  id: string,
+  input: Partial<AffiliateLinkInput>,
+) {
+  return authorizedRequest<{ success: boolean; link: AffiliateLink }>(
+    token,
+    `/api/monetization/links/${encodeURIComponent(id)}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function deactivateAffiliateLink(token: string, id: string) {
+  return authorizedRequest<{ success: boolean; link: AffiliateLink; message?: string }>(
+    token,
+    `/api/monetization/links/${encodeURIComponent(id)}`,
+    { method: "DELETE" },
+  );
 }
