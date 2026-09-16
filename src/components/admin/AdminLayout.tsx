@@ -1,7 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 
-
 type NavItem = {
   name: string;
   path: string;
@@ -20,6 +19,7 @@ export default function AdminLayout() {
     { name: "Merchandise", path: "/admin/merchandise", icon: "👕" },
     { name: "Monetization", path: "/admin/monetization", icon: "💰" },
     { name: "News", path: "/admin/news", icon: "📰" },
+    { name: "Partnerships", path: "/admin/partnerships", icon: "🤝" },
     { name: "AI Content Studio", path: "/admin/ai-content", icon: "🤖" },
     { name: "Settings", path: "/admin/settings", icon: "⚙️" },
     { name: "Social Queue", path: "/admin/social-queue", icon: "📡" },
@@ -61,9 +61,7 @@ export default function AdminLayout() {
                 </div>
 
                 {item.name === "AI Content Studio" && (
-                  <span className="rounded-full bg-purple-500/20 px-2 py-1 text-xs text-purple-300">
-                    AI
-                  </span>
+                  <span className="rounded-full bg-purple-500/20 px-2 py-1 text-xs text-purple-300">AI</span>
                 )}
               </Link>
             );
@@ -71,17 +69,11 @@ export default function AdminLayout() {
         </nav>
 
         <div className="border-t border-white/10 pt-6">
-          <Link
-            to="/"
-            className="block rounded-xl px-4 py-3 text-gray-300 transition hover:bg-white/5 hover:text-white"
-          >
+          <Link to="/" className="block rounded-xl px-4 py-3 text-gray-300 transition hover:bg-white/5 hover:text-white">
             🌐 View Website
           </Link>
 
-          <button
-            onClick={handleLogout}
-            className="mt-3 w-full rounded-xl bg-red-500/20 px-4 py-3 font-bold text-red-300 transition hover:bg-red-500/30"
-          >
+          <button onClick={handleLogout} className="mt-3 w-full rounded-xl bg-red-500/20 px-4 py-3 font-bold text-red-300 transition hover:bg-red-500/30">
             🚪 Logout
           </button>
         </div>
