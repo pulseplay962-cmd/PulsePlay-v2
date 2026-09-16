@@ -1,15 +1,13 @@
-import { ExternalLink, Mouse, Keyboard, Headphones, Monitor, Gamepad2, Mic2 } from "lucide-react";
-
 const RAZER_AFFILIATE_URL =
   "https://razer.a9yw.net/c/7786730/3987964/10229";
 
 const categories = [
-  { icon: Mouse, title: "Gaming Mice", description: "Precision control for competitive and everyday gaming." },
-  { icon: Keyboard, title: "Keyboards", description: "Mechanical keyboards and gaming-focused controls." },
-  { icon: Headphones, title: "Headsets", description: "Audio gear for gaming, streaming, and communication." },
-  { icon: Monitor, title: "Gaming Displays", description: "Monitors and display upgrades for your command center." },
-  { icon: Gamepad2, title: "Controllers", description: "Controllers and accessories for console and PC gaming." },
-  { icon: Mic2, title: "Creator Gear", description: "Microphones, streaming equipment, and creator essentials." },
+  { icon: "🖱️", title: "Gaming Mice", description: "Precision control for competitive and everyday gaming." },
+  { icon: "⌨️", title: "Keyboards", description: "Mechanical keyboards and gaming-focused controls." },
+  { icon: "🎧", title: "Headsets", description: "Audio gear for gaming, streaming, and communication." },
+  { icon: "🖥️", title: "Gaming Displays", description: "Monitors and display upgrades for your command center." },
+  { icon: "🎮", title: "Controllers", description: "Controllers and accessories for console and PC gaming." },
+  { icon: "🎙️", title: "Creator Gear", description: "Microphones, streaming equipment, and creator essentials." },
 ];
 
 export default function GamingGear() {
@@ -66,7 +64,7 @@ export default function GamingGear() {
                   <span className="rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-300">💡 Setup Gear</span>
                 </div>
                 <a href={RAZER_AFFILIATE_URL} target="_blank" rel="noopener noreferrer sponsored" className="mt-8 inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 px-6 py-4 font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(34,211,238,.20)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(34,211,238,.35)]">
-                  SHOP RAZER <ExternalLink size={18} />
+                  SHOP RAZER <span aria-hidden="true">↗</span>
                 </a>
               </div>
               <div className="flex min-h-[220px] items-center justify-center rounded-2xl border border-white/10 bg-black/30 p-8 text-center">
@@ -92,17 +90,14 @@ export default function GamingGear() {
             <h2 className="mt-3 text-4xl font-black tracking-tight text-white md:text-5xl">EXPLORE GAMING GEAR</h2>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              return (
-                <div key={category.title} className="group rounded-2xl border border-white/10 bg-[#0d1324]/70 p-6 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-[#111827]">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-400 transition group-hover:border-cyan-400/40 group-hover:bg-cyan-400/15"><Icon size={23} /></div>
-                  <h3 className="mt-5 text-xl font-black text-white">{category.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{category.description}</p>
-                  <div className="mt-5 text-xs font-black uppercase tracking-widest text-slate-600">COMING ONLINE</div>
-                </div>
-              );
-            })}
+            {categories.map((category) => (
+              <div key={category.title} className="group rounded-2xl border border-white/10 bg-[#0d1324]/70 p-6 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-[#111827]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-2xl text-cyan-400 transition group-hover:border-cyan-400/40 group-hover:bg-cyan-400/15" aria-hidden="true">{category.icon}</div>
+                <h3 className="mt-5 text-xl font-black text-white">{category.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-400">{category.description}</p>
+                <div className="mt-5 text-xs font-black uppercase tracking-widest text-slate-600">COMING ONLINE</div>
+              </div>
+            ))}
           </div>
         </section>
 
