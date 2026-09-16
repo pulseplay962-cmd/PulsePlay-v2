@@ -26,6 +26,8 @@ export default function Partnerships() {
   const [inquiries, setInquiries] = useState<PartnershipInquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [savingNotes, setSavingNotes] = useState<string | null>(null);
+  const [notesMessage, setNotesMessage] = useState<Record<string, string>>({});
 
   async function loadInquiries() {
     try {
@@ -68,6 +70,40 @@ export default function Partnerships() {
         inquiry.id === id ? { ...inquiry, status } : inquiry
       )
     );
+  }
+
+  function updateNotes(id: string, admin_notes: string) {
+    setInquiries((current) =>
+      current.map((inquiry) =>
+        inquiry.id === id ? { ...inquiry, admin_notes } : inquiry
+      )
+    );
+  }
+
+  async function saveNotes(inquiry: PartnershipInquiry) {
+    setSavingNotes(inquiry.id);
+    setNotesMessage((current) => ({ ...current, [inquiry.id]: "" }));
+
+    const { error: updateError } = await supabase
+      .from("partnership_inquiries")
+      .update({ admin_notes: inquiry.admin_notes || null })
+      .eq("id", inquiry.id);
+
+    if (updateError) {
+      console.error("Failed to save partnership notes:", updateError);
+      setNotesMessage((current) => ({
+        ...current,
+        [inquiry.id]: "Unable to save notes."
+      }));
+      setSavingNotes(null);
+      return;
+    }
+
+    setNotesMessage((current) => ({
+      ...current,
+      [inquiry.id]: "Notes saved."
+    }));
+    setSavingNotes(null);
   }
 
   return (
@@ -155,6 +191,41 @@ export default function Partnerships() {
                   <div><span className="font-bold text-slate-300">Start:</span> {inquiry.campaign_start || "Not provided"}</div>
                   <div><span className="font-bold text-slate-300">End:</span> {inquiry.campaign_end || "Not provided"}</div>
                   <div><span className="font-bold text-slate-300">Source:</span> {inquiry.how_heard || "Not provided"}</div>
+                </div>
+
+                <div className="rounded-xl border border-purple-400/20 bg-purple-500/5 p-4">
+                  <label
+                    htmlFor={`admin-notes-${inquiry.id}`}
+                    className="text-sm font-black tracking-[0.15em] text-purple-300"
+                  >
+                    🔒 ADMIN NOTES
+                  </label>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Private notes for the PulsePlay admin team. These are not shown on the public partnership form.
+                  </p>
+                  <textarea
+                    id={`admin-notes-${inquiry.id}`}
+                    value={inquiry.admin_notes || ""}
+                    onChange={(e) => updateNotes(inquiry.id, e.target.value)}
+                    rows={4}
+                    placeholder="Add internal notes about this partnership opportunity..."
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-black/40 p-3 text-sm text-white outline-none transition focus:border-purple-400/50"
+                  />
+                  <div className="mt-3 flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => saveNotes(inquiry)}
+                      disabled={savingNotes === inquiry.id}
+                      className="rounded-xl border border-purple-400/30 bg-purple-500/10 px-4 py-2 text-sm font-black text-purple-200 transition hover:bg-purple-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {savingNotes === inquiry.id ? "Saving..." : "Save Notes"}
+                    </button>
+                    {notesMessage[inquiry.id] && (
+                      <span className="text-xs font-bold text-cyan-300">
+                        {notesMessage[inquiry.id]}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="border-t border-white/10 pt-3 text-xs text-slate-500">
