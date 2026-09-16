@@ -5,22 +5,9 @@ import MainLayout from "../layout/MainLayout";
 import AdminLayout from "../components/admin/AdminLayout";
 import ProtectedRoute from "../components/admin/ProtectedRoute";
 
-// =========================
-// Admin Components
-// =========================
-
 import SocialQueue from "../pages/admin/SocialQueue";
 import CommunitySignups from "../pages/admin/CommunitySignups";
-
-// =========================
-// AI Admin Page
-// =========================
-
 import AIContentStudio from "../pages/admin/AIContentStudio";
-
-// =========================
-// Public Pages
-// =========================
 
 import Home from "../pages/Home";
 import GamesPage from "../pages/Games";
@@ -36,11 +23,8 @@ import NewsArticle from "../pages/NewsArticle";
 import Feedback from "../pages/Feedback";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
+import Partners from "../pages/Partners";
 import NotFound from "../pages/NotFound";
-
-// =========================
-// Admin Pages
-// =========================
 
 import Dashboard from "../pages/admin/Dashboard";
 import Analytics from "../pages/admin/Analytics";
@@ -52,12 +36,9 @@ import NewsAdmin from "../pages/admin/News";
 import Monetization from "../pages/admin/Monetization";
 import Settings from "../pages/admin/Settings";
 import Login from "../pages/admin/Login";
+import Partnerships from "../pages/admin/Partnerships";
 
 const router = createBrowserRouter([
-  // =========================
-  // PUBLIC WEBSITE
-  // =========================
-
   {
     path: "/",
     element: <MainLayout />,
@@ -76,21 +57,14 @@ const router = createBrowserRouter([
       { path: "feedback", element: <Feedback /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
+      { path: "partners", element: <Partners /> },
     ],
   },
-
-  // =========================
-  // ADMIN LOGIN
-  // =========================
 
   {
     path: "/admin/login",
     element: <Login />,
   },
-
-  // =========================
-  // ADMIN PANEL
-  // =========================
 
   {
     path: "/admin",
@@ -109,15 +83,12 @@ const router = createBrowserRouter([
       { path: "news", element: <NewsAdmin /> },
       { path: "social-queue", element: <SocialQueue /> },
       { path: "community-signups", element: <CommunitySignups /> },
+      { path: "partnerships", element: <Partnerships /> },
       { path: "ai-content", element: <AIContentStudio /> },
       { path: "monetization", element: <Monetization /> },
       { path: "settings", element: <Settings /> },
     ],
   },
-
-  // =========================
-  // 404
-  // =========================
 
   {
     path: "*",
