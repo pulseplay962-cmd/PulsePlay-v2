@@ -25,6 +25,7 @@ import Feedback from "../pages/Feedback";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Partners from "../pages/Partners";
+import MediaKit from "../pages/MediaKit";
 import NotFound from "../pages/NotFound";
 
 import Dashboard from "../pages/admin/Dashboard";
@@ -60,6 +61,7 @@ const router = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
       { path: "partners", element: <Partners /> },
+      { path: "media-kit", element: <MediaKit /> },
     ],
   },
 
