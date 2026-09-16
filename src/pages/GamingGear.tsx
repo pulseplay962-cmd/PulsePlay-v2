@@ -10,6 +10,33 @@ const categories = [
   { icon: "🎙️", title: "Creator Gear", description: "Microphones, streaming equipment, and creator essentials." },
 ];
 
+const featuredPicks = [
+  {
+    icon: "🖱️",
+    category: "GAMING MOUSE",
+    name: "Razer DeathAdder V3 Pro",
+    description: "A lightweight ergonomic esports mouse built around fast, precise control.",
+  },
+  {
+    icon: "⌨️",
+    category: "GAMING KEYBOARD",
+    name: "Razer BlackWidow V4 Pro",
+    description: "A full-size mechanical keyboard with Chroma RGB, a Command Dial, and dedicated macro controls.",
+  },
+  {
+    icon: "⌨️",
+    category: "WIRELESS KEYBOARD",
+    name: "Razer BlackWidow V4 Pro 75%",
+    description: "A compact hot-swappable keyboard with wireless connectivity, OLED display, and Command Dial.",
+  },
+  {
+    icon: "🎧",
+    category: "GAMING HEADSET",
+    name: "Razer BlackShark V2 Pro",
+    description: "Wireless gaming audio featuring HyperClear Super Wideband Mic and HyperSpeed Wireless.",
+  },
+];
+
 export default function GamingGear() {
   return (
     <main className="min-h-[72vh] px-4 py-10 sm:px-6 sm:py-12 lg:py-14">
@@ -41,6 +68,34 @@ export default function GamingGear() {
         <section className="mb-14">
           <div className="mb-7">
             <p className="text-xs font-black uppercase tracking-[0.4em] text-cyan-400">Featured Gear</p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight text-white md:text-5xl">RAZER PICKS</h2>
+            <p className="mt-3 max-w-2xl text-slate-400">A first look at gaming gear that fits the PulsePlay command-center setup. Product availability and pricing can change.</p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            {featuredPicks.map((product) => (
+              <article key={product.name} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0d1324]/80 p-6 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-[#111827]">
+                <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl transition group-hover:bg-cyan-400/15" />
+                <div className="relative">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-3xl" aria-hidden="true">{product.icon}</div>
+                    <span className="rounded-full border border-green-400/20 bg-green-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-green-300">RAZER</span>
+                  </div>
+                  <p className="mt-6 text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400">{product.category}</p>
+                  <h3 className="mt-2 text-2xl font-black text-white">{product.name}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-400">{product.description}</p>
+                  <a href={RAZER_AFFILIATE_URL} target="_blank" rel="noopener noreferrer sponsored" className="mt-6 inline-flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-xs font-black uppercase tracking-widest text-cyan-300 transition hover:border-cyan-400/40 hover:bg-cyan-400/15">
+                    SHOP RAZER <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-14">
+          <div className="mb-7">
+            <p className="text-xs font-black uppercase tracking-[0.4em] text-purple-400">Featured Collection</p>
             <h2 className="mt-3 text-4xl font-black tracking-tight text-white md:text-5xl">RAZER BATTLESTATION</h2>
             <p className="mt-3 max-w-2xl text-slate-400">Build out your gaming command center with Razer hardware and setup gear.</p>
           </div>
