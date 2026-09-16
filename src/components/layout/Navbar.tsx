@@ -29,8 +29,8 @@ export default function Navbar() {
           <div className="text-cyan-400">Build v2.1</div>
         </div>
 
-        <div className="flex items-center justify-between px-6 py-4">
-          <NavLink to="/" onClick={() => setOpen(false)} className="group flex items-center gap-4">
+        <div className="flex items-center justify-between gap-4 px-6 py-4">
+          <NavLink to="/" onClick={() => setOpen(false)} className="group flex shrink-0 items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 via-purple-500 to-cyan-400 font-black text-black shadow-[0_0_35px_rgba(34,211,238,.45)] transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
               PP
             </div>
@@ -40,36 +40,39 @@ export default function Navbar() {
             </div>
           </NavLink>
 
-          <div className="hidden xl:flex items-center gap-2">
+          <div className="hidden min-w-0 flex-1 items-center justify-end gap-1 2xl:flex">
             {links.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
-                className={({ isActive }) => `relative flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-all duration-300 ${isActive ? "bg-cyan-400 text-black shadow-[0_0_25px_rgba(34,211,238,.5)]" : "text-slate-300 hover:bg-white/5 hover:text-cyan-300"}`}
+                className={({ isActive }) => `relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-bold transition-all duration-300 ${isActive ? "bg-cyan-400 text-black shadow-[0_0_25px_rgba(34,211,238,.5)]" : "text-slate-300 hover:bg-white/5 hover:text-cyan-300"}`}
               >
-                <span className="text-lg">{link.icon}</span>
+                <span className="text-base">{link.icon}</span>
                 {link.name}
               </NavLink>
             ))}
           </div>
 
-          <div className="hidden xl:flex items-center gap-4">
+          <div className="hidden shrink-0 items-center gap-3 2xl:flex">
             <div className="text-right">
-              <div className="text-xs uppercase tracking-widest text-slate-500">Network Status</div>
-              <div className="font-bold text-green-400">● Online</div>
+              <div className="text-[10px] uppercase tracking-widest text-slate-500">Network Status</div>
+              <div className="text-sm font-bold text-green-400">● Online</div>
             </div>
-            <a href="https://throne.com/veiltactician" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 px-6 py-3 font-black shadow-[0_0_30px_rgba(236,72,153,.35)] transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+            <NavLink to="/gaming-gear" className={({ isActive }) => `rounded-xl border px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${isActive ? "border-cyan-300 bg-cyan-400 text-black" : "border-cyan-400/30 bg-cyan-400/10 text-cyan-300 hover:border-cyan-300/60 hover:bg-cyan-400/20"}`}>
+              ⚡ Gaming Gear
+            </NavLink>
+            <a href="https://throne.com/veiltactician" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 px-4 py-2.5 text-xs font-black shadow-[0_0_30px_rgba(236,72,153,.35)] transition-all duration-300 hover:-translate-y-1 hover:scale-105">
               🎁 Support
             </a>
           </div>
 
-          <button onClick={() => setOpen(!open)} className="text-4xl text-cyan-400 transition hover:scale-110 xl:hidden" aria-label="Toggle Menu">
+          <button onClick={() => setOpen(!open)} className="shrink-0 text-4xl text-cyan-400 transition hover:scale-110 2xl:hidden" aria-label="Toggle Menu">
             {open ? "✕" : "☰"}
           </button>
         </div>
 
         {open && (
-          <div className="border-t border-white/10 bg-black/70 p-5 backdrop-blur-xl xl:hidden">
+          <div className="border-t border-white/10 bg-black/70 p-5 backdrop-blur-xl 2xl:hidden">
             <div className="grid gap-3">
               {links.map((link) => (
                 <NavLink
