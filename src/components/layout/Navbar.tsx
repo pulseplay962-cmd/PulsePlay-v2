@@ -54,6 +54,9 @@ export default function Navbar() {
           </div>
 
           <div className="hidden shrink-0 items-center gap-3 2xl:flex">
+            <NavLink to="/media-kit" className={({ isActive }) => `rounded-xl border px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${isActive ? "border-purple-300 bg-purple-400 text-black" : "border-purple-400/30 bg-purple-400/10 text-purple-300 hover:border-purple-300/60 hover:bg-purple-400/20"}`}>
+              📋 Media Kit
+            </NavLink>
             <div className="text-right">
               <div className="text-[10px] uppercase tracking-widest text-slate-500">Network Status</div>
               <div className="text-sm font-bold text-green-400">● Online</div>
@@ -85,6 +88,10 @@ export default function Navbar() {
                   {link.name}
                 </NavLink>
               ))}
+              <NavLink to="/media-kit" onClick={() => setOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-5 py-4 font-black transition-all ${isActive ? "bg-purple-400 text-black" : "bg-purple-400/10 text-purple-300 hover:bg-purple-400/20"}`}>
+                <span className="text-xl">📋</span>
+                Media Kit
+              </NavLink>
               <a href="https://throne.com/veiltactician" target="_blank" rel="noopener noreferrer" className="mt-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 px-5 py-4 text-center font-black text-white">
                 🎁 Support Creator
               </a>
