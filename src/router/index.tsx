@@ -14,6 +14,7 @@ import GamesPage from "../pages/Games";
 import GameDetails from "../pages/GameDetails";
 import Streams from "../pages/Streams";
 import Store from "../pages/Store";
+import GamingGear from "../pages/GamingGear";
 import Merchandise from "../pages/Merchandise";
 import MerchandiseDetail from "../pages/MerchandiseDetail";
 import MerchandiseSuccess from "../pages/MerchandiseSuccess";
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
       { path: "games/:id", element: <GameDetails /> },
       { path: "streams", element: <Streams /> },
       { path: "store", element: <Store /> },
+      { path: "gaming-gear", element: <GamingGear /> },
       { path: "merchandise", element: <Merchandise /> },
       { path: "merchandise/success", element: <MerchandiseSuccess /> },
       { path: "merchandise/:id", element: <MerchandiseDetail /> },
