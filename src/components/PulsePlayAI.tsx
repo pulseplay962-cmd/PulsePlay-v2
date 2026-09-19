@@ -1,4 +1,5 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { askPulsePlayAI } from "../services/pulsePlayAI";
 
 type Message = { role: "assistant" | "user"; text: string };
