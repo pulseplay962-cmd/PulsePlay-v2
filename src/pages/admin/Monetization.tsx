@@ -51,6 +51,8 @@ export default function Monetization() {
 
   const [links, setLinks] = useState<AffiliateLink[]>([]);
   const [products, setProducts] = useState<AffiliateProduct[]>([]);
+  const [merchandiseCount, setMerchandiseCount] = useState(0);
+  const [activeMerchandiseCount, setActiveMerchandiseCount] = useState(0);
   const [recentClicks, setRecentClicks] = useState<
     Array<{
       id: string;
@@ -108,6 +110,7 @@ export default function Monetization() {
         settingsResponse,
         linksResponse,
         productsResponse,
+        merchandiseResponse,
       ] = await Promise.all([
         getMonetizationStats(token),
         getMonetizationSettings(token),
@@ -116,6 +119,9 @@ export default function Monetization() {
           .from("products")
           .select("id, name, description, price, image, category")
           .order("name"),
+        supabase
+          .from("merchandise")
+          .select("id, status"),
       ]);
 
       setSummary(statsResponse.summary);
@@ -126,6 +132,21 @@ export default function Monetization() {
         ...DEFAULT_SETTINGS,
         ...(settingsResponse.settings || {}),
       });
+
+      if (merchandiseResponse.error) {
+        console.warn(
+          "Unable to load merchandise activity:",
+          merchandiseResponse.error.message
+        );
+        setMerchandiseCount(0);
+        setActiveMerchandiseCount(0);
+      } else {
+        const merchandiseRows = merchandiseResponse.data || [];
+        setMerchandiseCount(merchandiseRows.length);
+        setActiveMerchandiseCount(
+          merchandiseRows.filter((item) => item.status === "active").length
+        );
+      }
 
       if (productsResponse.error) {
         console.warn(
@@ -267,6 +288,11 @@ export default function Monetization() {
       .sort((a, b) => b.clicks - a.clicks)
       .slice(0, 5);
   }, [recentClicks]);
+
+  const monetizationCoverage = useMemo(() => {
+    if (!merchandiseCount) return 0;
+    return (activeMerchandiseCount / merchandiseCount) * 100;
+  }, [activeMerchandiseCount, merchandiseCount]);
 
   const productNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -596,6 +622,46 @@ export default function Monetization() {
                   value={`$${revenuePerConversion.toFixed(2)}`}
                 />
               </div>
+            </section>
+
+            <section className="rounded-2xl border border-pink-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
+              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-400">
+                    Merchandise
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold">
+                    Store Monetization Activity
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Catalog health alongside affiliate performance.
+                  </p>
+                </div>
+
+                <span className="rounded-full border border-pink-400/20 bg-pink-400/10 px-3 py-1 text-xs font-semibold text-pink-300">
+                  {activeMerchandiseCount} active
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                <MiniMetric
+                  label="Merchandise Items"
+                  value={merchandiseCount.toLocaleString()}
+                />
+                <MiniMetric
+                  label="Active Items"
+                  value={activeMerchandiseCount.toLocaleString()}
+                />
+                <MiniMetric
+                  label="Catalog Active Rate"
+                  value={merchandiseCount ? `${monetizationCoverage.toFixed(0)}%` : "0%"}
+                />
+              </div>
+
+              <p className="mt-4 text-xs text-slate-500">
+                These are catalog metrics only; merchandise sales and profit are not
+                reported here unless a sales data source is connected.
+              </p>
             </section>
 
             <section className="grid gap-6 lg:grid-cols-2">
