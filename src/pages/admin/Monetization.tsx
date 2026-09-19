@@ -53,6 +53,14 @@ export default function Monetization() {
   const [products, setProducts] = useState<AffiliateProduct[]>([]);
   const [merchandiseCount, setMerchandiseCount] = useState(0);
   const [activeMerchandiseCount, setActiveMerchandiseCount] = useState(0);
+  const [pagePerformance, setPagePerformance] = useState<
+    Array<{
+      page_path: string;
+      views: number;
+      clicks: number;
+      click_rate: number;
+    }>
+  >([]);
   const [recentClicks, setRecentClicks] = useState<
     Array<{
       id: string;
@@ -126,6 +134,7 @@ export default function Monetization() {
 
       setSummary(statsResponse.summary);
       setRecentClicks(statsResponse.recentClicks || []);
+      setPagePerformance(statsResponse.pagePerformance || []);
       setLinks(linksResponse.links || []);
 
       setSettings({
@@ -288,6 +297,12 @@ export default function Monetization() {
       .sort((a, b) => b.clicks - a.clicks)
       .slice(0, 5);
   }, [recentClicks]);
+
+  const topTrafficToAffiliatePages = useMemo(() => {
+    return pagePerformance
+      .filter((page) => page.views > 0 || page.clicks > 0)
+      .slice(0, 10);
+  }, [pagePerformance]);
 
   const monetizationCoverage = useMemo(() => {
     if (!merchandiseCount) return 0;
@@ -665,6 +680,74 @@ export default function Monetization() {
                 content with the most relevant affiliate products. As traffic and
                 conversion data grows, these signals will become more useful.
               </div>
+            </section>
+
+            <section className="rounded-2xl border border-cyan-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
+              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                    Traffic → Revenue
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold">
+                    Traffic to Affiliate Performance
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Page views and affiliate clicks from the last 30 days.
+                  </p>
+                </div>
+
+                <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-cyan-300">
+                  30 Day View
+                </span>
+              </div>
+
+              {topTrafficToAffiliatePages.length === 0 ? (
+                <div className="mt-6">
+                  <EmptyState text="No page traffic or affiliate click data is available yet." />
+                </div>
+              ) : (
+                <div className="mt-6 overflow-x-auto">
+                  <table className="min-w-full text-left text-sm">
+                    <thead className="border-b border-white/10 text-xs uppercase tracking-wider text-slate-500">
+                      <tr>
+                        <th className="px-4 py-3">Page</th>
+                        <th className="px-4 py-3">Views</th>
+                        <th className="px-4 py-3">Clicks</th>
+                        <th className="px-4 py-3">Click Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {topTrafficToAffiliatePages.map((page) => (
+                        <tr key={page.page_path} className="hover:bg-white/[0.02]">
+                          <td className="max-w-[420px] px-4 py-4">
+                            <p
+                              className="truncate font-medium text-white"
+                              title={page.page_path}
+                            >
+                              {formatPath(page.page_path)}
+                            </p>
+                          </td>
+                          <td className="px-4 py-4 text-slate-300">
+                            {page.views.toLocaleString()}
+                          </td>
+                          <td className="px-4 py-4 font-semibold text-cyan-300">
+                            {page.clicks.toLocaleString()}
+                          </td>
+                          <td className="px-4 py-4 font-semibold text-purple-300">
+                            {page.click_rate.toFixed(2)}%
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <p className="mt-4 text-xs text-slate-500">
+                This connects traffic to affiliate clicks. Affiliate revenue is
+                reported at the network/link level today, so page-level revenue
+                is not claimed until conversion events can be tied to a page.
+              </p>
             </section>
 
             <section className="rounded-2xl border border-pink-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
