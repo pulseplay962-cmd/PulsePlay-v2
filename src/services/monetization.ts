@@ -81,6 +81,14 @@ export interface MonetizationStatsResponse {
     clicks: number;
     click_rate: number;
   }>;
+  pageProductPerformance: Array<{
+    page_path: string;
+    product_id: string;
+    product_name: string;
+    views: number;
+    clicks: number;
+    click_rate: number;
+  }>;
 }
 
 export function getAffiliateRedirectUrl(
