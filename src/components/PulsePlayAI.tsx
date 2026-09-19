@@ -8,6 +8,7 @@ type Message = {
   role: "assistant" | "user";
   text: string;
   recommendations?: PulsePlayAIResponse["recommendations"];
+  gearRecommendations?: PulsePlayAIResponse["gearRecommendations"];
 };
 
 const suggestions = [
@@ -36,7 +37,8 @@ export default function PulsePlayAI() {
       setMessages((current) => [...current, {
         role: "assistant",
         text: result.answer || "I couldn't find an answer right now.",
-        recommendations: result.recommendations || []
+        recommendations: result.recommendations || [],
+        gearRecommendations: result.gearRecommendations || []
       }]);
     } catch (error) {
       setMessages((current) => [...current, {
@@ -73,6 +75,21 @@ export default function PulsePlayAI() {
               <div key={message.role + "-" + index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${message.role === "user" ? "bg-cyan-400 font-medium text-black" : "border border-white/10 bg-white/5 text-slate-200"}`}>
                   {message.text}
+                  {message.gearRecommendations && message.gearRecommendations.length > 0 && (
+                    <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-purple-300">AI Gaming Gear</p>
+                      {message.gearRecommendations.map((gear) => (
+                        <a key={gear.id} href={gear.path} className="block rounded-xl border border-purple-400/20 bg-black/20 p-3 transition hover:border-purple-400/50 hover:bg-purple-400/5">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="font-bold text-white">{gear.title}</span>
+                            <span className="text-xs font-black text-purple-300">VIEW GEAR →</span>
+                          </div>
+                          {gear.description && <p className="mt-1 text-xs leading-5 text-slate-400">{gear.description}</p>}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
                   {message.recommendations && message.recommendations.length > 0 && (
                     <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
                       <p className="text-[10px] font-black uppercase tracking-widest text-cyan-300">AI Game Discovery</p>
