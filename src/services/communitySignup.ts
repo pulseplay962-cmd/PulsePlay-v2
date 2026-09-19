@@ -1,131 +1,40 @@
 console.log("🔥 COMMUNITY SIGNUP SERVICE LOADED");
 
-
 import { supabase } from "../lib/supabase";
 
-
-
 export type CommunitySignup = {
-
   id?: string;
-
   name: string;
-
   email: string;
-
   discord?: string;
-
   created_at?: string;
-
 };
-
-
-
-
-
-
 
 export async function submitCommunitySignup(
   signup: CommunitySignup
 ): Promise<CommunitySignup | null> {
+  console.log("📤 PULSEPLAY NETWORK SIGNUP:", {
+    name: signup.name,
+    email: signup.email,
+    discord: signup.discord || null,
+  });
 
-
-
-  const sessionCheck =
-    await supabase.auth.getSession();
-
-
-
-  console.log(
-    "🔐 AUTH BEFORE INSERT:",
-    sessionCheck
-  );
-
-
-
-
-
-  const userRole =
-    await supabase.rpc(
-      "get_my_role"
-    );
-
-
-
-  console.log(
-    "👤 ROLE CHECK:",
-    userRole
-  );
-
-
-
-
-
-  console.log(
-    "📤 INSERT DATA:",
-    signup
-  );
-
-
-
-
-
-
-
-  const {
-
-    data,
-
-    error
-
-  } = await supabase
-
+  const { error } = await supabase
     .from("community_signups")
+    .insert([
+      {
+        name: signup.name,
+        email: signup.email,
+        discord: signup.discord || null,
+      },
+    ]);
 
-    .insert([signup])
-
-    .select()
-
-    .single();
-
-
-
-
-
-
-
-  if(error){
-
-
-    console.error(
-      "❌ SUPABASE INSERT ERROR:",
-      error
-    );
-
-
+  if (error) {
+    console.error("❌ SUPABASE NETWORK SIGNUP ERROR:", error);
     throw error;
-
-
   }
 
+  console.log("✅ PULSEPLAY NETWORK SIGNUP SUCCESS");
 
-
-
-
-
-
-  console.log(
-    "✅ INSERT RETURNED:",
-    data
-  );
-
-
-
-
-
-
-  return data as CommunitySignup | null;
-
-
-
+  return null;
 }
