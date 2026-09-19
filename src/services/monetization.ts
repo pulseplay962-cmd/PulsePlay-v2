@@ -81,6 +81,12 @@ export interface MonetizationStatsResponse {
     clicks: number;
     click_rate: number;
   }>;
+  dailyPerformance: Array<{
+    date: string;
+    views: number;
+    clicks: number;
+    click_rate: number;
+  }>;
   pageProductPerformance: Array<{
     page_path: string;
     product_id: string;
