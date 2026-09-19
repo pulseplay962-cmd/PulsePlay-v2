@@ -5,7 +5,7 @@ export type PulsePlayAIResponse = {
   answer?: string;
   mode?: string;
   error?: string;
-  recommendations?: Array<{
+  gearRecommendations?: Array<{\n    type: "gear";\n    id: string;\n    title: string;\n    description?: string;\n    path: string;\n  }>;\n  recommendations?: Array<{
     type: "game";
     id: string;
     title: string;
