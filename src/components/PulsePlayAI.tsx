@@ -83,6 +83,7 @@ export default function PulsePlayAI() {
                             <span className="text-xs font-black text-cyan-300">VIEW GAME →</span>
                           </div>
                           {game.description && <p className="mt-1 text-xs leading-5 text-slate-400">{game.description}</p>}
+                          {game.reason && <p className="mt-2 text-[11px] font-medium leading-5 text-purple-200/80">⚡ {game.reason}</p>}
                         </a>
                       ))}
                     </div>
