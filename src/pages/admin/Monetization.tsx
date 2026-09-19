@@ -61,6 +61,16 @@ export default function Monetization() {
       click_rate: number;
     }>
   >([]);
+  const [pageProductPerformance, setPageProductPerformance] = useState<
+    Array<{
+      page_path: string;
+      product_id: string;
+      product_name: string;
+      views: number;
+      clicks: number;
+      click_rate: number;
+    }>
+  >([]);
   const [recentClicks, setRecentClicks] = useState<
     Array<{
       id: string;
@@ -135,6 +145,7 @@ export default function Monetization() {
       setSummary(statsResponse.summary);
       setRecentClicks(statsResponse.recentClicks || []);
       setPagePerformance(statsResponse.pagePerformance || []);
+      setPageProductPerformance(statsResponse.pageProductPerformance || []);
       setLinks(linksResponse.links || []);
 
       setSettings({
@@ -303,6 +314,12 @@ export default function Monetization() {
       .filter((page) => page.views > 0 || page.clicks > 0)
       .slice(0, 10);
   }, [pagePerformance]);
+
+  const topPageProductPerformance = useMemo(() => {
+    return pageProductPerformance
+      .filter((item) => item.clicks > 0)
+      .slice(0, 15);
+  }, [pageProductPerformance]);
 
   const monetizationCoverage = useMemo(() => {
     if (!merchandiseCount) return 0;
@@ -747,6 +764,86 @@ export default function Monetization() {
                 This connects traffic to affiliate clicks. Affiliate revenue is
                 reported at the network/link level today, so page-level revenue
                 is not claimed until conversion events can be tied to a page.
+              </p>
+            </section>
+
+            <section className="rounded-2xl border border-purple-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
+              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-400">
+                    Page → Product
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold">
+                    Affiliate Product Attribution
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    See which affiliate products visitors are clicking from each page.
+                  </p>
+                </div>
+
+                <span className="rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-300">
+                  Click Attribution
+                </span>
+              </div>
+
+              {topPageProductPerformance.length === 0 ? (
+                <div className="mt-6">
+                  <EmptyState text="No page-to-product affiliate clicks have been recorded yet." />
+                </div>
+              ) : (
+                <div className="mt-6 overflow-x-auto">
+                  <table className="min-w-full text-left text-sm">
+                    <thead className="border-b border-white/10 text-xs uppercase tracking-wider text-slate-500">
+                      <tr>
+                        <th className="px-4 py-3">Page</th>
+                        <th className="px-4 py-3">Affiliate Product</th>
+                        <th className="px-4 py-3">Views</th>
+                        <th className="px-4 py-3">Clicks</th>
+                        <th className="px-4 py-3">Click Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {topPageProductPerformance.map((item) => (
+                        <tr
+                          key={`${item.page_path}::${item.product_id}`}
+                          className="hover:bg-white/[0.02]"
+                        >
+                          <td className="max-w-[260px] px-4 py-4">
+                            <p
+                              className="truncate font-medium text-white"
+                              title={item.page_path}
+                            >
+                              {formatPath(item.page_path)}
+                            </p>
+                          </td>
+                          <td className="max-w-[280px] px-4 py-4">
+                            <p
+                              className="truncate font-medium text-purple-200"
+                              title={item.product_name}
+                            >
+                              {item.product_name}
+                            </p>
+                          </td>
+                          <td className="px-4 py-4 text-slate-300">
+                            {item.views.toLocaleString()}
+                          </td>
+                          <td className="px-4 py-4 font-semibold text-cyan-300">
+                            {item.clicks.toLocaleString()}
+                          </td>
+                          <td className="px-4 py-4 font-semibold text-purple-300">
+                            {item.click_rate.toFixed(2)}%
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <p className="mt-4 text-xs text-slate-500">
+                This shows click attribution by page and product. Affiliate revenue
+                remains reported at the network/link level until a conversion event
+                can be tied to an individual affiliate click.
               </p>
             </section>
 
