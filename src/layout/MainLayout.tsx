@@ -7,6 +7,7 @@ import {
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import RelatedAffiliateProducts from "../components/monetization/RelatedAffiliateProducts";
+import PulsePlayAI from "../components/PulsePlayAI";
 
 import { trackPageView } from "../services/analytics";
 
@@ -288,6 +289,8 @@ export default function MainLayout() {
       <div className="relative z-10">
 
         <Footer />
+
+      <PulsePlayAI />
 
       </div>
 
