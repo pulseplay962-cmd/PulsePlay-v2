@@ -2,7 +2,13 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { askPulsePlayAI } from "../services/pulsePlayAI";
 
-type Message = { role: "assistant" | "user"; text: string };
+import type { PulsePlayAIResponse } from "../services/pulsePlayAI";
+
+type Message = {
+  role: "assistant" | "user";
+  text: string;
+  recommendations?: PulsePlayAIResponse["recommendations"];
+};
 
 const suggestions = [
   "What should I play tonight?",
@@ -27,7 +33,11 @@ export default function PulsePlayAI() {
     setLoading(true);
     try {
       const result = await askPulsePlayAI(trimmed);
-      setMessages((current) => [...current, { role: "assistant", text: result.answer || "I couldn't find an answer right now." }]);
+      setMessages((current) => [...current, {
+        role: "assistant",
+        text: result.answer || "I couldn't find an answer right now.",
+        recommendations: result.recommendations || []
+      }]);
     } catch (error) {
       setMessages((current) => [...current, {
         role: "assistant",
@@ -63,6 +73,20 @@ export default function PulsePlayAI() {
               <div key={message.role + "-" + index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${message.role === "user" ? "bg-cyan-400 font-medium text-black" : "border border-white/10 bg-white/5 text-slate-200"}`}>
                   {message.text}
+                  {message.recommendations && message.recommendations.length > 0 && (
+                    <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-cyan-300">AI Game Discovery</p>
+                      {message.recommendations.map((game) => (
+                        <a key={game.id} href={game.path} className="block rounded-xl border border-cyan-400/20 bg-black/20 p-3 transition hover:border-cyan-400/50 hover:bg-cyan-400/5">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="font-bold text-white">{game.title}</span>
+                            <span className="text-xs font-black text-cyan-300">VIEW GAME →</span>
+                          </div>
+                          {game.description && <p className="mt-1 text-xs leading-5 text-slate-400">{game.description}</p>}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
