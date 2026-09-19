@@ -624,6 +624,49 @@ export default function Monetization() {
               </div>
             </section>
 
+            <section className="rounded-2xl border border-amber-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-400">
+                  Revenue Opportunities
+                </p>
+                <h2 className="mt-1 text-xl font-bold">Where to Focus Next</h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Simple signals from your current monetization data.
+                </p>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                <Opportunity
+                  title="Traffic → Affiliate"
+                  value={summary.totalClicks ? "Active" : "Build traffic"}
+                  detail={summary.totalClicks
+                    ? "Affiliate clicks are being recorded. Keep expanding relevant product placements."
+                    : "Create more gaming content and add relevant affiliate recommendations to high-traffic pages."}
+                />
+                <Opportunity
+                  title="Product Coverage"
+                  value={links.length.toLocaleString()}
+                  detail={links.length
+                    ? "Affiliate links are available for your content. Continue matching products to relevant games and gear guides."
+                    : "Add your first affiliate links to begin monetizing relevant content."}
+                />
+                <Opportunity
+                  title="Merch Catalog"
+                  value={activeMerchandiseCount.toLocaleString()}
+                  detail={activeMerchandiseCount
+                    ? "Active merchandise is available to promote alongside gaming and community content."
+                    : "Activate merchandise when products are ready for promotion."}
+                />
+              </div>
+
+              <div className="mt-4 rounded-xl border border-amber-400/10 bg-[#070b14] p-4 text-sm text-slate-400">
+                <span className="font-semibold text-amber-300">Next focus:</span>{" "}
+                Use Top Content and Top Products above to connect your strongest
+                content with the most relevant affiliate products. As traffic and
+                conversion data grows, these signals will become more useful.
+              </div>
+            </section>
+
             <section className="rounded-2xl border border-pink-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
@@ -1470,6 +1513,26 @@ function EmptyState({ text }: { text: string }) {
   return (
     <div className="rounded-xl border border-dashed border-white/10 bg-[#070b14] p-6 text-center text-sm text-slate-500">
       {text}
+    </div>
+  );
+}
+
+function Opportunity({
+  title,
+  value,
+  detail,
+}: {
+  title: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#070b14] p-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {title}
+      </p>
+      <p className="mt-2 text-xl font-bold text-amber-300">{value}</p>
+      <p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p>
     </div>
   );
 }
