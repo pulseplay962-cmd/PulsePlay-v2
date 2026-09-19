@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { supabase } from "../../lib/supabase";
+import { getMonetizationStats } from "../../services/monetization";
 
 
 type AnalyticsStats = {
@@ -47,6 +48,13 @@ type DailyTraffic = {
 type TopPage = {
   path: string;
   views: number;
+};
+
+type MonetizationAnalytics = {
+  totalLinks: number;
+  totalClicks: number;
+  totalConversions: number;
+  totalRevenue: number;
 };
 
 
@@ -111,6 +119,14 @@ export default function Analytics() {
 
   const [lastUpdated, setLastUpdated] =
     useState<Date | null>(null);
+
+  const [monetization, setMonetization] =
+    useState<MonetizationAnalytics>({
+      totalLinks: 0,
+      totalClicks: 0,
+      totalConversions: 0,
+      totalRevenue: 0,
+    });
 
 
   async function loadAnalytics() {
@@ -330,6 +346,24 @@ export default function Analytics() {
 
       }
 
+
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (token) {
+          const monetizationResult = await getMonetizationStats(token);
+          if (monetizationResult?.summary) {
+            setMonetization({
+              totalLinks: Number(monetizationResult.summary.totalLinks || 0),
+              totalClicks: Number(monetizationResult.summary.totalClicks || 0),
+              totalConversions: Number(monetizationResult.summary.totalConversions || 0),
+              totalRevenue: Number(monetizationResult.summary.totalRevenue || 0),
+            });
+          }
+        }
+      } catch (monetizationError) {
+        console.warn("MONETIZATION LOAD ERROR:", monetizationError);
+      }
 
       setLastUpdated(
         new Date()
@@ -724,6 +758,14 @@ export default function Analytics() {
   }
 
 
+  const affiliateClickRate = thirtyDayVisitors
+    ? (monetization.totalClicks / thirtyDayVisitors) * 100
+    : 0;
+
+  const revenuePerAffiliateClick = monetization.totalClicks
+    ? monetization.totalRevenue / monetization.totalClicks
+    : 0;
+
   return (
 
     <div className="space-y-8">
@@ -819,6 +861,39 @@ export default function Analytics() {
 
       </section>
 
+
+      {/* ======================================
+          MONETIZATION PERFORMANCE
+      ======================================= */}
+
+      <section>
+        <div className="mb-4">
+          <h2 className="text-2xl font-black text-purple-400">💰 MONETIZATION PERFORMANCE</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Affiliate activity connected to PulsePlay traffic. Revenue reflects reported affiliate earnings.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <TrafficCard title="Affiliate Clicks" value={monetization.totalClicks} icon="🖱️" color="purple" loading={loading} />
+          <TrafficCard title="Conversions" value={monetization.totalConversions} icon="🛒" color="green" loading={loading} />
+          <TrafficCard title="Affiliate Revenue" value={"$" + monetization.totalRevenue.toFixed(2)} icon="💵" color="cyan" loading={loading} />
+          <TrafficCard title="Active Links" value={monetization.totalLinks} icon="🔗" color="pink" loading={loading} />
+        </div>
+
+        <div className="mt-4 pp-panel p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">Revenue Funnel</p>
+              <p className="mt-1 text-sm text-slate-400">Traffic → affiliate clicks → conversions → reported revenue</p>
+            </div>
+            <div className="flex flex-wrap gap-4 text-sm">
+              <span className="text-slate-400">Click rate from 30-day visitors: <strong className="text-white">{affiliateClickRate.toFixed(2)}%</strong></span>
+              <span className="text-slate-400">Revenue / click: <strong className="text-white">{"$" + revenuePerAffiliateClick.toFixed(4)}</strong></span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ======================================
           TRAFFIC OVERVIEW
