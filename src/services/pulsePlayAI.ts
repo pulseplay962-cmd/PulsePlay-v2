@@ -5,6 +5,14 @@ export type PulsePlayAIResponse = {
   answer?: string;
   mode?: string;
   error?: string;
+  recommendations?: Array<{
+    type: "game";
+    id: string;
+    title: string;
+    description?: string;
+    path: string;
+    reason?: string;
+  }>;
 };
 
 export async function askPulsePlayAI(question: string): Promise<PulsePlayAIResponse> {
