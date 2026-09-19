@@ -75,6 +75,12 @@ export interface MonetizationStatsResponse {
     campaign: string | null;
     created_at: string;
   }>;
+  pagePerformance: Array<{
+    page_path: string;
+    views: number;
+    clicks: number;
+    click_rate: number;
+  }>;
 }
 
 export function getAffiliateRedirectUrl(
