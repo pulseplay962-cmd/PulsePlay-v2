@@ -53,6 +53,15 @@ export default function Monetization() {
   const [products, setProducts] = useState<AffiliateProduct[]>([]);
   const [merchandiseCount, setMerchandiseCount] = useState(0);
   const [activeMerchandiseCount, setActiveMerchandiseCount] = useState(0);
+  const [dailyPerformance, setDailyPerformance] = useState<
+    Array<{
+      date: string;
+      views: number;
+      clicks: number;
+      click_rate: number;
+    }>
+  >([]);
+
   const [pagePerformance, setPagePerformance] = useState<
     Array<{
       page_path: string;
@@ -145,6 +154,7 @@ export default function Monetization() {
       setSummary(statsResponse.summary);
       setRecentClicks(statsResponse.recentClicks || []);
       setPagePerformance(statsResponse.pagePerformance || []);
+      setDailyPerformance(statsResponse.dailyPerformance || []);
       setPageProductPerformance(statsResponse.pageProductPerformance || []);
       setLinks(linksResponse.links || []);
 
@@ -308,6 +318,10 @@ export default function Monetization() {
       .sort((a, b) => b.clicks - a.clicks)
       .slice(0, 5);
   }, [recentClicks]);
+
+  const maxDailyClicks = useMemo(() => {
+    return Math.max(...dailyPerformance.map((day) => day.clicks), 0);
+  }, [dailyPerformance]);
 
   const topTrafficToAffiliatePages = useMemo(() => {
     return pagePerformance
@@ -656,6 +670,41 @@ export default function Monetization() {
               </div>
             </section>
 
+            <section className="rounded-2xl border border-white/10 bg-[#111827] p-6 shadow-xl shadow-black/20">
+              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">Revenue Intelligence</p>
+                  <h2 className="mt-1 text-xl font-bold">30-Day Monetization Activity</h2>
+                  <p className="mt-1 text-sm text-slate-500">Daily site views and affiliate clicks, so you can see whether monetization activity is moving with traffic.</p>
+                </div>
+                <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-cyan-300">30 Day Trend</span>
+              </div>
+              {dailyPerformance.length === 0 ? (
+                <div className="mt-6"><EmptyState text="No daily traffic or affiliate activity has been recorded yet." /></div>
+              ) : (
+                <div className="mt-6 space-y-3">
+                  {dailyPerformance.map((day) => {
+                    const width = maxDailyClicks ? Math.max((day.clicks / maxDailyClicks) * 100, day.clicks ? 4 : 0) : 0;
+                    return (
+                      <div key={day.date} className="rounded-xl border border-white/5 bg-[#070b14] p-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+                          <span className="font-semibold text-slate-300">{new Date(day.date + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+                          <div className="flex gap-4 text-slate-500">
+                            <span>{day.views.toLocaleString()} views</span>
+                            <span className="font-semibold text-cyan-300">{day.clicks.toLocaleString()} clicks</span>
+                            <span className="text-purple-300">{day.click_rate.toFixed(2)}%</span>
+                          </div>
+                        </div>
+                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/5">
+                          <div className="h-full rounded-full bg-cyan-400 transition-all" style={{ width: width + "%" }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              <p className="mt-4 text-xs text-slate-500">This trend measures traffic and affiliate click activity. It does not claim daily affiliate revenue because network revenue is not currently tied to individual conversion dates.</p>
+            </section>
             <section className="rounded-2xl border border-amber-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-400">
