@@ -1813,7 +1813,7 @@ function TrafficCard({
   loading,
 }: {
   title: string;
-  value: number;
+  value: number | string;
   icon: string;
   color: string;
   loading: boolean;
