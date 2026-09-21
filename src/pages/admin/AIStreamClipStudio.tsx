@@ -55,8 +55,12 @@ export default function AIStreamClipStudio() {
   }
 
   async function analyze(id:string) {
-    try { setWorking(true); setError(""); await analyzeStreamVod(id); setClips(await getStreamClips()); setVods(await getStreamVods(false)); }
-    catch(e:any) { setError(e.message || "Unable to analyze VOD."); }
+    try {
+      setWorking(true); setError("");
+      await analyzeStreamVod(id);
+      setClips(await getStreamClips());
+      setVods(await getStreamVods(false));
+    } catch(e:any) { setError(e.message || "Unable to analyze VOD."); }
     finally { setWorking(false); }
   }
 
@@ -72,7 +76,7 @@ export default function AIStreamClipStudio() {
   return <div className="space-y-6">
     <div className="pp-panel p-6">
       <h1 className="pp-title text-3xl">⚡ AI Stream Clip Command Center</h1>
-      <p className="mt-3 text-slate-400">One Stream. Endless Content. Sync Veiltactician VODs, generate AI clip titles, and render approved time ranges into shareable MP4 clips.</p>
+      <p className="mt-3 text-slate-400">One Stream. Endless Content. Sync Veiltactician VODs, let AI find memorable moments, generate titles, and render shareable MP4 clips.</p>
       <div className="mt-5 flex flex-wrap gap-3">
         <button className="pp-button" onClick={()=>load(true)} disabled={loading}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
         {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>}
@@ -95,8 +99,9 @@ export default function AIStreamClipStudio() {
       </div>
 
       <div className="pp-panel p-6">
-        <h2 className="text-xl font-black text-purple-400">✂️ Create AI Clip</h2>
+        <h2 className="text-xl font-black text-purple-400">✂️ Create Manual Clip</h2>
         <p className="mt-2 text-sm text-slate-500">{currentVod?.title || "Select a VOD"}</p>
+        <p className="mt-2 text-xs text-slate-500">Use this only when you already know the exact moment. Automatic AI candidates are created by <strong>Analyze VOD & Find Moments</strong>.</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="Start seconds" value={start} onChange={e=>setStart(e.target.value)} />
           <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="End seconds" value={end} onChange={e=>setEnd(e.target.value)} />
@@ -105,7 +110,7 @@ export default function AIStreamClipStudio() {
           <option value="highlight">🔥 Highlight</option><option value="combat">⚔️ Combat</option><option value="funny">😂 Funny</option><option value="boss_fight">🏆 Boss Fight</option><option value="story">📖 Story</option><option value="fail">💀 Fail</option><option value="reaction">😱 Reaction</option>
         </select>
         <textarea className="mt-3 min-h-[110px] w-full rounded-xl bg-black/30 p-3 text-white" placeholder="Optional context for AI titles: what happened in this moment?" value={context} onChange={e=>setContext(e.target.value)} />
-        <button className="pp-button mt-3 w-full" onClick={makeCandidate} disabled={working || !selectedVod}>{working?"Working...":"🤖 Generate Titles + Clip Candidate"}</button>
+        <button className="pp-button mt-3 w-full" onClick={makeCandidate} disabled={working || !selectedVod}>{working?"Working...":"🎯 Generate Titles + Clip Candidate"}</button>
       </div>
     </div>
 
