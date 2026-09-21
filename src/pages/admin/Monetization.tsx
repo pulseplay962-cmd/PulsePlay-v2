@@ -370,6 +370,78 @@ export default function Monetization() {
     };
   }, [pagePerformance, pageProductPerformance]);
 
+  const growthActions = useMemo(() => {
+    const actions: Array<{
+      priority: "HIGH" | "MEDIUM" | "LOW";
+      title: string;
+      detail: string;
+      action: string;
+    }> = [];
+
+    const topGap = revenueIntelligence.trafficGaps[0];
+    if (topGap) {
+      actions.push({
+        priority: "HIGH",
+        title: "Monetize a high-traffic page",
+        detail: `${topGap.page_path} has ${topGap.views.toLocaleString()} views and no tracked affiliate clicks.`,
+        action: "Add a relevant gaming gear or product recommendation.",
+      });
+    }
+
+    const topSignal = revenueIntelligence.productSignals[0];
+    if (topSignal) {
+      actions.push({
+        priority: "HIGH",
+        title: "Expand a proven product signal",
+        detail: `${topSignal.product_name} is generating clicks from ${topSignal.page_path}.`,
+        action: "Add the same product context to closely related content.",
+      });
+    }
+
+    const strongestPage = revenueIntelligence.strongPages[0];
+    if (strongestPage) {
+      actions.push({
+        priority: "MEDIUM",
+        title: "Build around a converting page",
+        detail: `${strongestPage.page_path} is currently showing a ${strongestPage.click_rate.toFixed(2)}% affiliate click rate.`,
+        action: "Create related content and link it back to this page.",
+      });
+    }
+
+    if (activeMerchandiseCount > 0) {
+      actions.push({
+        priority: "MEDIUM",
+        title: "Connect content to merchandise",
+        detail: `${activeMerchandiseCount.toLocaleString()} merchandise item${activeMerchandiseCount === 1 ? "" : "s"} are active.`,
+        action: "Feature relevant merchandise alongside high-interest gaming content.",
+      });
+    }
+
+    if (links.length === 0) {
+      actions.push({
+        priority: "HIGH",
+        title: "Activate affiliate coverage",
+        detail: "No affiliate links are currently available.",
+        action: "Add relevant affiliate products before expanding traffic campaigns.",
+      });
+    }
+
+    if (actions.length === 0) {
+      actions.push({
+        priority: "LOW",
+        title: "Keep building the data set",
+        detail: "PulsePlay does not have enough monetization signals for a stronger automated recommendation yet.",
+        action: "Continue publishing content and review this panel as traffic grows.",
+      });
+    }
+
+    return actions.slice(0, 5);
+  }, [
+    activeMerchandiseCount,
+    links.length,
+    revenueIntelligence,
+  ]);
+
   const productNameById = useMemo(() => {
     const map = new Map<string, string>();
 
@@ -850,6 +922,58 @@ export default function Monetization() {
               <div className="mt-4 rounded-xl border border-purple-400/10 bg-[#070b14] p-4 text-sm text-slate-400">
                 <span className="font-semibold text-purple-300">Recommended workflow:</span>{" "}
                 Start with traffic-gap pages, improve relevant affiliate placements, then watch those pages in the 30-day Traffic → Affiliate table.
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-emerald-400/20 bg-[#0d1324] p-6 shadow-xl shadow-black/20">
+              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-400">
+                    Growth Automation
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold">AI-Ready Growth Action Queue</h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    The next actions PulsePlay can take from the traffic, affiliate, and merchandise signals already being collected.
+                  </p>
+                </div>
+                <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                  Action Queue
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                {growthActions.map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-xl border border-white/10 bg-[#070b14] p-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-white">{item.title}</p>
+                        <p className="mt-2 text-xs leading-5 text-slate-400">{item.detail}</p>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-full border px-2 py-1 text-[9px] font-bold tracking-wider ${
+                          item.priority === "HIGH"
+                            ? "border-red-400/20 bg-red-400/10 text-red-300"
+                            : item.priority === "MEDIUM"
+                            ? "border-amber-400/20 bg-amber-400/10 text-amber-300"
+                            : "border-slate-400/20 bg-slate-400/10 text-slate-300"
+                        }`}
+                      >
+                        {item.priority}
+                      </span>
+                    </div>
+                    <div className="mt-3 rounded-lg border border-emerald-400/10 bg-emerald-400/5 px-3 py-2 text-xs text-emerald-200">
+                      <span className="font-semibold">Next action:</span> {item.action}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 rounded-xl border border-emerald-400/10 bg-[#070b14] p-4 text-sm text-slate-400">
+                <span className="font-semibold text-emerald-300">Automation path:</span>{" "}
+                this action queue is intentionally read-only for now. The next phase can let PulsePlay AI turn approved signals into content, affiliate-placement, internal-linking, and promotion tasks without changing the underlying analytics.
               </div>
             </section>
 
