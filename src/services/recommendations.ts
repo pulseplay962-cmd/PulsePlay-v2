@@ -14,6 +14,15 @@ export type AffiliateRecommendation = {
   };
 };
 
+export type RelatedContentRecommendation = {
+  id: string;
+  type: "news" | "game";
+  title: string;
+  category?: string | null;
+  excerpt?: string | null;
+  path: string;
+};
+
 export async function getAffiliateRecommendations(path: string, limit = 3) {
   const params = new URLSearchParams({
     path,
@@ -36,5 +45,6 @@ export async function getAffiliateRecommendations(path: string, limit = 3) {
       category: string | null;
     };
     recommendations: AffiliateRecommendation[];
+    relatedContent: RelatedContentRecommendation[];
   };
 }
