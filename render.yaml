@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: PulsePlay-v2
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://pulseplay-api-yubf.onrender.com/api/*
