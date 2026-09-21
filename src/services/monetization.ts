@@ -198,3 +198,25 @@ export async function deactivateAffiliateLink(token: string, id: string) {
     { method: "DELETE" },
   );
 }
+
+
+export async function runAIGrowthManager(token: string) {
+  return authorizedRequest<{
+    success: boolean;
+    action: string;
+    queueItem: {
+      id: string;
+      title: string;
+      status: string;
+    };
+    signals: {
+      gap?: { page_path: string; views: number; clicks: number; click_rate: number };
+      strongest?: { page_path: string; views: number; clicks: number; click_rate: number };
+      productSignal?: { product_name: string; page_path: string; clicks: number; category?: string | null };
+      activeAffiliateLinks: number;
+    };
+  }>(token, "/api/ai/growth/run", {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
