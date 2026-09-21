@@ -14,3 +14,5 @@ export async function getStreamClips(vodId?:string):Promise<StreamClip[]>{const 
 export async function analyzeStreamVod(id:string){return adminFetch(`/api/ai/stream-clips/vods/${id}/analyze`,{method:"POST"})}
 export async function createStreamClipCandidate(input:{vodId:string;startSeconds:number;endSeconds:number;momentType?:string;context?:string;score?:number}):Promise<StreamClip>{const d=await adminFetch("/api/ai/stream-clips/candidates",{method:"POST",body:JSON.stringify(input)});return d.clip}
 export async function renderStreamClip(id:string):Promise<StreamClip>{const d=await adminFetch(`/api/ai/stream-clips/${id}/render`,{method:"POST"});return d.clip}
+
+export async function autoRenderTopClips(id:string, limit=3){return adminFetch(`/api/ai/stream-clips/vods/${id}/auto-render`,{method:"POST",body:JSON.stringify({limit})})}
