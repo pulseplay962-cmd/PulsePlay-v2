@@ -1,6 +1,6 @@
 import { supabase } from "../lib/supabase";
 
-const API_URL = "https://pulseplay-api-yubf.onrender.com";
+const API_URL = "";
 
 async function adminFetch(path:string, options:RequestInit={}) {
   const {data:{session}}=await supabase.auth.getSession();
