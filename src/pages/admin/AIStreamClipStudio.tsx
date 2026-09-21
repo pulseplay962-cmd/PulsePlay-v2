@@ -3,7 +3,8 @@ import {
   createStreamClipCandidate,
   getStreamClips,
   getStreamVods,
-  renderStreamClip,\n  analyzeStreamVod,
+  renderStreamClip,
+  analyzeStreamVod,
   type StreamClip,
   type StreamVod
 } from "../../services/streamClips";
@@ -53,7 +54,13 @@ export default function AIStreamClipStudio() {
     finally { setWorking(false); }
   }
 
-  async function analyze(id:string) {\n    try { setWorking(true); setError(""); await analyzeStreamVod(id); setClips(await getStreamClips()); setVods(await getStreamVods(false)); }\n    catch(e:any) { setError(e.message || "Unable to analyze VOD."); }\n    finally { setWorking(false); }\n  }\n\n  async function render(id:string) {
+  async function analyze(id:string) {
+    try { setWorking(true); setError(""); await analyzeStreamVod(id); setClips(await getStreamClips()); setVods(await getStreamVods(false)); }
+    catch(e:any) { setError(e.message || "Unable to analyze VOD."); }
+    finally { setWorking(false); }
+  }
+
+  async function render(id:string) {
     try {
       setWorking(true); setError("");
       const updated=await renderStreamClip(id);
@@ -67,7 +74,8 @@ export default function AIStreamClipStudio() {
       <h1 className="pp-title text-3xl">⚡ AI Stream Clip Command Center</h1>
       <p className="mt-3 text-slate-400">One Stream. Endless Content. Sync Veiltactician VODs, generate AI clip titles, and render approved time ranges into shareable MP4 clips.</p>
       <div className="mt-5 flex flex-wrap gap-3">
-        <button className="pp-button" onClick={()=>load(true)} disabled={loading}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>\n        {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>
+        <button className="pp-button" onClick={()=>load(true)} disabled={loading}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
+        {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>}
         <a className="rounded-xl bg-purple-500/20 px-5 py-3 font-bold text-purple-300" href={currentVod?.url || "https://www.twitch.tv/veiltactician/videos"} target="_blank" rel="noreferrer">🎥 Open VOD</a>
       </div>
     </div>
