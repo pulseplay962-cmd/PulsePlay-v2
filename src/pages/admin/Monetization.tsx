@@ -340,13 +340,6 @@ export default function Monetization() {
     return (activeMerchandiseCount / merchandiseCount) * 100;
   }, [activeMerchandiseCount, merchandiseCount]);
 
-  const revenueIntelligence = useMemo(() => {
-    const trafficGaps = pagePerformance.filter((page) => page.views >= 10 && page.clicks === 0).sort((a, b) => b.views - a.views).slice(0, 3);
-    const strongPages = pagePerformance.filter((page) => page.clicks > 0).sort((a, b) => b.click_rate - a.click_rate || b.clicks - a.clicks).slice(0, 3);
-    const productSignals = pageProductPerformance.filter((item) => item.clicks > 0).sort((a, b) => b.clicks - a.clicks).slice(0, 3);
-    return { trafficGaps, strongPages, productSignals, gapCount: pagePerformance.filter((page) => page.views >= 10 && page.clicks === 0).length };
-  }, [pagePerformance, pageProductPerformance]);
-
   const productNameById = useMemo(() => {
     const map = new Map<string, string>();
 
@@ -758,18 +751,32 @@ export default function Monetization() {
             <section className="rounded-2xl border border-purple-400/20 bg-[#111827] p-6 shadow-xl shadow-black/20">
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-400">Revenue Intelligence</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-400">
+                    Revenue Intelligence
+                  </p>
                   <h2 className="mt-1 text-xl font-bold">What the Data Says Next</h2>
-                  <p className="mt-1 text-sm text-slate-500">Action signals generated from your existing 30-day traffic and affiliate-click data.</p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Action signals generated from your existing 30-day traffic and affiliate-click data.
+                  </p>
                 </div>
-                <span className="rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-300">Data Driven</span>
+                <span className="rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-300">
+                  Data Driven
+                </span>
               </div>
+
               <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <MiniMetric label="Traffic Gaps" value={revenueIntelligence.gapCount.toLocaleString()} />
-                <MiniMetric label="Strongest Page" value={revenueIntelligence.strongPages[0] ? formatPath(revenueIntelligence.strongPages[0].page_path) : "No signal yet"} />
-                <MiniMetric label="Top Product Signal" value={revenueIntelligence.productSignals[0]?.product_name || "No signal yet"} />
+                <MiniMetric
+                  label="Strongest Page"
+                  value={revenueIntelligence.strongPages[0] ? formatPath(revenueIntelligence.strongPages[0].page_path) : "No signal yet"}
+                />
+                <MiniMetric
+                  label="Top Product Signal"
+                  value={revenueIntelligence.productSignals[0]?.product_name || "No signal yet"}
+                />
                 <MiniMetric label="Affiliate Links" value={links.length.toLocaleString()} />
               </div>
+
               <div className="mt-6 grid gap-4 lg:grid-cols-2">
                 <div className="rounded-xl border border-amber-400/10 bg-[#070b14] p-4">
                   <p className="text-sm font-semibold text-amber-300">Pages to investigate</p>
@@ -782,8 +789,13 @@ export default function Monetization() {
                         </div>
                       ))}
                     </div>
-                  ) : <p className="mt-3 text-xs text-slate-500">No traffic gaps detected yet. A page needs at least 10 views and zero affiliate clicks to appear here.</p>}
+                  ) : (
+                    <p className="mt-3 text-xs text-slate-500">
+                      No traffic gaps detected yet. A page needs at least 10 views and zero affiliate clicks to appear here.
+                    </p>
+                  )}
                 </div>
+
                 <div className="rounded-xl border border-cyan-400/10 bg-[#070b14] p-4">
                   <p className="text-sm font-semibold text-cyan-300">Strong product/page signals</p>
                   {revenueIntelligence.productSignals.length ? (
@@ -791,16 +803,23 @@ export default function Monetization() {
                       {revenueIntelligence.productSignals.map((item) => (
                         <div key={item.page_path + "::" + item.product_id} className="rounded-lg border border-white/5 px-3 py-2">
                           <p className="truncate text-xs font-semibold text-white" title={item.product_name}>{item.product_name}</p>
-                          <p className="mt-1 truncate text-[11px] text-slate-500" title={item.page_path}>{formatPath(item.page_path)} · {item.clicks} clicks</p>
+                          <p className="mt-1 truncate text-[11px] text-slate-500" title={item.page_path}>
+                            {formatPath(item.page_path)} · {item.clicks} clicks
+                          </p>
                         </div>
                       ))}
                     </div>
-                  ) : <p className="mt-3 text-xs text-slate-500">No product-level click signal yet. Keep adding relevant gear to content.</p>}
+                  ) : (
+                    <p className="mt-3 text-xs text-slate-500">
+                      No product-level click signal yet. Keep adding relevant gear to content.
+                    </p>
+                  )}
                 </div>
               </div>
+
               <div className="mt-4 rounded-xl border border-purple-400/10 bg-[#070b14] p-4 text-sm text-slate-400">
                 <span className="font-semibold text-purple-300">Recommended workflow:</span>{" "}
-                start with traffic-gap pages, add or improve relevant affiliate placements, then watch the same pages in the 30-day Traffic → Affiliate table. This is an analytics signal, not a claim of affiliate revenue by page.
+                Start with traffic-gap pages, improve relevant affiliate placements, then watch those pages in the 30-day Traffic → Affiliate table.
               </div>
             </section>
 
@@ -1654,3 +1673,197 @@ export default function Monetization() {
                       </td>
 
                       <td className="px-6 py-4 text-slate-300">
+                        {Number(
+                          link.clicks || 0
+                        ).toLocaleString()}
+                      </td>
+
+                      <td className="px-6 py-4 text-slate-300">
+                        {Number(
+                          link.conversions || 0
+                        ).toLocaleString()}
+                      </td>
+
+                      <td className="px-6 py-4 font-semibold text-cyan-300">
+                        $
+                        {Number(
+                          link.revenue || 0
+                        ).toFixed(2)}
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              startEdit(link)
+                            }
+                            className="rounded-md border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:bg-white/5"
+                          >
+                            Edit
+                          </button>
+
+                          {link.status ===
+                            "active" && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void deactivateLink(
+                                  link
+                                )
+                              }
+                              className="rounded-md border border-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-300 hover:bg-red-500/10"
+                            >
+                              Deactivate
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function MetricCard({
+  label,
+  value,
+  detail,
+  accent = "cyan",
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  accent?: "cyan" | "purple";
+}) {
+  const accentClasses =
+    accent === "purple"
+      ? "border-purple-400/20 bg-purple-400/5"
+      : "border-cyan-400/20 bg-[#111827]";
+
+  const valueClasses =
+    accent === "purple"
+      ? "text-purple-300"
+      : "text-cyan-300";
+
+  return (
+    <div
+      className={`rounded-2xl border p-5 shadow-xl shadow-black/20 ${accentClasses}`}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
+
+      <p
+        className={`mt-3 text-2xl font-bold ${valueClasses}`}
+      >
+        {value}
+      </p>
+
+      <p className="mt-2 text-xs text-slate-600">
+        {detail}
+      </p>
+    </div>
+  );
+}
+
+function MiniMetric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#0d1324] px-5 py-4">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+        {label}
+      </p>
+
+      <p className="mt-2 text-lg font-bold text-white">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function StatCell({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-lg border border-white/5 bg-white/[0.02] px-2 py-2">
+      <p className="text-[9px] uppercase tracking-wider text-slate-600">
+        {label}
+      </p>
+
+      <p className="mt-1 font-semibold text-slate-300">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return (
+    <div className="rounded-xl border border-dashed border-white/10 bg-[#070b14] p-6 text-center text-sm text-slate-500">
+      {text}
+    </div>
+  );
+}
+
+function Opportunity({
+  title,
+  value,
+  detail,
+}: {
+  title: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#070b14] p-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {title}
+      </p>
+      <p className="mt-2 text-xl font-bold text-amber-300">{value}</p>
+      <p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p>
+    </div>
+  );
+}
+
+function Toggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between rounded-xl border border-white/10 bg-[#070b14] p-4">
+      <span className="text-sm font-medium text-slate-200">
+        {label}
+      </span>
+
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) =>
+          onChange(event.target.checked)
+        }
+        className="h-5 w-5 accent-cyan-400"
+      />
+    </label>
+  );
+}
