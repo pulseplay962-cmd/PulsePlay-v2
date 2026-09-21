@@ -47,16 +47,8 @@ export async function renderStreamClip(id:string):Promise<StreamClip>{
 }
 
 export async function autoRenderTopClips(id:string, limit=3){
-  const {data:{session}}=await supabase.auth.getSession();
-  if(!session?.access_token) throw new Error("You must be logged in as an administrator.");
-  const response=await fetch(`${API_URL}/api/ai/stream-clips/vods/${id}/auto-render?limit=${encodeURIComponent(String(limit))}`,{
+  return adminFetch(`/api/ai/stream-clips/vods/${id}/auto-render?limit=${encodeURIComponent(String(limit))}`,{
     method:"POST",
-    headers:{"Content-Type":"text/plain"},
-    body:session.access_token
+    body:JSON.stringify({limit})
   });
-  const contentType=response.headers.get("content-type")||"";
-  const data=contentType.includes("application/json") ? await response.json() : null;
-  if(!response.ok) throw new Error(data?.error||`PulsePlay AI request failed (HTTP ${response.status}).`);
-  if(!data) throw new Error("PulsePlay API returned an unexpected non-JSON response.");
-  return data;
 }
