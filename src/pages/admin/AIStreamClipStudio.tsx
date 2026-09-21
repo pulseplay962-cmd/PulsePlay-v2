@@ -25,6 +25,7 @@ export default function AIStreamClipStudio() {
   const [context,setContext]=useState("");
   const [loading,setLoading]=useState(true);
   const [working,setWorking]=useState(false);
+  const [status,setStatus]=useState("");
   const [error,setError]=useState("");
 
   async function load(sync=true) {
@@ -41,47 +42,61 @@ export default function AIStreamClipStudio() {
 
   const currentVod=useMemo(()=>vods.find(v=>v.id===selectedVod),[vods,selectedVod]);
 
+  async function analyze(id:string) {
+    try {
+      if(!id) throw new Error("Select a VOD first.");
+      setWorking(true);
+      setError("");
+      setStatus("🤖 AI analysis started. Sending the selected VOD to PulsePlay...");
+      await analyzeStreamVod(id);
+      setStatus("✅ AI analysis finished. Loading the clip candidates...");
+      const [newClips,newVods]=await Promise.all([getStreamClips(),getStreamVods(false)]);
+      setClips(newClips);
+      setVods(newVods);
+      setStatus(`✅ Analysis complete. ${newClips.length} clip candidate${newClips.length===1?"":"s"} are now in the Clip Library.`);
+    } catch(e:any) {
+      setStatus("");
+      setError(e.message || "Unable to analyze VOD.");
+    } finally {
+      setWorking(false);
+    }
+  }
+
   async function makeCandidate() {
     try {
       setWorking(true); setError("");
       const a=Number(start), b=Number(end);
 
-      // If timestamps are blank, use the main AI workflow instead of
-      // throwing the old manual validation error.
       if(!Number.isFinite(a) || !Number.isFinite(b) || b<=a) {
-        if(!selectedVod) throw new Error("Select a VOD first.");
-        await analyzeStreamVod(selectedVod);
-        setClips(await getStreamClips());
-        setVods(await getStreamVods(false));
-        setStart(""); setEnd(""); setContext("");
+        setStatus("🤖 AI analysis started. Looking for memorable moments automatically...");
+        await analyze(selectedVod);
         return;
       }
 
       if(b-a>180) throw new Error("Clips are limited to 180 seconds.");
+      setStatus("🎯 Creating the manual clip candidate...");
       await createStreamClipCandidate({vodId:selectedVod,startSeconds:a,endSeconds:b,momentType,context});
       setStart(""); setEnd(""); setContext("");
       setClips(await getStreamClips());
-    } catch(e:any) { setError(e.message || "Unable to create clip candidate."); }
-    finally { setWorking(false); }
-  }
-
-  async function analyze(id:string) {
-    try {
-      setWorking(true); setError("");
-      await analyzeStreamVod(id);
-      setClips(await getStreamClips());
-      setVods(await getStreamVods(false));
-    } catch(e:any) { setError(e.message || "Unable to analyze VOD."); }
-    finally { setWorking(false); }
+      setStatus("✅ Manual clip candidate created.");
+    } catch(e:any) {
+      setStatus("");
+      setError(e.message || "Unable to create clip candidate.");
+    } finally {
+      setWorking(false);
+    }
   }
 
   async function render(id:string) {
     try {
-      setWorking(true); setError("");
+      setWorking(true); setError(""); setStatus("🎬 Rendering the MP4 clip...");
       const updated=await renderStreamClip(id);
       setClips(items=>items.map(item=>item.id===id?updated:item));
-    } catch(e:any) { setError(e.message || "Unable to render clip."); }
-    finally { setWorking(false); }
+      setStatus("✅ MP4 clip rendered and added to the Clip Library.");
+    } catch(e:any) {
+      setStatus("");
+      setError(e.message || "Unable to render clip.");
+    } finally { setWorking(false); }
   }
 
   return <div className="space-y-6">
@@ -89,19 +104,20 @@ export default function AIStreamClipStudio() {
       <h1 className="pp-title text-3xl">⚡ AI Stream Clip Command Center</h1>
       <p className="mt-3 text-slate-400">One Stream. Endless Content. Sync Veiltactician VODs, let AI find memorable moments, generate titles, and render shareable MP4 clips.</p>
       <div className="mt-5 flex flex-wrap gap-3">
-        <button className="pp-button" onClick={()=>load(true)} disabled={loading}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
+        <button className="pp-button" onClick={()=>load(true)} disabled={loading || working}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
         {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>}
         <a className="rounded-xl bg-purple-500/20 px-5 py-3 font-bold text-purple-300" href={currentVod?.url || "https://www.twitch.tv/veiltactician/videos"} target="_blank" rel="noreferrer">🎥 Open VOD</a>
       </div>
     </div>
 
-    {error && <div className="pp-panel border border-red-500/40 p-5 text-red-300">{error}</div>}
+    {status && <div className="pp-panel border border-cyan-400/30 p-5 text-cyan-300"><div className="font-bold">{working ? "PROCESSING" : "STATUS"}</div><div className="mt-1">{status}</div></div>}
+    {error && <div className="pp-panel border border-red-500/40 p-5 text-red-300"><div className="font-bold">ERROR</div><div className="mt-1">{error}</div></div>}
 
     <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
       <div className="pp-panel p-6">
         <h2 className="text-xl font-black text-cyan-400">📡 Recent Veiltactician VODs</h2>
         <div className="mt-4 space-y-3">
-          {vods.map(v=><button key={v.id} onClick={()=>setSelectedVod(v.id)} className={`w-full rounded-xl border p-4 text-left ${selectedVod===v.id?"border-cyan-400 bg-cyan-400/10":"border-white/10 bg-black/20"}`}>
+          {vods.map(v=><button key={v.id} onClick={()=>setSelectedVod(v.id)} disabled={working} className={`w-full rounded-xl border p-4 text-left ${selectedVod===v.id?"border-cyan-400 bg-cyan-400/10":"border-white/10 bg-black/20"}`}>
             <div className="flex items-center justify-between gap-3"><div className="font-bold">{v.title}</div><span className="text-xs uppercase text-cyan-400">{v.status || "discovered"}</span></div>
             <div className="mt-1 text-sm text-slate-500">{v.published_at ? new Date(v.published_at).toLocaleString() : "Unknown date"} • {v.duration || "duration unavailable"} • {v.view_count || 0} views</div>
           </button>)}
@@ -110,18 +126,18 @@ export default function AIStreamClipStudio() {
       </div>
 
       <div className="pp-panel p-6">
-        <h2 className="text-xl font-black text-purple-400">✂️ Create Manual Clip</h2>
+        <h2 className="text-xl font-black text-purple-400">✂️ Clip Creator</h2>
         <p className="mt-2 text-sm text-slate-500">{currentVod?.title || "Select a VOD"}</p>
-        <p className="mt-2 text-xs text-slate-500">Leave timestamps blank to let AI find the moments automatically. Enter timestamps only for a specific manual clip.</p>
+        <p className="mt-2 text-xs text-slate-500">For automatic AI detection, leave both timestamp fields blank. Enter timestamps only when you already know the exact moment you want.</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="Start seconds (optional)" value={start} onChange={e=>setStart(e.target.value)} />
-          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="End seconds (optional)" value={end} onChange={e=>setEnd(e.target.value)} />
+          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="Start seconds (optional)" value={start} onChange={e=>setStart(e.target.value)} disabled={working} />
+          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="End seconds (optional)" value={end} onChange={e=>setEnd(e.target.value)} disabled={working} />
         </div>
-        <select className="mt-3 w-full rounded-xl bg-black/30 p-3 text-white" value={momentType} onChange={e=>setMomentType(e.target.value)}>
+        <select className="mt-3 w-full rounded-xl bg-black/30 p-3 text-white" value={momentType} onChange={e=>setMomentType(e.target.value)} disabled={working}>
           <option value="highlight">🔥 Highlight</option><option value="combat">⚔️ Combat</option><option value="funny">😂 Funny</option><option value="boss_fight">🏆 Boss Fight</option><option value="story">📖 Story</option><option value="fail">💀 Fail</option><option value="reaction">😱 Reaction</option>
         </select>
-        <textarea className="mt-3 min-h-[110px] w-full rounded-xl bg-black/30 p-3 text-white" placeholder="Optional context for AI titles: what happened in this moment?" value={context} onChange={e=>setContext(e.target.value)} />
-        <button className="pp-button mt-3 w-full" onClick={makeCandidate} disabled={working || !selectedVod}>{working?"Working...":"🤖 Find AI Moments / 🎯 Create Manual Clip"}</button>
+        <textarea className="mt-3 min-h-[110px] w-full rounded-xl bg-black/30 p-3 text-white" placeholder="Optional context for AI titles: what happened in this moment?" value={context} onChange={e=>setContext(e.target.value)} disabled={working} />
+        <button className="pp-button mt-3 w-full" onClick={makeCandidate} disabled={working || !selectedVod}>{working?"🤖 AI is working...":"🤖 Find AI Moments / 🎯 Create Manual Clip"}</button>
       </div>
     </div>
 
