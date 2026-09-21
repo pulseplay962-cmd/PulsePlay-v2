@@ -46,4 +46,18 @@ export async function renderStreamClip(id:string):Promise<StreamClip>{
   return d.clip;
 }
 
-export async function autoRenderTopClips(id:string, limit=3){\n  const {data:{session}}=await supabase.auth.getSession();\n  if(!session?.access_token) throw new Error("You must be logged in as an administrator.");\n  const body=new URLSearchParams({limit:String(limit),access_token:session.access_token});\n  const response=await fetch(`${API_URL}/api/ai/stream-clips/vods/${id}/auto-render`,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:body.toString()});\n  const contentType=response.headers.get("content-type")||"";\n  const data=contentType.includes("application/json") ? await response.json() : null;\n  if(!response.ok) throw new Error(data?.error||`PulsePlay AI request failed (HTTP ${response.status}).`);\n  if(!data) throw new Error("PulsePlay API returned an unexpected non-JSON response.");\n  return data;\n}\n
+export async function autoRenderTopClips(id:string, limit=3){
+  const {data:{session}}=await supabase.auth.getSession();
+  if(!session?.access_token) throw new Error("You must be logged in as an administrator.");
+  const body=new URLSearchParams({limit:String(limit),access_token:session.access_token});
+  const response=await fetch(`${API_URL}/api/ai/stream-clips/vods/${id}/auto-render`,{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:body.toString()
+  });
+  const contentType=response.headers.get("content-type")||"";
+  const data=contentType.includes("application/json") ? await response.json() : null;
+  if(!response.ok) throw new Error(data?.error||`PulsePlay AI request failed (HTTP ${response.status}).`);
+  if(!data) throw new Error("PulsePlay API returned an unexpected non-JSON response.");
+  return data;
+}
