@@ -790,14 +790,8 @@ export default function Monetization() {
 
               <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <MiniMetric label="Traffic Gaps" value={revenueIntelligence.gapCount.toLocaleString()} />
-                <MiniMetric
-                  label="Strongest Page"
-                  value={revenueIntelligence.strongPages[0] ? formatPath(revenueIntelligence.strongPages[0].page_path) : "No signal yet"}
-                />
-                <MiniMetric
-                  label="Top Product Signal"
-                  value={revenueIntelligence.productSignals[0]?.product_name || "No signal yet"}
-                />
+                <MiniMetric label="Strongest Page" value={revenueIntelligence.strongPages[0] ? formatPath(revenueIntelligence.strongPages[0].page_path) : "No signal yet"} />
+                <MiniMetric label="Top Product Signal" value={revenueIntelligence.productSignals[0]?.product_name || "No signal yet"} />
                 <MiniMetric label="Affiliate Links" value={links.length.toLocaleString()} />
               </div>
 
@@ -825,9 +819,7 @@ export default function Monetization() {
                       {revenueIntelligence.productSignals.map((item) => (
                         <div key={item.page_path + "::" + item.product_id} className="rounded-lg border border-white/5 px-3 py-2">
                           <p className="truncate text-xs font-semibold text-white" title={item.product_name}>{item.product_name}</p>
-                          <p className="mt-1 truncate text-[11px] text-slate-500" title={item.page_path}>
-                            {formatPath(item.page_path)} · {item.clicks} clicks
-                          </p>
+                          <p className="mt-1 truncate text-[11px] text-slate-500" title={item.page_path}>{formatPath(item.page_path)} · {item.clicks} clicks</p>
                         </div>
                       ))}
                     </div>
