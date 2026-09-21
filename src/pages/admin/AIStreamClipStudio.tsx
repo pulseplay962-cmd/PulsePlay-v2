@@ -5,6 +5,7 @@ import {
   getStreamVods,
   renderStreamClip,
   analyzeStreamVod,
+  autoRenderTopClips,
   type StreamClip,
   type StreamVod
 } from "../../services/streamClips";
@@ -62,6 +63,23 @@ export default function AIStreamClipStudio() {
     }
   }
 
+  async function autoRender() {
+    try {
+      if(!selectedVod) throw new Error("Select a VOD first.");
+      setWorking(true); setError("");
+      setStatus("🎬 Rendering the top AI-ranked clips. This may take a few minutes...");
+      const result=await autoRenderTopClips(selectedVod,3);
+      const newClips=await getStreamClips();
+      setClips(newClips);
+      const count=result?.rendered?.length || 0;
+      const failures=result?.errors?.length || 0;
+      setStatus("✅ Auto-render complete. "+count+" clip"+(count===1?"":"s")+" rendered"+(failures?" and "+failures+" failed":"")+".");
+    } catch(e:any) {
+      setStatus("");
+      setError(e.message || "Unable to auto-render clips.");
+    } finally { setWorking(false); }
+  }
+
   async function makeCandidate() {
     try {
       setWorking(true); setError("");
@@ -106,6 +124,7 @@ export default function AIStreamClipStudio() {
       <div className="mt-5 flex flex-wrap gap-3">
         <button className="pp-button" onClick={()=>load(true)} disabled={loading || working}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
         {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>}
+        {currentVod && <button className="rounded-xl bg-cyan-400/20 px-5 py-3 font-bold text-cyan-300" onClick={autoRender} disabled={working}>🎬 Auto-Render Top 3 Clips</button>}
         <a className="rounded-xl bg-purple-500/20 px-5 py-3 font-bold text-purple-300" href={currentVod?.url || "https://www.twitch.tv/veiltactician/videos"} target="_blank" rel="noreferrer">🎥 Open VOD</a>
       </div>
     </div>
