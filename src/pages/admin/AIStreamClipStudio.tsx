@@ -3,7 +3,7 @@ import {
   createStreamClipCandidate,
   getStreamClips,
   getStreamVods,
-  renderStreamClip,
+  renderStreamClip,\n  analyzeStreamVod,
   type StreamClip,
   type StreamVod
 } from "../../services/streamClips";
@@ -53,7 +53,7 @@ export default function AIStreamClipStudio() {
     finally { setWorking(false); }
   }
 
-  async function render(id:string) {
+  async function analyze(id:string) {\n    try { setWorking(true); setError(""); await analyzeStreamVod(id); setClips(await getStreamClips()); setVods(await getStreamVods(false)); }\n    catch(e:any) { setError(e.message || "Unable to analyze VOD."); }\n    finally { setWorking(false); }\n  }\n\n  async function render(id:string) {
     try {
       setWorking(true); setError("");
       const updated=await renderStreamClip(id);
@@ -67,7 +67,7 @@ export default function AIStreamClipStudio() {
       <h1 className="pp-title text-3xl">⚡ AI Stream Clip Command Center</h1>
       <p className="mt-3 text-slate-400">One Stream. Endless Content. Sync Veiltactician VODs, generate AI clip titles, and render approved time ranges into shareable MP4 clips.</p>
       <div className="mt-5 flex flex-wrap gap-3">
-        <button className="pp-button" onClick={()=>load(true)} disabled={loading}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
+        <button className="pp-button" onClick={()=>load(true)} disabled={loading}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>\n        {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>
         <a className="rounded-xl bg-purple-500/20 px-5 py-3 font-bold text-purple-300" href={currentVod?.url || "https://www.twitch.tv/veiltactician/videos"} target="_blank" rel="noreferrer">🎥 Open VOD</a>
       </div>
     </div>
@@ -79,7 +79,7 @@ export default function AIStreamClipStudio() {
         <h2 className="text-xl font-black text-cyan-400">📡 Recent Veiltactician VODs</h2>
         <div className="mt-4 space-y-3">
           {vods.map(v=><button key={v.id} onClick={()=>setSelectedVod(v.id)} className={`w-full rounded-xl border p-4 text-left ${selectedVod===v.id?"border-cyan-400 bg-cyan-400/10":"border-white/10 bg-black/20"}`}>
-            <div className="font-bold">{v.title}</div>
+            <div className="flex items-center justify-between gap-3"><div className="font-bold">{v.title}</div><span className="text-xs uppercase text-cyan-400">{v.status || "discovered"}</span></div>
             <div className="mt-1 text-sm text-slate-500">{v.published_at ? new Date(v.published_at).toLocaleString() : "Unknown date"} • {v.duration || "duration unavailable"} • {v.view_count || 0} views</div>
           </button>)}
           {!vods.length && !loading && <div className="text-slate-500">No VODs found. Make sure Twitch credentials are configured in Render.</div>}
