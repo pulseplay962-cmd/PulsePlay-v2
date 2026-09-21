@@ -8,6 +8,7 @@ import ProtectedRoute from "../components/admin/ProtectedRoute";
 import SocialQueue from "../pages/admin/SocialQueue";
 import CommunitySignups from "../pages/admin/CommunitySignups";
 import AIContentStudio from "../pages/admin/AIContentStudio";
+import AIStreamClipStudio from "../pages/admin/AIStreamClipStudio";
 
 import Home from "../pages/Home";
 import GamesPage from "../pages/Games";
@@ -89,6 +90,7 @@ const router = createBrowserRouter([
       { path: "community-signups", element: <CommunitySignups /> },
       { path: "partnerships", element: <Partnerships /> },
       { path: "ai-content", element: <AIContentStudio /> },
+      { path: "ai-clips", element: <AIStreamClipStudio /> },
       { path: "monetization", element: <Monetization /> },
       { path: "settings", element: <Settings /> },
     ],
