@@ -49,11 +49,10 @@ export async function renderStreamClip(id:string):Promise<StreamClip>{
 export async function autoRenderTopClips(id:string, limit=3){
   const {data:{session}}=await supabase.auth.getSession();
   if(!session?.access_token) throw new Error("You must be logged in as an administrator.");
-  const body=new URLSearchParams({limit:String(limit),access_token:session.access_token});
-  const response=await fetch(`${API_URL}/api/ai/stream-clips/vods/${id}/auto-render`,{
+  const response=await fetch(`${API_URL}/api/ai/stream-clips/vods/${id}/auto-render?limit=${encodeURIComponent(String(limit))}`,{
     method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:body.toString()
+    headers:{"Content-Type":"text/plain"},
+    body:session.access_token
   });
   const contentType=response.headers.get("content-type")||"";
   const data=contentType.includes("application/json") ? await response.json() : null;
