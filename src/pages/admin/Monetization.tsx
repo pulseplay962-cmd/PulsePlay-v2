@@ -8,6 +8,7 @@ import {
   getMonetizationStats,
   updateAffiliateLink,
   updateMonetizationSettings,
+  runAIGrowthManager,
   type AffiliateLink,
   type AffiliateProduct,
   type MonetizationSettings,
@@ -101,6 +102,8 @@ export default function Monetization() {
   const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savingLink, setSavingLink] = useState(false);
+  const [growthRunning, setGrowthRunning] = useState(false);
+  const [growthMessage, setGrowthMessage] = useState("");
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -457,6 +460,33 @@ export default function Monetization() {
 
     return map;
   }, [products, links]);
+
+  async function runGrowthManager() {
+    setGrowthRunning(true);
+    setGrowthMessage("");
+    setError("");
+
+    try {
+      const token = await getToken();
+      const result = await runAIGrowthManager(token);
+
+      setGrowthMessage(
+        result.queueItem?.title
+          ? `AI Growth Manager created a new draft: "${result.queueItem.title}".`
+          : "AI Growth Manager created a new content draft."
+      );
+
+      await load({ silent: true });
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to run the AI Growth Manager."
+      );
+    } finally {
+      setGrowthRunning(false);
+    }
+  }
 
   async function saveSettings() {
     setSaving(true);
