@@ -67,16 +67,34 @@ export default function AIStreamClipStudio() {
     try {
       if(!selectedVod) throw new Error("Select a VOD first.");
       setWorking(true); setError("");
-      setStatus("🎬 Rendering the top AI-ranked clips. This may take a few minutes...");
-      const result=await autoRenderTopClips(selectedVod,3);
-      const newClips=await getStreamClips();
-      setClips(newClips);
-      const count=result?.rendered?.length || 0;
-      const failures=result?.errors?.length || 0;
-      setStatus("✅ Auto-render complete. "+count+" clip"+(count===1?"":"s")+" rendered"+(failures?" and "+failures+" failed":"")+".");
+      setStatus("🎬 Auto-render started. Render is running in the background...");
+      await autoRenderTopClips(selectedVod,3);
+
+      let lastStatus = "";
+      for(let attempt=0; attempt<36; attempt++) {
+        await new Promise(resolve=>setTimeout(resolve,5000));
+        const newClips=await getStreamClips(selectedVod);
+        setClips(newClips);
+
+        const rendering=newClips.filter(c=>c.status==="rendering").length;
+        const ready=newClips.filter(c=>c.status==="ready").length;
+        const failed=newClips.filter(c=>c.status==="failed").length;
+        const remaining=newClips.filter(c=>c.status==="candidate").length;
+
+        if(rendering || (ready < 3 && remaining > 0 && !failed)) {
+          const message="🎬 Auto-render running... "+ready+" ready, "+rendering+" rendering, "+remaining+" waiting.";
+          if(message!==lastStatus) { setStatus(message); lastStatus=message; }
+          continue;
+        }
+
+        setStatus("✅ Auto-render check complete. "+ready+" clip"+(ready===1?"":"s")+" ready"+(failed?" and "+failed+" failed":"")+".");
+        return;
+      }
+
+      setStatus("⏳ Rendering is still running in the background. The Clip Library will update as clips finish.");
     } catch(e:any) {
       setStatus("");
-      setError(e.message || "Unable to auto-render clips.");
+      setError(e.message || "Unable to start auto-render.");
     } finally { setWorking(false); }
   }
 
