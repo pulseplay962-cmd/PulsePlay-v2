@@ -43,10 +43,21 @@ export default function AIStreamClipStudio() {
 
   async function makeCandidate() {
     try {
-      const a=Number(start), b=Number(end);
-      if(!selectedVod || !Number.isFinite(a) || !Number.isFinite(b) || b<=a) throw new Error("Enter valid start and end seconds.");
-      if(b-a>180) throw new Error("Clips are limited to 180 seconds.");
       setWorking(true); setError("");
+      const a=Number(start), b=Number(end);
+
+      // If timestamps are blank, use the main AI workflow instead of
+      // throwing the old manual validation error.
+      if(!Number.isFinite(a) || !Number.isFinite(b) || b<=a) {
+        if(!selectedVod) throw new Error("Select a VOD first.");
+        await analyzeStreamVod(selectedVod);
+        setClips(await getStreamClips());
+        setVods(await getStreamVods(false));
+        setStart(""); setEnd(""); setContext("");
+        return;
+      }
+
+      if(b-a>180) throw new Error("Clips are limited to 180 seconds.");
       await createStreamClipCandidate({vodId:selectedVod,startSeconds:a,endSeconds:b,momentType,context});
       setStart(""); setEnd(""); setContext("");
       setClips(await getStreamClips());
@@ -101,16 +112,16 @@ export default function AIStreamClipStudio() {
       <div className="pp-panel p-6">
         <h2 className="text-xl font-black text-purple-400">✂️ Create Manual Clip</h2>
         <p className="mt-2 text-sm text-slate-500">{currentVod?.title || "Select a VOD"}</p>
-        <p className="mt-2 text-xs text-slate-500">Use this only when you already know the exact moment. Automatic AI candidates are created by <strong>Analyze VOD & Find Moments</strong>.</p>
+        <p className="mt-2 text-xs text-slate-500">Leave timestamps blank to let AI find the moments automatically. Enter timestamps only for a specific manual clip.</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="Start seconds" value={start} onChange={e=>setStart(e.target.value)} />
-          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="End seconds" value={end} onChange={e=>setEnd(e.target.value)} />
+          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="Start seconds (optional)" value={start} onChange={e=>setStart(e.target.value)} />
+          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="End seconds (optional)" value={end} onChange={e=>setEnd(e.target.value)} />
         </div>
         <select className="mt-3 w-full rounded-xl bg-black/30 p-3 text-white" value={momentType} onChange={e=>setMomentType(e.target.value)}>
           <option value="highlight">🔥 Highlight</option><option value="combat">⚔️ Combat</option><option value="funny">😂 Funny</option><option value="boss_fight">🏆 Boss Fight</option><option value="story">📖 Story</option><option value="fail">💀 Fail</option><option value="reaction">😱 Reaction</option>
         </select>
         <textarea className="mt-3 min-h-[110px] w-full rounded-xl bg-black/30 p-3 text-white" placeholder="Optional context for AI titles: what happened in this moment?" value={context} onChange={e=>setContext(e.target.value)} />
-        <button className="pp-button mt-3 w-full" onClick={makeCandidate} disabled={working || !selectedVod}>{working?"Working...":"🎯 Generate Titles + Clip Candidate"}</button>
+        <button className="pp-button mt-3 w-full" onClick={makeCandidate} disabled={working || !selectedVod}>{working?"Working...":"🤖 Find AI Moments / 🎯 Create Manual Clip"}</button>
       </div>
     </div>
 
