@@ -966,9 +966,24 @@ export default function Monetization() {
                     The next actions PulsePlay can take from the traffic, affiliate, and merchandise signals already being collected.
                   </p>
                 </div>
-                <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
-                  Action Queue
-                </span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => void runGrowthManager()}
+                    disabled={growthRunning}
+                    className="rounded-lg bg-cyan-400 px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {growthRunning ? "Running..." : "⚡ Run AI Growth Manager"}
+                  </button>
+                  <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                    Action Queue
+                  </span>
+                </div>
+                {growthMessage && (
+                  <div className="mt-4 rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3 text-sm text-cyan-200">
+                    {growthMessage}
+                  </div>
+                )}
               </div>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
