@@ -1,6 +1,6 @@
 import { supabase } from "../lib/supabase";
 
-const API_URL = "";
+const API_URL = "https://pulseplay-api-yubf.onrender.com";
 
 async function adminFetch(path:string, options:RequestInit={}) {
   const {data:{session}}=await supabase.auth.getSession();
@@ -9,8 +9,12 @@ async function adminFetch(path:string, options:RequestInit={}) {
   headers.set("Content-Type","application/json");
   headers.set("Authorization",`Bearer ${session.access_token}`);
   const response=await fetch(`${API_URL}${path}`,{...options,headers});
-  const data=await response.json();
-  if(!response.ok) throw new Error(data?.error||"PulsePlay AI request failed.");
+  const contentType=response.headers.get("content-type")||"";
+  const data=contentType.includes("application/json")
+    ? await response.json()
+    : null;
+  if(!response.ok) throw new Error(data?.error||`PulsePlay AI request failed (HTTP ${response.status}).`);
+  if(!data) throw new Error("PulsePlay API returned an unexpected non-JSON response.");
   return data;
 }
 
