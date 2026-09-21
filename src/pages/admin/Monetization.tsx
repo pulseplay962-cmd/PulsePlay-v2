@@ -340,6 +340,36 @@ export default function Monetization() {
     return (activeMerchandiseCount / merchandiseCount) * 100;
   }, [activeMerchandiseCount, merchandiseCount]);
 
+  const revenueIntelligence = useMemo(() => {
+    const trafficGaps = pagePerformance
+      .filter((page) => page.views >= 10 && page.clicks === 0)
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 3);
+
+    const strongPages = pagePerformance
+      .filter((page) => page.clicks > 0)
+      .sort(
+        (a, b) =>
+          b.click_rate - a.click_rate ||
+          b.clicks - a.clicks
+      )
+      .slice(0, 3);
+
+    const productSignals = pageProductPerformance
+      .filter((item) => item.clicks > 0)
+      .sort((a, b) => b.clicks - a.clicks)
+      .slice(0, 3);
+
+    return {
+      trafficGaps,
+      strongPages,
+      productSignals,
+      gapCount: pagePerformance.filter(
+        (page) => page.views >= 10 && page.clicks === 0
+      ).length,
+    };
+  }, [pagePerformance, pageProductPerformance]);
+
   const productNameById = useMemo(() => {
     const map = new Map<string, string>();
 
