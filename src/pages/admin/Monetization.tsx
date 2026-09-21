@@ -340,6 +340,30 @@ export default function Monetization() {
     return (activeMerchandiseCount / merchandiseCount) * 100;
   }, [activeMerchandiseCount, merchandiseCount]);
 
+  const revenueIntelligence = useMemo(() => {
+    const trafficGaps = pagePerformance
+      .filter((page) => page.views >= 10 && page.clicks === 0)
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 3);
+
+    const strongPages = pagePerformance
+      .filter((page) => page.clicks > 0)
+      .sort((a, b) => b.click_rate - a.click_rate || b.clicks - a.clicks)
+      .slice(0, 3);
+
+    const productSignals = pageProductPerformance
+      .filter((item) => item.clicks > 0)
+      .sort((a, b) => b.clicks - a.clicks)
+      .slice(0, 3);
+
+    return {
+      trafficGaps,
+      strongPages,
+      productSignals,
+      gapCount: pagePerformance.filter((page) => page.views >= 10 && page.clicks === 0).length,
+    };
+  }, [pagePerformance, pageProductPerformance]);
+
   const productNameById = useMemo(() => {
     const map = new Map<string, string>();
 
@@ -745,6 +769,77 @@ export default function Monetization() {
                 Use Top Content and Top Products above to connect your strongest
                 content with the most relevant affiliate products. As traffic and
                 conversion data grows, these signals will become more useful.
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-purple-400/20 bg-[#111827] p-6 shadow-xl shadow-black/20">
+              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-400">
+                    Revenue Intelligence
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold">What the Data Says Next</h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Action signals generated from your existing 30-day traffic and affiliate-click data.
+                  </p>
+                </div>
+                <span className="rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-300">
+                  Data Driven
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <MiniMetric label="Traffic Gaps" value={revenueIntelligence.gapCount.toLocaleString()} />
+                <MiniMetric
+                  label="Strongest Page"
+                  value={revenueIntelligence.strongPages[0] ? formatPath(revenueIntelligence.strongPages[0].page_path) : "No signal yet"}
+                />
+                <MiniMetric
+                  label="Top Product Signal"
+                  value={revenueIntelligence.productSignals[0]?.product_name || "No signal yet"}
+                />
+                <MiniMetric label="Affiliate Links" value={links.length.toLocaleString()} />
+              </div>
+
+              <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-xl border border-amber-400/10 bg-[#070b14] p-4">
+                  <p className="text-sm font-semibold text-amber-300">Pages to investigate</p>
+                  {revenueIntelligence.trafficGaps.length ? (
+                    <div className="mt-3 space-y-2">
+                      {revenueIntelligence.trafficGaps.map((page) => (
+                        <div key={page.page_path} className="flex items-center justify-between gap-4 rounded-lg border border-white/5 px-3 py-2">
+                          <span className="truncate text-xs text-slate-300" title={page.page_path}>{formatPath(page.page_path)}</span>
+                          <span className="shrink-0 text-xs font-semibold text-amber-300">{page.views.toLocaleString()} views</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-3 text-xs text-slate-500">No traffic gaps detected yet. A page needs at least 10 views and zero affiliate clicks to appear here.</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-cyan-400/10 bg-[#070b14] p-4">
+                  <p className="text-sm font-semibold text-cyan-300">Strong product/page signals</p>
+                  {revenueIntelligence.productSignals.length ? (
+                    <div className="mt-3 space-y-2">
+                      {revenueIntelligence.productSignals.map((item) => (
+                        <div key={item.page_path + "::" + item.product_id} className="rounded-lg border border-white/5 px-3 py-2">
+                          <p className="truncate text-xs font-semibold text-white" title={item.product_name}>{item.product_name}</p>
+                          <p className="mt-1 truncate text-[11px] text-slate-500" title={item.page_path}>
+                            {formatPath(item.page_path)} · {item.clicks} clicks
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-3 text-xs text-slate-500">No product-level click signal yet. Keep adding relevant gear to content.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-purple-400/10 bg-[#070b14] p-4 text-sm text-slate-400">
+                <span className="font-semibold text-purple-300">Recommended workflow:</span>{" "}
+                start with traffic-gap pages, add or improve relevant affiliate placements, then watch the same pages in the 30-day Traffic → Affiliate table. This is an analytics signal, not a claim of affiliate revenue by page.
               </div>
             </section>
 
@@ -1198,597 +1293,3 @@ export default function Monetization() {
                 Cancel Edit
               </button>
             )}
-          </div>
-
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-medium text-slate-300">
-                PulsePlay product
-              </span>
-
-              <select
-                value={form.product_id}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    product_id:
-                      event.target.value,
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-              >
-                <option value="">
-                  No product association
-                </option>
-
-                {products.map((product) => (
-                  <option
-                    key={product.id}
-                    value={product.id}
-                  >
-                    {product.name}
-                  </option>
-                ))}
-              </select>
-
-              {products.length === 0 && (
-                <p className="mt-1 text-xs text-slate-500">
-                  No public products were available for
-                  selection. You can still add the affiliate
-                  link without a product association.
-                </p>
-              )}
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-slate-300">
-                Merchant
-              </span>
-
-              <input
-                value={form.merchant}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    merchant:
-                      event.target.value,
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-                placeholder="Amazon, Best Buy, etc."
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-slate-300">
-                Affiliate network
-              </span>
-
-              <input
-                value={form.network}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    network:
-                      event.target.value,
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-                placeholder="Amazon Associates"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-slate-300">
-                Status
-              </span>
-
-              <select
-                value={form.status}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    status:
-                      event.target.value as
-                        | "active"
-                        | "inactive",
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-              >
-                <option value="active">
-                  Active
-                </option>
-                <option value="inactive">
-                  Inactive
-                </option>
-              </select>
-            </label>
-
-            <label className="block md:col-span-2">
-              <span className="text-sm font-medium text-slate-300">
-                Real affiliate URL
-              </span>
-
-              <input
-                type="url"
-                value={form.affiliate_url}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    affiliate_url:
-                      event.target.value,
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-                placeholder="https://..."
-              />
-
-              <p className="mt-1 text-xs text-slate-500">
-                This URL is sent only to the protected API. It
-                is not exposed in the public product card.
-              </p>
-            </label>
-
-            <label className="block md:col-span-2">
-              <span className="text-sm font-medium text-slate-300">
-                Tracking code{" "}
-                <span className="text-slate-500">
-                  (optional)
-                </span>
-              </span>
-
-              <input
-                value={form.tracking_code}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    tracking_code:
-                      event.target.value,
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-                placeholder="Optional campaign/subtag"
-              />
-            </label>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => void saveAffiliateLink()}
-              disabled={savingLink}
-              className="rounded-lg bg-cyan-400 px-5 py-2.5 font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {savingLink
-                ? "Saving..."
-                : editingId
-                ? "Update Affiliate Link"
-                : "Add Affiliate Link"}
-            </button>
-
-            <button
-              type="button"
-              onClick={startAdd}
-              disabled={savingLink}
-              className="rounded-lg border border-white/10 px-5 py-2.5 font-semibold text-slate-300 hover:bg-white/5 disabled:opacity-50"
-            >
-              Clear Form
-            </button>
-          </div>
-        </section>
-
-        <section className="rounded-2xl border border-white/10 bg-[#0d1324] p-6">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-            <div>
-              <h2 className="text-xl font-bold">
-                Monetization Controls
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-400">
-                Keep revenue channels independent so Printful
-                merchandise remains separate from affiliate
-                products.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => void saveSettings()}
-              disabled={saving}
-              className="rounded-lg bg-cyan-400 px-5 py-2.5 font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {saving ? "Saving..." : "Save Settings"}
-            </button>
-          </div>
-
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <Toggle
-              label="Affiliate monetization"
-              checked={settings.affiliate_enabled}
-              onChange={(value) =>
-                setSettings((current) => ({
-                  ...current,
-                  affiliate_enabled: value,
-                }))
-              }
-            />
-
-            <Toggle
-              label="Merchandise monetization"
-              checked={settings.merch_enabled}
-              onChange={(value) =>
-                setSettings((current) => ({
-                  ...current,
-                  merch_enabled: value,
-                }))
-              }
-            />
-
-            <Toggle
-              label="Display ads"
-              checked={settings.ads_enabled}
-              onChange={(value) =>
-                setSettings((current) => ({
-                  ...current,
-                  ads_enabled: value,
-                }))
-              }
-            />
-
-            <Toggle
-              label="Sponsorships"
-              checked={settings.sponsorship_enabled}
-              onChange={(value) =>
-                setSettings((current) => ({
-                  ...current,
-                  sponsorship_enabled: value,
-                }))
-              }
-            />
-          </div>
-
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-medium text-slate-300">
-                Default affiliate network
-              </span>
-
-              <input
-                value={
-                  settings.default_affiliate_network ||
-                  ""
-                }
-                onChange={(event) =>
-                  setSettings((current) => ({
-                    ...current,
-                    default_affiliate_network:
-                      event.target.value,
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-                placeholder="Amazon Associates"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-slate-300">
-                AdSense Publisher ID
-              </span>
-
-              <input
-                value={
-                  settings.adsense_publisher_id || ""
-                }
-                onChange={(event) =>
-                  setSettings((current) => ({
-                    ...current,
-                    adsense_publisher_id:
-                      event.target.value,
-                  }))
-                }
-                className="mt-2 w-full rounded-lg border border-white/10 bg-[#070b14] px-4 py-3 text-white outline-none focus:border-cyan-400"
-                placeholder="Add when AdSense is approved"
-              />
-            </label>
-          </div>
-        </section>
-
-        <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#111827]">
-          <div className="flex flex-col justify-between gap-4 border-b border-white/10 p-6 md:flex-row md:items-center">
-            <div>
-              <h2 className="text-xl font-bold">
-                Affiliate Links
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-400">
-                Manage active links without exposing their real
-                destination URLs to visitors.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={startAdd}
-              className="rounded-lg bg-purple-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-purple-400"
-            >
-              + Add Affiliate Link
-            </button>
-          </div>
-
-          {loading ? (
-            <div className="p-6 text-slate-400">
-              Loading affiliate links...
-            </div>
-          ) : links.length === 0 ? (
-            <div className="p-8 text-center text-slate-400">
-              No affiliate links have been added yet. Add
-              your first real affiliate URL above.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead className="bg-[#0d1324] text-xs uppercase tracking-wider text-slate-500">
-                  <tr>
-                    <th className="px-6 py-4">
-                      Product / Merchant
-                    </th>
-                    <th className="px-6 py-4">
-                      Network
-                    </th>
-                    <th className="px-6 py-4">
-                      Status
-                    </th>
-                    <th className="px-6 py-4">
-                      Clicks
-                    </th>
-                    <th className="px-6 py-4">
-                      Conversions
-                    </th>
-                    <th className="px-6 py-4">
-                      Revenue
-                    </th>
-                    <th className="px-6 py-4">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-white/5">
-                  {links.map((link) => (
-                    <tr
-                      key={link.id}
-                      className="hover:bg-white/[0.02]"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-white">
-                          {link.product?.name ||
-                            link.merchant ||
-                            "Unassigned product"}
-                        </div>
-
-                        {link.product?.category && (
-                          <div className="mt-1 text-xs text-slate-500">
-                            {link.product.category}
-                          </div>
-                        )}
-
-                        {link.merchant &&
-                          link.product?.name && (
-                            <div className="mt-1 text-xs text-slate-400">
-                              {link.merchant}
-                            </div>
-                          )}
-                      </td>
-
-                      <td className="px-6 py-4 text-slate-300">
-                        {link.network}
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <span
-                          className={`rounded-full border px-2.5 py-1 text-xs ${
-                            link.status === "active"
-                              ? "border-cyan-400/20 bg-cyan-400/10 text-cyan-300"
-                              : "border-slate-500/20 bg-slate-500/10 text-slate-400"
-                          }`}
-                        >
-                          {link.status}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-4 text-slate-300">
-                        {Number(
-                          link.clicks || 0
-                        ).toLocaleString()}
-                      </td>
-
-                      <td className="px-6 py-4 text-slate-300">
-                        {Number(
-                          link.conversions || 0
-                        ).toLocaleString()}
-                      </td>
-
-                      <td className="px-6 py-4 font-semibold text-cyan-300">
-                        $
-                        {Number(
-                          link.revenue || 0
-                        ).toFixed(2)}
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              startEdit(link)
-                            }
-                            className="rounded-md border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:bg-white/5"
-                          >
-                            Edit
-                          </button>
-
-                          {link.status ===
-                            "active" && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                void deactivateLink(
-                                  link
-                                )
-                              }
-                              className="rounded-md border border-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-300 hover:bg-red-500/10"
-                            >
-                              Deactivate
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      </div>
-    </div>
-  );
-}
-
-function MetricCard({
-  label,
-  value,
-  detail,
-  accent = "cyan",
-}: {
-  label: string;
-  value: string;
-  detail: string;
-  accent?: "cyan" | "purple";
-}) {
-  const accentClasses =
-    accent === "purple"
-      ? "border-purple-400/20 bg-purple-400/5"
-      : "border-cyan-400/20 bg-[#111827]";
-
-  const valueClasses =
-    accent === "purple"
-      ? "text-purple-300"
-      : "text-cyan-300";
-
-  return (
-    <div
-      className={`rounded-2xl border p-5 shadow-xl shadow-black/20 ${accentClasses}`}
-    >
-      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-        {label}
-      </p>
-
-      <p
-        className={`mt-3 text-2xl font-bold ${valueClasses}`}
-      >
-        {value}
-      </p>
-
-      <p className="mt-2 text-xs text-slate-600">
-        {detail}
-      </p>
-    </div>
-  );
-}
-
-function MiniMetric({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-[#0d1324] px-5 py-4">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
-        {label}
-      </p>
-
-      <p className="mt-2 text-lg font-bold text-white">
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function StatCell({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-lg border border-white/5 bg-white/[0.02] px-2 py-2">
-      <p className="text-[9px] uppercase tracking-wider text-slate-600">
-        {label}
-      </p>
-
-      <p className="mt-1 font-semibold text-slate-300">
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function EmptyState({ text }: { text: string }) {
-  return (
-    <div className="rounded-xl border border-dashed border-white/10 bg-[#070b14] p-6 text-center text-sm text-slate-500">
-      {text}
-    </div>
-  );
-}
-
-function Opportunity({
-  title,
-  value,
-  detail,
-}: {
-  title: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-[#070b14] p-4">
-      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-        {title}
-      </p>
-      <p className="mt-2 text-xl font-bold text-amber-300">{value}</p>
-      <p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p>
-    </div>
-  );
-}
-
-function Toggle({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) {
-  return (
-    <label className="flex cursor-pointer items-center justify-between rounded-xl border border-white/10 bg-[#070b14] p-4">
-      <span className="text-sm font-medium text-slate-200">
-        {label}
-      </span>
-
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) =>
-          onChange(event.target.checked)
-        }
-        className="h-5 w-5 accent-cyan-400"
-      />
-    </label>
-  );
-}
