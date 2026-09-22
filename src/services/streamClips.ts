@@ -48,23 +48,17 @@ export async function autoRenderTopClips(id:string, limit=3){
   const {data:{session}}=await supabase.auth.getSession();
   if(!session?.access_token) throw new Error("You must be logged in as an administrator.");
 
-  const body=new URLSearchParams();
-  body.set("access_token",session.access_token);
-  body.set("limit",String(limit));
+  const {data,error}=await supabase.functions.invoke("ai-auto-render-proxy",{
+    body:{vodId:id,limit}
+  });
 
-  await fetch(
-    `${API_URL}/api/ai/stream-clips/vods/${id}/auto-render?limit=${encodeURIComponent(String(limit))}`,
-    {
-      method:"POST",
-      mode:"no-cors",
-      headers:{"Content-Type":"application/x-www-form-urlencoded"},
-      body:body.toString()
-    }
-  );
+  if(error) {
+    throw new Error(error.message||"Unable to start AI auto-render.");
+  }
 
-  return {
-    success:true,
-    started:true,
-    message:"Auto-render request sent. Clip statuses will update as rendering progresses."
-  };
+  if(!data?.success) {
+    throw new Error(data?.error||"Unable to start AI auto-render.");
+  }
+
+  return data;
 }
