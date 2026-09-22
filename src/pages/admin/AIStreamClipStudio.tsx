@@ -4,6 +4,7 @@ import {
   getStreamClips,
   getStreamVods,
   renderStreamClip,
+  renderVerticalStreamClip,
   analyzeStreamVod,
   autoRenderTopClips,
   type StreamClip,
@@ -138,6 +139,16 @@ export default function AIStreamClipStudio() {
     finally { setWorking(false); }
   }
 
+  async function renderVertical(id:string) {
+    try {
+      setWorking(true); setError(""); setStatus("📱 Creating the 9:16 vertical social clip...");
+      const updated=await renderVerticalStreamClip(id);
+      setClips(items=>items.map(item=>item.id===id?updated:item));
+      setStatus("✅ 9:16 vertical clip created and added to the Clip Library.");
+    } catch(e:any) { setStatus(""); setError(e.message || "Unable to render vertical clip."); }
+    finally { setWorking(false); }
+  }
+
   async function render(id:string) {
     try {
       setWorking(true); setError(""); setStatus("🎬 Rendering the MP4 clip...");
@@ -228,7 +239,11 @@ export default function AIStreamClipStudio() {
               <a className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300" href={c.clip_url} download={downloadName(c)} target="_blank" rel="noreferrer">⬇️ Download MP4</a>
               <a className="rounded-xl bg-white/10 px-4 py-2 font-bold text-slate-200" href={c.clip_url} target="_blank" rel="noreferrer">↗ Open MP4</a>
             </div>
-            <p className="mt-2 text-xs text-slate-500">Landscape MP4 is the master file. Use it as the source for Shorts, Reels, TikTok, and other edits.</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {!c.vertical_clip_url && <button className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-300" onClick={()=>renderVertical(c.id)} disabled={working}>📱 Create 9:16 Vertical</button>}
+              {c.vertical_clip_url && <a className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-300" href={c.vertical_clip_url} download={downloadName(c).replace(/\.mp4$/,"-vertical.mp4")} target="_blank" rel="noreferrer">⬇️ Download 9:16</a>}
+            </div>
+            <p className="mt-2 text-xs text-slate-500">Landscape MP4 is the master. The vertical version is 720×1280 (9:16), ready for Shorts, Reels, and TikTok.</p>
           </div>}
           {c.status==="ready" && <details className="mt-4 rounded-xl border border-purple-400/20 bg-purple-400/5 p-4">
             <summary className="cursor-pointer font-bold text-purple-300">📲 Social-Ready Content Package</summary>
