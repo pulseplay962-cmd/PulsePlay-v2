@@ -84,6 +84,8 @@ export default function AIStreamClipStudio() {
         return;
       }
 
+      setStatus(`🎬 Current Render Batch: 0/${batchIds.length} ready. Starting the isolated render worker...`);
+
       await autoRenderTopClips(selectedVod,3);
 
       let lastStatus = "";
@@ -196,7 +198,25 @@ export default function AIStreamClipStudio() {
     </div>
 
     <div className="pp-panel p-6">
-      <h2 className="text-xl font-black text-pink-400">🎬 Clip Library</h2>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-black text-pink-400">🎬 Clip Library</h2>
+          <p className="mt-1 text-xs text-slate-500">Current Render Batch is tracked separately from historical attempts.</p>
+        </div>
+        {selectedVod && (()=> {
+          const vodClips=clips.filter(c=>c.vod_id===selectedVod);
+          const ready=vodClips.filter(c=>c.status==="ready").length;
+          const failed=vodClips.filter(c=>c.status==="failed").length;
+          const candidates=vodClips.filter(c=>c.status==="candidate").length;
+          const rendering=vodClips.filter(c=>c.status==="rendering").length;
+          return <div className="flex flex-wrap gap-2 text-xs">
+            <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-300">Ready: {ready}</span>
+            <span className="rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1 text-yellow-300">Rendering: {rendering}</span>
+            <span className="rounded-full border border-purple-400/30 bg-purple-400/10 px-3 py-1 text-purple-300">Candidates: {candidates}</span>
+            <span className="rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-red-300">Historical failures: {failed}</span>
+          </div>;
+        })()}
+      </div>
       <div className="mt-5 grid gap-4">
         {clips.map(c=><div key={c.id} className="rounded-2xl border border-white/10 bg-black/20 p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
