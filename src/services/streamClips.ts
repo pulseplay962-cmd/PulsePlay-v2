@@ -49,6 +49,11 @@ export async function renderVerticalStreamClip(id:string):Promise<StreamClip>{
   return d.clip;
 }
 
+export async function renderCaptionedVerticalStreamClip(id:string):Promise<StreamClip>{
+  const d=await adminFetch(`/api/ai/stream-clips/${id}/render-captioned-vertical`,{method:"POST"});
+  return d.clip || {id};
+}
+
 export async function autoRenderTopClips(id:string, limit=3){
   const {data:{session}}=await supabase.auth.getSession();
   if(!session?.access_token) throw new Error("You must be logged in as an administrator.");
