@@ -67,7 +67,23 @@ export default function AIStreamClipStudio() {
     try {
       if(!selectedVod) throw new Error("Select a VOD first.");
       setWorking(true); setError("");
-      setStatus("🎬 Auto-render started. Render is running in the background...");
+      setStatus("🎬 Selecting the top 3 AI-ranked clips for this VOD...");
+
+      // Capture the exact candidate IDs that the API will select. This keeps
+      // the progress counter scoped to the current auto-render batch instead
+      // of counting historical failures or previously completed clips.
+      const batchCandidates = clips
+        .filter(c=>c.vod_id===selectedVod && c.status==="candidate")
+        .sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0))
+        .slice(0,3);
+      const batchIds = batchCandidates.map(c=>c.id);
+
+      if(!batchIds.length) {
+        const ready = clips.filter(c=>c.vod_id===selectedVod && c.status==="ready").length;
+        setStatus(ready ? `ℹ️ This VOD already has ${ready} rendered clip${ready===1?"":"s"}. Analyze the VOD again or create another candidate to render more.` : "ℹ️ No candidate clips are waiting to be rendered for this VOD.");
+        return;
+      }
+
       await autoRenderTopClips(selectedVod,3);
 
       let lastStatus = "";
@@ -76,22 +92,23 @@ export default function AIStreamClipStudio() {
         const newClips=await getStreamClips(selectedVod);
         setClips(newClips);
 
-        const rendering=newClips.filter(c=>c.status==="rendering").length;
-        const ready=newClips.filter(c=>c.status==="ready").length;
-        const failed=newClips.filter(c=>c.status==="failed").length;
-        const remaining=newClips.filter(c=>c.status==="candidate").length;
+        const batch = newClips.filter(c=>batchIds.includes(c.id));
+        const rendering=batch.filter(c=>c.status==="rendering").length;
+        const ready=batch.filter(c=>c.status==="ready").length;
+        const failed=batch.filter(c=>c.status==="failed").length;
+        const remaining=batch.filter(c=>c.status==="candidate").length;
 
-        if(rendering || (ready < 3 && remaining > 0 && !failed)) {
-          const message="🎬 Auto-render running... "+ready+" ready, "+rendering+" rendering, "+remaining+" waiting.";
+        if(rendering || remaining) {
+          const message=`🎬 Auto-render running... ${ready}/${batchIds.length} ready, ${rendering} rendering, ${remaining} waiting.`;
           if(message!==lastStatus) { setStatus(message); lastStatus=message; }
           continue;
         }
 
-        setStatus("✅ Auto-render check complete. "+ready+" clip"+(ready===1?"":"s")+" ready"+(failed?" and "+failed+" failed":"")+".");
+        setStatus(`✅ Auto-render complete. ${ready}/${batchIds.length} clips ready${failed ? `, ${failed} failed` : ", 0 failed"}.`);
         return;
       }
 
-      setStatus("⏳ Rendering is still running in the background. The Clip Library will update as clips finish.");
+      setStatus("⏳ Rendering is still running in the background. The Clip Library will update as the selected clips finish.");
     } catch(e:any) {
       setStatus("");
       setError(e.message || "Unable to start auto-render.");
