@@ -28,6 +28,15 @@ function socialPackage(clip:StreamClip) {
   };
 }
 
+function downloadName(clip:StreamClip) {
+  const safe=(clip.title?.trim() || "pulseplay-gaming-highlight")
+    .replace(/[^a-z0-9]+/gi,"-")
+    .replace(/^-+|-+$/g,"")
+    .slice(0,80)
+    .toLowerCase();
+  return `${safe || "pulseplay-gaming-highlight"}.mp4`;
+}
+
 export default function AIStreamClipStudio() {
   const [vods,setVods]=useState<StreamVod[]>([]);
   const [clips,setClips]=useState<StreamClip[]>([]);
@@ -58,21 +67,15 @@ export default function AIStreamClipStudio() {
   async function analyze(id:string) {
     try {
       if(!id) throw new Error("Select a VOD first.");
-      setWorking(true);
-      setError("");
+      setWorking(true); setError("");
       setStatus("🤖 AI analysis started. Sending the selected VOD to PulsePlay...");
       await analyzeStreamVod(id);
       setStatus("✅ AI analysis finished. Loading the clip candidates...");
       const [newClips,newVods]=await Promise.all([getStreamClips(),getStreamVods(false)]);
-      setClips(newClips);
-      setVods(newVods);
+      setClips(newClips); setVods(newVods);
       setStatus(`✅ Analysis complete. ${newClips.length} clip candidate${newClips.length===1?"":"s"} are now in the Clip Library.`);
-    } catch(e:any) {
-      setStatus("");
-      setError(e.message || "Unable to analyze VOD.");
-    } finally {
-      setWorking(false);
-    }
+    } catch(e:any) { setStatus(""); setError(e.message || "Unable to analyze VOD."); }
+    finally { setWorking(false); }
   }
 
   async function autoRender() {
@@ -80,14 +83,7 @@ export default function AIStreamClipStudio() {
       if(!selectedVod) throw new Error("Select a VOD first.");
       setWorking(true); setError("");
       setStatus("🎬 Selecting the top 3 AI-ranked clips for this VOD...");
-
-      // Capture the exact candidate IDs that the API will select. This keeps
-      // the progress counter scoped to the current auto-render batch instead
-      // of counting historical failures or previously completed clips.
-      const batchCandidates = clips
-        .filter(c=>c.vod_id===selectedVod && c.status==="candidate")
-        .sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0))
-        .slice(0,3);
+      const batchCandidates = clips.filter(c=>c.vod_id===selectedVod && c.status==="candidate").sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)).slice(0,3);
       const batchIds = batchCandidates.map(c=>c.id);
 
       if(!batchIds.length) {
@@ -97,7 +93,6 @@ export default function AIStreamClipStudio() {
       }
 
       setStatus(`🎬 Current Render Batch: 0/${batchIds.length} ready. Starting the isolated render worker...`);
-
       await autoRenderTopClips(selectedVod,3);
 
       let lastStatus = "";
@@ -105,7 +100,6 @@ export default function AIStreamClipStudio() {
         await new Promise(resolve=>setTimeout(resolve,5000));
         const newClips=await getStreamClips(selectedVod);
         setClips(newClips);
-
         const batch = newClips.filter(c=>batchIds.includes(c.id));
         const rendering=batch.filter(c=>c.status==="rendering").length;
         const ready=batch.filter(c=>c.status==="ready").length;
@@ -117,41 +111,31 @@ export default function AIStreamClipStudio() {
           if(message!==lastStatus) { setStatus(message); lastStatus=message; }
           continue;
         }
-
         setStatus(`✅ Auto-render complete. ${ready}/${batchIds.length} clips ready${failed ? `, ${failed} failed` : ", 0 failed"}.`);
         return;
       }
-
       setStatus("⏳ Rendering is still running in the background. The Clip Library will update as the selected clips finish.");
-    } catch(e:any) {
-      setStatus("");
-      setError(e.message || "Unable to start auto-render.");
-    } finally { setWorking(false); }
+    } catch(e:any) { setStatus(""); setError(e.message || "Unable to start auto-render."); }
+    finally { setWorking(false); }
   }
 
   async function makeCandidate() {
     try {
       setWorking(true); setError("");
       const a=Number(start), b=Number(end);
-
       if(!Number.isFinite(a) || !Number.isFinite(b) || b<=a) {
         setStatus("🤖 AI analysis started. Looking for memorable moments automatically...");
         await analyze(selectedVod);
         return;
       }
-
       if(b-a>180) throw new Error("Clips are limited to 180 seconds.");
       setStatus("🎯 Creating the manual clip candidate...");
       await createStreamClipCandidate({vodId:selectedVod,startSeconds:a,endSeconds:b,momentType,context});
       setStart(""); setEnd(""); setContext("");
       setClips(await getStreamClips());
       setStatus("✅ Manual clip candidate created.");
-    } catch(e:any) {
-      setStatus("");
-      setError(e.message || "Unable to create clip candidate.");
-    } finally {
-      setWorking(false);
-    }
+    } catch(e:any) { setStatus(""); setError(e.message || "Unable to create clip candidate."); }
+    finally { setWorking(false); }
   }
 
   async function render(id:string) {
@@ -160,10 +144,8 @@ export default function AIStreamClipStudio() {
       const updated=await renderStreamClip(id);
       setClips(items=>items.map(item=>item.id===id?updated:item));
       setStatus("✅ MP4 clip rendered and added to the Clip Library.");
-    } catch(e:any) {
-      setStatus("");
-      setError(e.message || "Unable to render clip.");
-    } finally { setWorking(false); }
+    } catch(e:any) { setStatus(""); setError(e.message || "Unable to render clip."); }
+    finally { setWorking(false); }
   }
 
   return <div className="space-y-6">
@@ -240,7 +222,14 @@ export default function AIStreamClipStudio() {
           </div>
           {c.ai_title_options?.length ? <div className="mt-3 text-sm text-slate-400">AI title options: {c.ai_title_options.join(" • ")}</div>:null}
           {c.description && <p className="mt-3 text-slate-300">{c.description}</p>}
-          {c.clip_url && <video className="mt-4 w-full rounded-xl border border-white/10" controls src={c.clip_url} />}
+          {c.clip_url && <div className="mt-4">
+            <video className="w-full rounded-xl border border-white/10" controls src={c.clip_url} />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <a className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300" href={c.clip_url} download={downloadName(c)} target="_blank" rel="noreferrer">⬇️ Download MP4</a>
+              <a className="rounded-xl bg-white/10 px-4 py-2 font-bold text-slate-200" href={c.clip_url} target="_blank" rel="noreferrer">↗ Open MP4</a>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">Landscape MP4 is the master file. Use it as the source for Shorts, Reels, TikTok, and other edits.</p>
+          </div>}
           {c.status==="ready" && <details className="mt-4 rounded-xl border border-purple-400/20 bg-purple-400/5 p-4">
             <summary className="cursor-pointer font-bold text-purple-300">📲 Social-Ready Content Package</summary>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
