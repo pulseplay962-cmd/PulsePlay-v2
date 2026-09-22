@@ -17,7 +17,7 @@ async function adminFetch(path:string, options:RequestInit={}) {
 }
 
 export type StreamVod={id:string;twitch_id:string;channel:string;title:string;description?:string;url:string;thumbnail_url?:string;published_at?:string;duration?:string;view_count?:number;status?:string;analyzed_at?:string};
-export type StreamClip={id:string;vod_id:string;title:string;description?:string;start_seconds:number;end_seconds:number;duration_seconds:number;moment_type?:string;score?:number;ai_reason?:string;ai_title_options?:string[];source_url?:string;clip_url?:string;vertical_clip_url?:string;thumbnail_url?:string;status:string;error?:string};
+export type StreamClip={id:string;vod_id:string;title:string;description?:string;start_seconds:number;end_seconds:number;duration_seconds:number;moment_type?:string;score?:number;ai_reason?:string;ai_title_options?:string[];source_url?:string;clip_url?:string;vertical_clip_url?:string;captioned_vertical_clip_url?:string;thumbnail_url?:string;status:string;error?:string};
 
 export async function getStreamVods(sync=true):Promise<StreamVod[]>{
   const d=await adminFetch(`/api/ai/stream-clips/vods?sync=${sync?"true":"false"}&limit=20`);
