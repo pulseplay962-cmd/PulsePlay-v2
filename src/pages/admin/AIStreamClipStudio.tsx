@@ -16,6 +16,18 @@ function clock(total:number) {
   return h ? `${h}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}` : `${m}:${String(sec).padStart(2,"0")}`;
 }
 
+function socialPackage(clip:StreamClip) {
+  const title=clip.title?.trim() || "PulsePlay Gaming Highlight";
+  const description=clip.description?.trim() || "A memorable Veiltactician gaming moment from PulsePlay.";
+  const tags=["#PulsePlay","#Veiltactician","#Gaming","#GamingClips","#Twitch","#Shorts"];
+  return {
+    youtube:{title:title.slice(0,100),text:description+"\n\nWatch more from Veiltactician at PulsePlay.online ⚡\n\n"+tags.join(" ")+" #YouTubeShorts"},
+    facebook:{title:"🎮 "+title,text:description+"\n\nMore gaming, streaming, community and clips: PulsePlay.online ⚡\n\n"+tags.join(" ")+" #FacebookReels"},
+    instagram:{title:title,text:description+"\n\n⚡ Level Up with PulsePlay\n\n"+tags.join(" ")+" #InstagramReels"},
+    tiktok:{title:title,text:description+"\n\n⚡ PulsePlay.online | Veiltactician\n\n"+tags.join(" ")+" #TikTokGaming"}
+  };
+}
+
 export default function AIStreamClipStudio() {
   const [vods,setVods]=useState<StreamVod[]>([]);
   const [clips,setClips]=useState<StreamClip[]>([]);
@@ -229,6 +241,20 @@ export default function AIStreamClipStudio() {
           {c.ai_title_options?.length ? <div className="mt-3 text-sm text-slate-400">AI title options: {c.ai_title_options.join(" • ")}</div>:null}
           {c.description && <p className="mt-3 text-slate-300">{c.description}</p>}
           {c.clip_url && <video className="mt-4 w-full rounded-xl border border-white/10" controls src={c.clip_url} />}
+          {c.status==="ready" && <details className="mt-4 rounded-xl border border-purple-400/20 bg-purple-400/5 p-4">
+            <summary className="cursor-pointer font-bold text-purple-300">📲 Social-Ready Content Package</summary>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {Object.entries(socialPackage(c)).map(([platform,pkg])=><div key={platform} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-black capitalize text-cyan-300">{platform === "youtube" ? "YouTube Shorts" : platform === "facebook" ? "Facebook Reels" : platform === "instagram" ? "Instagram Reels" : "TikTok"}</span>
+                  <button className="rounded-lg bg-white/10 px-3 py-1 text-xs font-bold text-slate-200" onClick={()=>navigator.clipboard?.writeText(pkg.title+"\n\n"+pkg.text)}>Copy</button>
+                </div>
+                <p className="mt-2 text-sm font-bold text-white">{pkg.title}</p>
+                <p className="mt-2 whitespace-pre-line text-xs text-slate-400">{pkg.text}</p>
+              </div>)}
+            </div>
+            <p className="mt-3 text-xs text-slate-500">Use the rendered MP4 above with the matching platform package. Posting remains manual until platform publishing is connected.</p>
+          </details>}
           {c.status==="failed" && <p className="mt-3 text-sm text-red-300">{c.error}</p>}
         </div>)}
         {!clips.length && <div className="text-slate-500">No clip candidates yet.</div>}
