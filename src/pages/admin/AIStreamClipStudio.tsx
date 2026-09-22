@@ -5,6 +5,7 @@ import {
   getStreamVods,
   renderStreamClip,
   renderVerticalStreamClip,
+  renderCaptionedVerticalStreamClip,
   analyzeStreamVod,
   autoRenderTopClips,
   type StreamClip,
@@ -149,6 +150,17 @@ export default function AIStreamClipStudio() {
     finally { setWorking(false); }
   }
 
+  async function renderCaptionedVertical(id:string) {
+    try {
+      setWorking(true); setError(""); setStatus("📝 AI is generating timestamped captions and burning them into the 9:16 clip...");
+      await renderCaptionedVerticalStreamClip(id);
+      const updated=await getStreamClips(selectedVod);
+      setClips(updated);
+      setStatus("✅ Captioned 9:16 clip created. The subtitles are burned into the video.");
+    } catch(e:any) { setStatus(""); setError(e.message || "Unable to create captioned vertical clip."); }
+    finally { setWorking(false); }
+  }
+
   async function render(id:string) {
     try {
       setWorking(true); setError(""); setStatus("🎬 Rendering the MP4 clip...");
@@ -241,7 +253,7 @@ export default function AIStreamClipStudio() {
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
               {!c.vertical_clip_url && <button className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-300" onClick={()=>renderVertical(c.id)} disabled={working}>📱 Create 9:16 Vertical</button>}
-              {c.vertical_clip_url && <a className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-300" href={c.vertical_clip_url} download={downloadName(c).replace(/\.mp4$/,"-vertical.mp4")} target="_blank" rel="noreferrer">⬇️ Download 9:16</a>}
+              {c.vertical_clip_url && <a className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-300" href={c.vertical_clip_url} download={downloadName(c).replace(/\.mp4$/,"-vertical.mp4")} target="_blank" rel="noreferrer">⬇️ Download 9:16</a>}\n              {c.vertical_clip_url && <button className="rounded-xl bg-purple-500/20 px-4 py-2 font-bold text-purple-300" onClick={()=>renderCaptionedVertical(c.id)} disabled={working}>📝 Add AI Captions</button>}\n              {c.captioned_vertical_clip_url && <a className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300" href={c.captioned_vertical_clip_url} download={downloadName(c).replace(/\.mp4$/,"-vertical-captioned.mp4")} target="_blank" rel="noreferrer">⬇️ Download Captioned</a>}
             </div>
             <p className="mt-2 text-xs text-slate-500">Landscape MP4 is the master. The vertical version is 720×1280 (9:16), ready for Shorts, Reels, and TikTok.</p>
           </div>}
