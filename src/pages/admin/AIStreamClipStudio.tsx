@@ -8,6 +8,10 @@ import {
   renderCaptionedVerticalStreamClip,
   analyzeStreamVod,
   autoRenderTopClips,
+  archiveStreamClip,
+  setStreamClipKeep,
+  getClipCleanupPreview,
+  cleanupStreamClips,
   type StreamClip,
   type StreamVod
 } from "../../services/streamClips";
@@ -51,6 +55,8 @@ export default function AIStreamClipStudio() {
   const [working,setWorking]=useState(false);
   const [status,setStatus]=useState("");
   const [error,setError]=useState("");
+  const [cleanup,setCleanup]=useState<any>(null);
+  const [cleanupBusy,setCleanupBusy]=useState(false);
 
   async function load(sync=true) {
     try {
@@ -62,7 +68,24 @@ export default function AIStreamClipStudio() {
     finally { setLoading(false); }
   }
 
-  useEffect(()=>{ load(true); },[]);
+  useEffect(()=>{ load(true); loadCleanup(); },[]);
+  async function loadCleanup() {
+    try { setCleanup(await getClipCleanupPreview(50,60)); }
+    catch(e:any) { setError(e.message || "Unable to check Clip Library cleanup."); }
+  }
+  async function archive(id:string) {
+    try { setCleanupBusy(true); setError(""); await archiveStreamClip(id); setClips(items=>items.filter(item=>item.id!==id)); setStatus("🧹 Clip archived and its stored video files were removed."); await loadCleanup(); }
+    catch(e:any) { setError(e.message || "Unable to archive clip."); } finally { setCleanupBusy(false); }
+  }
+  async function toggleKeep(clip:StreamClip) {
+    try { setCleanupBusy(true); setError(""); const updated=await setStreamClipKeep(clip.id,!clip.keep); setClips(items=>items.map(item=>item.id===clip.id?updated:item)); setStatus(updated.keep?"🔒 Clip protected from automatic cleanup.":"🔓 Clip is no longer protected."); await loadCleanup(); }
+    catch(e:any) { setError(e.message || "Unable to update clip protection."); } finally { setCleanupBusy(false); }
+  }
+  async function cleanupLibrary() {
+    if(!window.confirm("Clean up clips older than 60 days and clips beyond the 50-clip library limit? Protected clips will be kept.")) return;
+    try { setCleanupBusy(true); setError(""); setStatus("🧹 Cleaning the Clip Library and removing stored video files..."); const result=await cleanupStreamClips(50,60); setClips(await getStreamClips()); setCleanup(result); setStatus(`✅ Cleanup complete. ${result.archivedCount||0} clip${(result.archivedCount||0)===1?"":"s"} archived and storage cleaned.`); }
+    catch(e:any) { setError(e.message || "Unable to clean up the Clip Library."); } finally { setCleanupBusy(false); }
+  }
 
   const currentVod=useMemo(()=>vods.find(v=>v.id===selectedVod),[vods,selectedVod]);
 
@@ -234,6 +257,11 @@ export default function AIStreamClipStudio() {
           </div>;
         })()}
       </div>
+      <div className="mt-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="font-black text-cyan-300">🧹 Clip Library Cleanup</div><div className="mt-1 text-xs text-slate-500">Keeps the newest 50 clips, archives clips older than 60 days, and removes their stored MP4 files. Protected clips are never touched.</div></div>
+          <div className="flex flex-wrap gap-2"><button className="rounded-xl bg-white/10 px-4 py-2 text-sm font-bold text-slate-200" onClick={loadCleanup} disabled={cleanupBusy}>Check Cleanup</button><button className="rounded-xl bg-pink-500/20 px-4 py-2 text-sm font-bold text-pink-300" onClick={cleanupLibrary} disabled={cleanupBusy}>🧹 Clean Up Library</button></div></div>
+        {cleanup && <div className="mt-3 flex flex-wrap gap-2 text-xs"><span className="rounded-full border border-white/10 px-3 py-1 text-slate-300">Active: {cleanup.totalActive}</span><span className="rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1 text-yellow-300">Eligible: {cleanup.eligibleCount}</span><span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-300">Limit: {cleanup.maxClips}</span><span className="rounded-full border border-purple-400/30 bg-purple-400/10 px-3 py-1 text-purple-300">Age: {cleanup.ageDays} days</span></div>}
+      </div>
       <div className="mt-5 grid gap-4">
         {clips.map(c=><div key={c.id} className="rounded-2xl border border-white/10 bg-black/20 p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -245,6 +273,7 @@ export default function AIStreamClipStudio() {
           </div>
           {c.ai_title_options?.length ? <div className="mt-3 text-sm text-slate-400">AI title options: {c.ai_title_options.join(" • ")}</div>:null}
           {c.description && <p className="mt-3 text-slate-300">{c.description}</p>}
+          <div className="mt-3 flex flex-wrap gap-2"><button className={`rounded-xl px-4 py-2 font-bold ${c.keep?"bg-yellow-400/20 text-yellow-300":"bg-white/10 text-slate-300"}`} onClick={()=>toggleKeep(c)} disabled={cleanupBusy}>{c.keep?"🔒 Keep Protected":"🔓 Keep Clip"}</button>{!c.keep && c.status!=="rendering" && <button className="rounded-xl bg-red-500/15 px-4 py-2 font-bold text-red-300" onClick={()=>archive(c.id)} disabled={cleanupBusy}>🗄️ Archive</button>}</div>
           {c.clip_url && <div className="mt-4">
             <video className="w-full rounded-xl border border-white/10" controls src={c.clip_url} />
             <div className="mt-3 flex flex-wrap gap-2">
