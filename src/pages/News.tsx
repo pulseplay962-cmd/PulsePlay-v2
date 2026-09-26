@@ -252,6 +252,13 @@ export default function News() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(12);
+
+  function openNewsSearch() {
+    const query = search.trim();
+    const url = query ? "/news/search?query=" + encodeURIComponent(query) : "/news/search";
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 
   useEffect(() => {
     async function loadNews() {
@@ -327,10 +334,13 @@ export default function News() {
     (article) => article.featured === true
   ) || filteredArticles[0];
 
-const secondaryArticles =
-  filteredArticles.filter(
-    (article) => article.id !== featuredArticle?.id
-  );
+const secondaryArticles = filteredArticles
+  .filter((article) => article.id !== featuredArticle?.id)
+  .slice(0, visibleCount);
+
+const hasMoreArticles = filteredArticles.filter(
+  (article) => article.id !== featuredArticle?.id
+).length > visibleCount;
 
   if (loading) {
     return (
@@ -574,6 +584,9 @@ const secondaryArticles =
                         setSearch(event.target.value)
                       }
                       placeholder="Search titles, topics, authors..."
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") openNewsSearch();
+                      }}
                       className="
                         w-full
                         rounded-xl
@@ -592,6 +605,10 @@ const secondaryArticles =
                       "
                     />
                   </div>
+
+                  <BrandButton variant="secondary" type="button" onClick={openNewsSearch}>
+                    🔎 Open Search Window
+                  </BrandButton>
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-3">
