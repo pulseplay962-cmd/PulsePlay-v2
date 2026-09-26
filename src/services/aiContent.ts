@@ -17,6 +17,8 @@ export type AIContentItem = {
   scheduled_date?:string;
   created_at?:string;
   updated_at?:string;
+  source_url?:string;
+  source_name?:string;
 };
 
 // =====================================
