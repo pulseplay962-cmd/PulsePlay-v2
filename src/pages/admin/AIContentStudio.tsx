@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import {
   getAIContent,
   refreshAINews,
-  generateWeeklyContent,
   generateAIImage,
   updateAIContent,
   deleteAIContent,
