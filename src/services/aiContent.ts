@@ -20,73 +20,52 @@ export type AIContentItem = {
 };
 
 // =====================================
-// Get AI Queue
+// Refresh AI News
 // =====================================
 
-export async function getAIContent():Promise<AIContentItem[]> {
-
-  /*
-   * The AI Studio Refresh button previously called this function
-   * and only reloaded /api/ai/queue. When the function is called
-   * directly from the Refresh button, the button is the active
-   * element during the click handler, so we can trigger the new
-   * research-backed refresh endpoint before loading the queue.
-   */
-  const activeElement =
-    typeof document !== "undefined"
-      ? document.activeElement
-      : null;
-
-  const isManualRefresh =
-    activeElement instanceof HTMLElement &&
-    activeElement.tagName === "BUTTON" &&
-    /refresh/i.test(activeElement.textContent || "");
-
-  if (isManualRefresh) {
-    const refreshResponse = await fetch(
-      `${API_URL}/api/news/refresh-ai`,
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
-      }
-    );
-
-    const refreshData =
-      await refreshResponse.json();
-
-    if (!refreshResponse.ok) {
-      throw new Error(
-        refreshData?.error ||
-        "Failed refreshing current gaming news"
-      );
+export async function refreshAINews() {
+  const response = await fetch(
+    `${API_URL}/api/news/refresh-ai`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
+  );
 
-    console.log(
-      "AI NEWS REFRESH RESULT:",
-      refreshData
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ||
+      "Failed refreshing current gaming news"
     );
   }
 
-  const response =
-    await fetch(
-      `${API_URL}/api/ai/queue`
-    );
+  return data;
+}
 
-  const data =
-    await response.json();
+// =====================================
+// Get AI Queue
+// =====================================
 
-  if(!response.ok){
+export async function getAIContent(): Promise<AIContentItem[]> {
+  const response = await fetch(
+    `${API_URL}/api/ai/queue`
+  );
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
     throw new Error(
-      data.error ||
+      data?.error ||
       "Failed loading AI content"
     );
   }
 
   return data.queue || [];
 }
-
 // =====================================
 // Generate Weekly Content
 // =====================================
