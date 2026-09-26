@@ -702,14 +702,28 @@ const hasMoreArticles = filteredArticles.filter(
                 {/* SECONDARY */}
 
                 {secondaryArticles.length > 0 && (
-                  <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {secondaryArticles.map((article) => (
-                      <ArticleCard
-                        key={article.id}
-                        article={article}
-                      />
-                    ))}
-                  </section>
+                  <>
+                    <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                      {secondaryArticles.map((article) => (
+                        <ArticleCard
+                          key={article.id}
+                          article={article}
+                        />
+                      ))}
+                    </section>
+
+                    {hasMoreArticles && (
+                      <div className="mt-8 flex justify-center">
+                        <BrandButton
+                          variant="secondary"
+                          type="button"
+                          onClick={() => setVisibleCount((count) => count + 12)}
+                        >
+                          Load More Intelligence →
+                        </BrandButton>
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             ) : (
