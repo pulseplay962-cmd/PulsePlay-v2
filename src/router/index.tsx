@@ -22,6 +22,7 @@ import MerchandiseSuccess from "../pages/MerchandiseSuccess";
 import Community from "../pages/Community";
 import News from "../pages/News";
 import NewsArticle from "../pages/NewsArticle";
+import NewsSearch from "../pages/NewsSearch";
 import Feedback from "../pages/Feedback";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
       { path: "merchandise/:id", element: <MerchandiseDetail /> },
       { path: "community", element: <Community /> },
       { path: "news", element: <News /> },
+      { path: "news/search", element: <NewsSearch /> },
       { path: "news/:slug", element: <NewsArticle /> },
       { path: "feedback", element: <Feedback /> },
       { path: "about", element: <About /> },
