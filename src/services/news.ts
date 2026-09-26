@@ -39,6 +39,10 @@ export type NewsArticle = {
 
     hashtags?:string[] | null;
 
+    source_url?:string | null;
+
+    source_name?:string | null;
+
 };
 
 
