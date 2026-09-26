@@ -49,6 +49,9 @@ export default function AIContentStudio() {
   const [testingImage, setTestingImage] =
     useState(false);
 
+  const [approvingPublishing, setApprovingPublishing] =
+    useState<string | null>(null);
+
   const [testImageUrl, setTestImageUrl] =
     useState("");
 
@@ -70,7 +73,12 @@ export default function AIContentStudio() {
       const data =
         await getAIContent();
 
-      setContent(data || []);
+      setContent(
+        (data || []).filter(
+          (item: AIContentItem) =>
+            item.content_type === "news"
+        )
+      );
 
     } catch (error: any) {
       console.error(
@@ -402,6 +410,49 @@ export default function AIContentStudio() {
   // Publish Post
   // =====================================
 
+  async function approveAndPublish(
+    item: AIContentItem
+  ) {
+    if (!item.id) return;
+
+    try {
+      setApprovingPublishing(item.id);
+      setError("");
+
+      await updateAIContent(item.id, {
+        status: "approved",
+      });
+
+      const result = await publishAIContent(item.id);
+
+      if (result?.slug) {
+        setPublishedArticles((prev) => ({
+          ...prev,
+          [item.id]: result.slug,
+        }));
+      }
+
+      await loadContent();
+    } catch (error: any) {
+      console.error(
+        "APPROVE & PUBLISH ERROR:",
+        error
+      );
+
+      setError(
+        error.message ||
+        "Approve & Publish failed"
+      );
+    } finally {
+      setApprovingPublishing(null);
+    }
+  }
+
+
+  // =====================================
+  // Publish Post
+  // =====================================
+
   async function publishPost(
     id: string
   ) {
@@ -454,13 +505,13 @@ export default function AIContentStudio() {
         </h1>
 
         <p className="mt-3 text-slate-400">
-          Generate, edit, approve, and publish
-          automated gaming content.
+          Review and publish fresh weekly gaming news
+          with minimal manual work.
         </p>
 
         <p className="mt-2 text-sm text-slate-500">
-          🖼 Generate or regenerate featured
-          images for your AI content.
+          🖼 Weekly news is researched from current gaming
+          sources, drafted with AI, and given an original image.
         </p>
 
         {/* =====================================
@@ -607,8 +658,8 @@ export default function AIContentStudio() {
             "
           >
             {generating
-              ? "Generating Weekly Content..."
-              : "🚀 Generate Weekly Content"}
+              ? "Generating..."
+              : "🚫 Legacy Weekly Content"}
           </button>
 
 
@@ -626,7 +677,7 @@ export default function AIContentStudio() {
               disabled:opacity-50
             "
           >
-            🔄 Refresh
+            🔄 Refresh Fresh Gaming News
           </button>
 
         </div>
@@ -1240,6 +1291,33 @@ export default function AIContentStudio() {
                           ✅ Approve
                         </button>
 
+
+                        {/* APPROVE & PUBLISH */}
+
+                        {item.status !== "published" &&
+                        item.status !== "approved" && (
+                          <button
+                            onClick={() =>
+                              approveAndPublish(item)
+                            }
+                            disabled={
+                              approvingPublishing === item.id
+                            }
+                            className="
+                              rounded-xl
+                              bg-green-500/20
+                              px-4
+                              py-2
+                              font-bold
+                              text-green-300
+                              disabled:opacity-40
+                            "
+                          >
+                            {approvingPublishing === item.id
+                              ? "🚀 Publishing..."
+                              : "✅ Approve & Publish"}
+                          </button>
+                        )}
 
                         {/* PUBLISH / VIEW */}
 
