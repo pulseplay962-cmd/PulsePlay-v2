@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import {
   getAIContent,
+  refreshAINews,
   generateWeeklyContent,
   generateAIImage,
   updateAIContent,
@@ -131,6 +132,32 @@ export default function AIContentStudio() {
 
     } finally {
       setTestingImage(false);
+    }
+  }
+
+
+  // =====================================
+  // Refresh Current Gaming News
+  // =====================================
+
+  async function handleRefreshNews() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const result = await refreshAINews();
+      console.log("AI NEWS REFRESH RESULT:", result);
+
+      const data = await getAIContent();
+      setContent(data || []);
+    } catch (error: any) {
+      console.error("AI NEWS REFRESH ERROR:", error);
+      setError(
+        error?.message ||
+        "Failed refreshing current gaming news"
+      );
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -588,7 +615,7 @@ export default function AIContentStudio() {
           {/* REFRESH */}
 
           <button
-            onClick={loadContent}
+            onClick={handleRefreshNews}
             disabled={loading}
             className="
               rounded-xl
