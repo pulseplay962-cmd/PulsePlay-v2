@@ -25,9 +25,6 @@ export default function AIContentStudio() {
   const [loading, setLoading] =
     useState(true);
 
-  const [generating, setGenerating] =
-    useState(false);
-
   const [generatingImage, setGeneratingImage] =
     useState<string | null>(null);
 
@@ -166,44 +163,6 @@ export default function AIContentStudio() {
       );
     } finally {
       setLoading(false);
-    }
-  }
-
-
-  // =====================================
-  // Generate Weekly Content
-  // =====================================
-
-  async function handleGenerate() {
-    try {
-      setGenerating(true);
-      setError("");
-
-      await generateWeeklyContent();
-
-      await loadContent();
-
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(
-          new CustomEvent(
-            "pulseplay:ai-published"
-          )
-        );
-      }
-
-    } catch (error: any) {
-      console.error(
-        "GENERATE ERROR:",
-        error
-      );
-
-      setError(
-        error.message ||
-        "Failed generating content"
-      );
-
-    } finally {
-      setGenerating(false);
     }
   }
 
@@ -646,21 +605,6 @@ export default function AIContentStudio() {
 
 
         <div className="mt-5 flex flex-wrap gap-3">
-
-          {/* GENERATE WEEKLY */}
-
-          <button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="
-              pp-button
-              disabled:opacity-50
-            "
-          >
-            {generating
-              ? "Generating..."
-              : "🚫 Legacy Weekly Content"}
-          </button>
 
 
           {/* REFRESH */}
