@@ -1,41 +1,23 @@
 import { supabase } from "../lib/supabase";
 
-
 const API_URL =
   import.meta.env.VITE_API_URL ||
   "http://localhost:5000";
 
-
-
 export type AIContentItem = {
-
   id:string;
-
   title:string;
-
   content_type:string;
-
   category:string;
-
   body:string;
-
   social_caption?:string;
-
   image_prompt?:string;
-
   image_url?:string;
-
   status:string;
-
   scheduled_date?:string;
-
   created_at?:string;
-
   updated_at?:string;
-
 };
-
-
 
 // =====================================
 // Get AI Queue
@@ -43,82 +25,96 @@ export type AIContentItem = {
 
 export async function getAIContent():Promise<AIContentItem[]> {
 
+  /*
+   * The AI Studio Refresh button previously called this function
+   * and only reloaded /api/ai/queue. When the function is called
+   * directly from the Refresh button, the button is the active
+   * element during the click handler, so we can trigger the new
+   * research-backed refresh endpoint before loading the queue.
+   */
+  const activeElement =
+    typeof document !== "undefined"
+      ? document.activeElement
+      : null;
+
+  const isManualRefresh =
+    activeElement instanceof HTMLElement &&
+    activeElement.tagName === "BUTTON" &&
+    /refresh/i.test(activeElement.textContent || "");
+
+  if (isManualRefresh) {
+    const refreshResponse = await fetch(
+      `${API_URL}/api/news/refresh-ai`,
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+        },
+      }
+    );
+
+    const refreshData =
+      await refreshResponse.json();
+
+    if (!refreshResponse.ok) {
+      throw new Error(
+        refreshData?.error ||
+        "Failed refreshing current gaming news"
+      );
+    }
+
+    console.log(
+      "AI NEWS REFRESH RESULT:",
+      refreshData
+    );
+  }
 
   const response =
     await fetch(
       `${API_URL}/api/ai/queue`
     );
 
-
   const data =
     await response.json();
 
-
-
   if(!response.ok){
-
     throw new Error(
       data.error ||
       "Failed loading AI content"
     );
-
   }
 
-
-
   return data.queue || [];
-
 }
-
-
-
 
 // =====================================
 // Generate Weekly Content
 // =====================================
 
 export async function generateWeeklyContent(){
-
-
   const response =
     await fetch(
-
       `${API_URL}/api/ai/generate-weekly-save`,
-
       {
         method:"POST",
-
         headers:{
           "Content-Type":"application/json",
         },
       }
-
     );
-
-
 
   const data =
     await response.json();
 
-
-
   if(!response.ok){
-
     throw new Error(
       data.error ||
       "Failed generating weekly content"
     );
-
   }
 
-
-
   return data.posts || [];
-
 }
-
-
-
 
 // =====================================
 // Generate AI Image
@@ -127,60 +123,39 @@ export async function generateWeeklyContent(){
 export async function generateAIImage(
   id:string
 ){
-
-
   console.log(
     "GENERATING IMAGE FOR:",
     id
   );
 
-
   const response =
     await fetch(
-
       `${API_URL}/api/ai/image/${id}`,
-
       {
         method:"POST",
-
         headers:{
           "Content-Type":"application/json",
         },
       }
-
     );
-
-
 
   const data =
     await response.json();
-
-
 
   console.log(
     "IMAGE RESPONSE:",
     data
   );
 
-
-
   if(!response.ok){
-
     throw new Error(
       data.error ||
       "Failed generating AI image"
     );
-
   }
 
-
-
   return data.item;
-
 }
-
-
-
 
 // =====================================
 // Update AI Content
@@ -190,37 +165,19 @@ export async function updateAIContent(
   id:string,
   updates:Partial<AIContentItem>
 ){
-
-
   const {
     error
   } = await supabase
-
     .from("ai_content_queue")
-
     .update(updates)
-
-    .eq(
-      "id",
-      id
-    );
-
-
+    .eq("id", id);
 
   if(error){
-
     throw error;
-
   }
 
-
-
   return true;
-
 }
-
-
-
 
 // =====================================
 // Delete AI Content
@@ -229,37 +186,19 @@ export async function updateAIContent(
 export async function deleteAIContent(
   id:string
 ){
-
-
   const {
     error
   } = await supabase
-
     .from("ai_content_queue")
-
     .delete()
-
-    .eq(
-      "id",
-      id
-    );
-
-
+    .eq("id", id);
 
   if(error){
-
     throw error;
-
   }
 
-
-
   return true;
-
 }
-
-
-
 
 // =====================================
 // Publish AI Content
@@ -268,43 +207,28 @@ export async function deleteAIContent(
 export async function publishAIContent(
   id:string
 ){
-
-
   const response =
     await fetch(
-
       `${API_URL}/api/ai/publish/${id}`,
-
       {
         method:"POST",
-
         headers:{
           "Content-Type":"application/json",
         },
       }
-
     );
-
-
 
   const data =
     await response.json();
 
-
-
   if(!response.ok){
-
     throw new Error(
       data.error ||
       "Failed publishing AI content"
     );
-
   }
 
-
-
   return data.article;
-
 }
 
 // =====================================
@@ -355,7 +279,6 @@ export type GameReleasePublishResult = {
   social_queue?: unknown;
 };
 
-
 // =====================================
 // Scan Game Releases
 // =====================================
@@ -365,7 +288,6 @@ export async function scanGameReleases(
   month: number,
   limit = 10
 ): Promise<GameReleaseScanResult> {
-
   const response = await fetch(
     `${API_URL}/api/ai/game-releases/scan`,
     {
@@ -393,7 +315,6 @@ export async function scanGameReleases(
   return data;
 }
 
-
 // =====================================
 // Generate Game Release Package
 // =====================================
@@ -401,7 +322,6 @@ export async function scanGameReleases(
 export async function generateGameReleasePackage(
   release: GameReleaseCandidate
 ): Promise<GameReleasePackage> {
-
   const response = await fetch(
     `${API_URL}/api/ai/game-releases/generate`,
     {
@@ -433,7 +353,6 @@ export async function generateGameReleasePackage(
   return data.package;
 }
 
-
 // =====================================
 // Publish Game Release Package
 // =====================================
@@ -444,14 +363,6 @@ export async function publishGameRelease(
   selectedMonth: number,
   maxGames = 10
 ): Promise<GameReleasePublishResult> {
-
-  /*
-   * Get the currently authenticated Supabase
-   * session. The backend requireAdmin middleware
-   * validates this access token and confirms
-   * profiles.role === "admin".
-   */
-
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -466,13 +377,11 @@ export async function publishGameRelease(
     `${API_URL}/api/ai/game-releases/publish`,
     {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
         Authorization:
           `Bearer ${session.access_token}`,
       },
-
       body: JSON.stringify({
         package: packageData,
         selectedYear,
