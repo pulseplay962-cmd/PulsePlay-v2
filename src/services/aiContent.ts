@@ -383,3 +383,27 @@ export async function publishGameRelease(
 
   return data;
 }
+
+
+export async function refreshAINewsTest() {
+  const response = await fetch(
+    `${API_URL}/api/news/refresh-ai?test=true`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ||
+      "Failed running the no-credit news refresh test"
+    );
+  }
+
+  return data;
+}
