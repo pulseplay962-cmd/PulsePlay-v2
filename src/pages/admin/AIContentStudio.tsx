@@ -226,21 +226,6 @@ export default function AIContentStudio() {
     }
   }
 
-  async function publishPost(id: string) {
-    try {
-      setError("");
-      const result = await publishAIContent(id);
-      if (result?.slug) {
-        setPublishedArticles((prev) => ({ ...prev, [id]: result.slug }));
-      }
-      const data = filterNews(await getAIContent());
-      setAllContent(data);
-      setContent(showFreshOnly ? data.filter((item) => content.some((fresh) => fresh.id === item.id)) : data);
-    } catch (error: any) {
-      console.error("PUBLISH ERROR:", error);
-      setError(error.message || "Publish failed");
-    }
-  }
 
   return (
     <div className="space-y-6">
