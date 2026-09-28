@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import {
   getAIContent,
   refreshAINews,
+  refreshAINewsTest,
   generateAIImage,
   updateAIContent,
   deleteAIContent,
@@ -32,6 +33,7 @@ export default function AIContentStudio() {
   const [testImageUrl, setTestImageUrl] = useState("");
   const [showFreshOnly, setShowFreshOnly] = useState(false);
   const [freshBatchCount, setFreshBatchCount] = useState(0);
+  const [testMode, setTestMode] = useState(false);
   const [testImagePrompt, setTestImagePrompt] = useState(
     "A cinematic futuristic gaming setup with dark neon purple and cyan lighting, premium editorial gaming aesthetic, no logos, no text."
   );
@@ -79,9 +81,31 @@ export default function AIContentStudio() {
     }
   }
 
+  async function handleTestRefreshNews() {
+    try {
+      setLoading(true);
+      setError("");
+      setShowFreshOnly(true);
+      setTestMode(true);
+
+      const result = await refreshAINewsTest();
+      console.log("AI NEWS NO-CREDIT TEST RESULT:", result);
+
+      const testPosts = filterNews(result?.posts || []);
+      setFreshBatchCount(testPosts.length);
+      setContent(testPosts);
+    } catch (error: any) {
+      console.error("AI NEWS NO-CREDIT TEST ERROR:", error);
+      setError(error?.message || "No-credit news refresh test failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleRefreshNews() {
     try {
       setLoading(true);
+      setTestMode(false);
       setError("");
       setShowFreshOnly(true);
 
@@ -276,12 +300,26 @@ export default function AIContentStudio() {
 
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <button
+            onClick={handleTestRefreshNews}
+            disabled={loading}
+            className="rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 font-bold text-cyan-300 hover:bg-cyan-500/20 disabled:opacity-50"
+          >
+            {loading && testMode ? "🧪 Running No-Credit Test..." : "🧪 Test Refresh (No OpenAI)"}
+          </button>
+
+          <button
             onClick={handleRefreshNews}
             disabled={loading}
             className="rounded-xl bg-slate-700 px-5 py-3 font-bold disabled:opacity-50"
           >
             {loading ? "⏳ Refreshing..." : "🔄 Refresh Fresh Gaming + Hardware News"}
           </button>
+
+          {testMode && showFreshOnly && (
+            <span className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm font-bold text-yellow-300">
+              🧪 TEST MODE — No OpenAI calls • No database writes • Nothing published
+            </span>
+          )}
 
           {showFreshOnly && (
             <>
@@ -420,8 +458,8 @@ export default function AIContentStudio() {
                           </div>
 
                           <div className="mt-5 flex flex-wrap gap-3">
-                            <button onClick={() => startEdit(item)} className="rounded-xl bg-slate-700 px-4 py-2 font-bold">✏️ Edit</button>
-                            {!item.image_url && (
+                            {!testMode && <button onClick={() => startEdit(item)} className="rounded-xl bg-slate-700 px-4 py-2 font-bold">✏️ Edit</button>}
+                            {!testMode && !item.image_url && (
                               <button
                                 onClick={() => handleGenerateImage(item.id)}
                                 disabled={generatingImage === item.id}
@@ -430,10 +468,10 @@ export default function AIContentStudio() {
                                 {generatingImage === item.id ? "🖼 Generating..." : "🖼 Generate Image"}
                               </button>
                             )}
-                            {item.status !== "approved" && item.status !== "published" && (
+                            {!testMode && item.status !== "approved" && item.status !== "published" && (
                               <button onClick={() => approvePost(item.id)} className="rounded-xl bg-cyan-500/20 px-4 py-2 font-bold text-cyan-300">✅ Approve</button>
                             )}
-                            {item.status !== "published" && (
+                            {!testMode && item.status !== "published" && (
                               <button
                                 onClick={() => approveAndPublish(item)}
                                 disabled={approvingPublishing === item.id}
@@ -442,7 +480,7 @@ export default function AIContentStudio() {
                                 {approvingPublishing === item.id ? "🚀 Publishing..." : "🚀 Approve & Publish"}
                               </button>
                             )}
-                            <button onClick={() => removePost(item.id)} className="rounded-xl bg-red-500/10 px-4 py-2 font-bold text-red-300">🗑 Delete</button>
+                            {!testMode && <button onClick={() => removePost(item.id)} className="rounded-xl bg-red-500/10 px-4 py-2 font-bold text-red-300">🗑 Delete</button>}
                             {publishedArticles[item.id] && (
                               <Link to={`/news/${publishedArticles[item.id]}`} className="rounded-xl bg-green-500/20 px-4 py-2 font-bold text-green-300">
                                 View Published Article
