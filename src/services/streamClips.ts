@@ -55,22 +55,14 @@ export async function renderCaptionedVerticalStreamClip(id:string):Promise<Strea
 }
 
 export async function autoRenderTopClips(id:string, limit=3){
-  const {data:{session}}=await supabase.auth.getSession();
-  if(!session?.access_token) throw new Error("You must be logged in as an administrator.");
-
-  const {data,error}=await supabase.functions.invoke("ai-auto-render-proxy",{
-    body:{vodId:id,limit}
+  // Use the PulsePlay API directly. The API route already authenticates the
+  // administrator and starts the background renderer, so routing this action
+  // through a separate Supabase Edge Function can fail with a browser-level
+  // "Failed to fetch" when that function is unavailable or misconfigured.
+  return adminFetch(`/api/ai/stream-clips/vods/${encodeURIComponent(id)}/auto-render`,{
+    method:"POST",
+    body:JSON.stringify({limit:Math.min(Math.max(Number(limit)||3,1),3)})
   });
-
-  if(error) {
-    throw new Error(error.message||"Unable to start AI auto-render.");
-  }
-
-  if(!data?.success) {
-    throw new Error(data?.error||"Unable to start AI auto-render.");
-  }
-
-  return data;
 }
 
 export async function archiveStreamClip(id:string):Promise<StreamClip>{ const d=await adminFetch(`/api/ai/stream-clips/${id}/archive`,{method:"POST"}); return d.clip; }
