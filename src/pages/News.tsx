@@ -422,7 +422,7 @@ const hasMoreArticles = filteredArticles.filter(
                 </h1>
 
                 <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-                  The latest gaming news, industry developments,
+                  Fresh gaming news, industry developments,
                   announcements, updates, and community transmissions
                   from across the PulsePlay network.
                 </p>
