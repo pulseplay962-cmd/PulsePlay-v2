@@ -10,7 +10,7 @@ export default function Navbar() {
     { name: "Streams", icon: "📡", path: "/streams" },
     { name: "Store", icon: "🛒", path: "/store" },
     { name: "Gaming Gear", icon: "⚡", path: "/gaming-gear" },
-    { name: "News", icon: "📰", path: "/news" },
+    { name: "Latest Transmissions", icon: "📡", path: "/transmissions" },
     { name: "Community", icon: "🌐", path: "/community" },
     { name: "Feedback", icon: "📝", path: "/feedback" },
     { name: "About", icon: "📖", path: "/about" },
