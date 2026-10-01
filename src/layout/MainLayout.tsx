@@ -53,19 +53,11 @@ export default function MainLayout() {
           Animated Background
       ======================================= */}
 
-      {/* Main Gradient */}
+      {/* The global command-center background is provided by index.css.
+          Keep this layout layer transparent so it cannot cover the background image. */}
 
       <div
-        className="
-          pointer-events-none
-          fixed
-          inset-0
-          -z-30
-          bg-gradient-to-b
-          from-[#0b0617]
-          via-[#070b14]
-          to-[#02040a]
-        "
+        className="pointer-events-none fixed inset-0 -z-30 bg-transparent"
       />
 
 
