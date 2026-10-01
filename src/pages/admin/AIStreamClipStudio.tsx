@@ -1,265 +1,97 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  createStreamClipCandidate,
-  getStreamClips,
-  getStreamVods,
-  renderStreamClip,
-  renderVerticalStreamClip,
-  renderCaptionedVerticalStreamClip,
-  analyzeStreamVod,
-  archiveStreamClip,
-  setStreamClipKeep,
-  getClipCleanupPreview,
-  cleanupStreamClips,
-  type StreamClip,
-  type StreamVod
-} from "../../services/streamClips";
-
-function clock(total:number) {
-  const s=Math.max(0,Math.floor(total||0));
-  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
-  return h ? `${h}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}` : `${m}:${String(sec).padStart(2,"0")}`;
-}
-
-function socialPackage(clip:StreamClip) {
-  const title=clip.title?.trim() || "PulsePlay Gaming Highlight";
-  const description=clip.description?.trim() || "A memorable Veiltactician gaming moment from PulsePlay.";
-  const tags=["#PulsePlay","#Veiltactician","#Gaming","#GamingClips","#Twitch","#Shorts"];
-  return {
-    youtube:{title:title.slice(0,100),text:description+"\n\nWatch more from Veiltactician at PulsePlay.online ⚡\n\n"+tags.join(" ")+" #YouTubeShorts"},
-    facebook:{title:"🎮 "+title,text:description+"\n\nMore gaming, streaming, community and clips: PulsePlay.online ⚡\n\n"+tags.join(" ")+" #FacebookReels"},
-    instagram:{title:title,text:description+"\n\n⚡ Level Up with PulsePlay\n\n"+tags.join(" ")+" #InstagramReels"},
-    tiktok:{title:title,text:description+"\n\n⚡ PulsePlay.online | Veiltactician\n\n"+tags.join(" ")+" #TikTokGaming"}
-  };
-}
-
-function downloadName(clip:StreamClip) {
-  const safe=(clip.title?.trim() || "pulseplay-gaming-highlight")
-    .replace(/[^a-z0-9]+/gi,"-")
-    .replace(/^-+|-+$/g,"")
-    .slice(0,80)
-    .toLowerCase();
-  return `${safe || "pulseplay-gaming-highlight"}.mp4`;
-}
+import { useEffect, useState } from "react";
+import { getStreamVods, loadStreamVodToSite, type StreamVod } from "../../services/streamClips";
 
 export default function AIStreamClipStudio() {
   const [vods,setVods]=useState<StreamVod[]>([]);
-  const [clips,setClips]=useState<StreamClip[]>([]);
-  const [selectedVod,setSelectedVod]=useState("");
-  const [start,setStart]=useState("");
-  const [end,setEnd]=useState("");
-  const [momentType,setMomentType]=useState("highlight");
-  const [context,setContext]=useState("");
   const [loading,setLoading]=useState(true);
-  const [working,setWorking]=useState(false);
+  const [workingId,setWorkingId]=useState("");
   const [status,setStatus]=useState("");
   const [error,setError]=useState("");
-  const [cleanup,setCleanup]=useState<any>(null);
-  const [cleanupBusy,setCleanupBusy]=useState(false);
 
   async function load(sync=true) {
     try {
-      setLoading(true); setError("");
-      const [v,c]=await Promise.all([getStreamVods(sync),getStreamClips()]);
-      setVods(v); setClips(c);
-      if (!selectedVod && v[0]) setSelectedVod(v[0].id);
-    } catch(e:any) { setError(e.message || "Unable to load stream clips."); }
-    finally { setLoading(false); }
+      setLoading(true);
+      setError("");
+      const recent=await getStreamVods(sync);
+      setVods(recent);
+    } catch(e:any) {
+      setError(e.message || "Unable to load recent VODs.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  useEffect(()=>{ load(true); loadCleanup(); },[]);
-  async function loadCleanup() {
-    try { setCleanup(await getClipCleanupPreview(50,60)); }
-    catch(e:any) { setError(e.message || "Unable to check Clip Library cleanup."); }
-  }
-  async function archive(id:string) {
-    try { setCleanupBusy(true); setError(""); await archiveStreamClip(id); setClips(items=>items.filter(item=>item.id!==id)); setStatus("🧹 Clip archived and its stored video files were removed."); await loadCleanup(); }
-    catch(e:any) { setError(e.message || "Unable to archive clip."); } finally { setCleanupBusy(false); }
-  }
-  async function toggleKeep(clip:StreamClip) {
-    try { setCleanupBusy(true); setError(""); const updated=await setStreamClipKeep(clip.id,!clip.keep); setClips(items=>items.map(item=>item.id===clip.id?updated:item)); setStatus(updated.keep?"🔒 Clip protected from automatic cleanup.":"🔓 Clip is no longer protected."); await loadCleanup(); }
-    catch(e:any) { setError(e.message || "Unable to update clip protection."); } finally { setCleanupBusy(false); }
-  }
-  async function cleanupLibrary() {
-    if(!window.confirm("Clean up clips older than 60 days and clips beyond the 50-clip library limit? Protected clips will be kept.")) return;
-    try { setCleanupBusy(true); setError(""); setStatus("🧹 Cleaning the Clip Library and removing stored video files..."); const result=await cleanupStreamClips(50,60); setClips(await getStreamClips()); setCleanup(result); setStatus(`✅ Cleanup complete. ${result.archivedCount||0} clip${(result.archivedCount||0)===1?"":"s"} archived and storage cleaned.`); }
-    catch(e:any) { setError(e.message || "Unable to clean up the Clip Library."); } finally { setCleanupBusy(false); }
-  }
+  useEffect(()=>{ load(true); },[]);
 
-  const currentVod=useMemo(()=>vods.find(v=>v.id===selectedVod),[vods,selectedVod]);
-
-  async function analyze(id:string) {
+  async function loadToSite(vod:StreamVod) {
     try {
-      if(!id) throw new Error("Select a VOD first.");
-      setWorking(true); setError("");
-      setStatus("🤖 AI analysis started. Sending the selected VOD to PulsePlay...");
-      await analyzeStreamVod(id);
-      setStatus("✅ AI analysis finished. Loading the clip candidates...");
-      const [newClips,newVods]=await Promise.all([getStreamClips(),getStreamVods(false)]);
-      setClips(newClips); setVods(newVods);
-      setStatus(`✅ Analysis complete. ${newClips.length} clip candidate${newClips.length===1?"":"s"} are now in the Clip Library.`);
-    } catch(e:any) { setStatus(""); setError(e.message || "Unable to analyze VOD."); }
-    finally { setWorking(false); }
-  }
-
-  async function makeCandidate() {
-    try {
-      setWorking(true); setError("");
-      const a=Number(start), b=Number(end);
-      if(!Number.isFinite(a) || !Number.isFinite(b) || b<=a) {
-        setStatus("🤖 AI analysis started. Looking for memorable moments automatically...");
-        await analyze(selectedVod);
-        return;
-      }
-      if(b-a>180) throw new Error("Clips are limited to 180 seconds.");
-      setStatus("🎯 Creating the manual clip candidate...");
-      await createStreamClipCandidate({vodId:selectedVod,startSeconds:a,endSeconds:b,momentType,context});
-      setStart(""); setEnd(""); setContext("");
-      setClips(await getStreamClips());
-      setStatus("✅ Manual clip candidate created.");
-    } catch(e:any) { setStatus(""); setError(e.message || "Unable to create clip candidate."); }
-    finally { setWorking(false); }
-  }
-
-  async function renderVertical(id:string) {
-    try {
-      setWorking(true); setError(""); setStatus("📱 Creating the 9:16 vertical social clip...");
-      const updated=await renderVerticalStreamClip(id);
-      setClips(items=>items.map(item=>item.id===id?updated:item));
-      setStatus("✅ 9:16 vertical clip created and added to the Clip Library.");
-    } catch(e:any) { setStatus(""); setError(e.message || "Unable to render vertical clip."); }
-    finally { setWorking(false); }
-  }
-
-  async function renderCaptionedVertical(id:string) {
-    try {
-      setWorking(true); setError(""); setStatus("📝 AI is generating timestamped captions and burning them into the 9:16 clip...");
-      await renderCaptionedVerticalStreamClip(id);
-      const updated=await getStreamClips(selectedVod);
-      setClips(updated);
-      setStatus("✅ Captioned 9:16 clip created. The subtitles are burned into the video.");
-    } catch(e:any) { setStatus(""); setError(e.message || "Unable to create captioned vertical clip."); }
-    finally { setWorking(false); }
-  }
-
-  async function render(id:string) {
-    try {
-      setWorking(true); setError(""); setStatus("🎬 Rendering the MP4 clip...");
-      const updated=await renderStreamClip(id);
-      setClips(items=>items.map(item=>item.id===id?updated:item));
-      setStatus("✅ MP4 clip rendered and added to the Clip Library.");
-    } catch(e:any) { setStatus(""); setError(e.message || "Unable to render clip."); }
-    finally { setWorking(false); }
+      setWorkingId(vod.id);
+      setError("");
+      setStatus(`📺 Loading “${vod.title}” to the PulsePlay Videos page...`);
+      await loadStreamVodToSite(vod.id);
+      setVods(items=>items.map(item=>item.id===vod.id ? {...item,status:"loaded_to_site"} : item));
+      setStatus(`✅ “${vod.title}” is now loaded on the PulsePlay Videos page.`);
+    } catch(e:any) {
+      setStatus("");
+      setError(e.message || "Unable to load VOD to the site.");
+    } finally {
+      setWorkingId("");
+    }
   }
 
   return <div className="space-y-6">
     <div className="pp-panel p-6">
-      <h1 className="pp-title text-3xl">⚡ AI Stream Clip Command Center</h1>
-      <p className="mt-3 text-slate-400">One Stream. Endless Content. Sync Veiltactician VODs, let AI find memorable moments, generate titles, and render shareable MP4 clips.</p>
+      <h1 className="pp-title text-3xl">⚡ PulsePlay VOD Command Center</h1>
+      <p className="mt-3 text-slate-400">
+        Sync the latest Veiltactician Twitch VODs and choose which ones should appear on the PulsePlay Videos page.
+      </p>
       <div className="mt-5 flex flex-wrap gap-3">
-        <button className="pp-button" onClick={()=>load(true)} disabled={loading || working}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
-        {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>}
-        <a className="rounded-xl bg-purple-500/20 px-5 py-3 font-bold text-purple-300" href={currentVod?.url || "https://www.twitch.tv/veiltactician/videos"} target="_blank" rel="noreferrer">🎥 Open VOD</a>
+        <button className="pp-button" onClick={()=>load(true)} disabled={loading || !!workingId}>
+          {loading ? "Loading VODs..." : "🔄 Refresh Recent VODs"}
+        </button>
+        <a className="rounded-xl bg-purple-500/20 px-5 py-3 font-bold text-purple-300" href="https://www.twitch.tv/veiltactician/videos" target="_blank" rel="noreferrer">
+          🎥 Open Twitch VODs
+        </a>
       </div>
     </div>
 
-    {status && <div className="pp-panel border border-cyan-400/30 p-5 text-cyan-300"><div className="font-bold">{working ? "PROCESSING" : "STATUS"}</div><div className="mt-1">{status}</div></div>}
+    {status && <div className="pp-panel border border-cyan-400/30 p-5 text-cyan-300"><div className="font-bold">STATUS</div><div className="mt-1">{status}</div></div>}
     {error && <div className="pp-panel border border-red-500/40 p-5 text-red-300"><div className="font-bold">ERROR</div><div className="mt-1">{error}</div></div>}
-
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
-      <div className="pp-panel p-6">
-        <h2 className="text-xl font-black text-cyan-400">📡 Recent Veiltactician VODs</h2>
-        <div className="mt-4 space-y-3">
-          {vods.map(v=><button key={v.id} onClick={()=>setSelectedVod(v.id)} disabled={working} className={`w-full rounded-xl border p-4 text-left ${selectedVod===v.id?"border-cyan-400 bg-cyan-400/10":"border-white/10 bg-black/20"}`}>
-            <div className="flex items-center justify-between gap-3"><div className="font-bold">{v.title}</div><span className="text-xs uppercase text-cyan-400">{v.status || "discovered"}</span></div>
-            <div className="mt-1 text-sm text-slate-500">{v.published_at ? new Date(v.published_at).toLocaleString() : "Unknown date"} • {v.duration || "duration unavailable"} • {v.view_count || 0} views</div>
-          </button>)}
-          {!vods.length && !loading && <div className="text-slate-500">No VODs found. Make sure Twitch credentials are configured in Render.</div>}
-        </div>
-      </div>
-
-      <div className="pp-panel p-6">
-        <h2 className="text-xl font-black text-purple-400">✂️ Clip Creator</h2>
-        <p className="mt-2 text-sm text-slate-500">{currentVod?.title || "Select a VOD"}</p>
-        <p className="mt-2 text-xs text-slate-500">For automatic AI detection, leave both timestamp fields blank. Enter timestamps only when you already know the exact moment you want.</p>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="Start seconds (optional)" value={start} onChange={e=>setStart(e.target.value)} disabled={working} />
-          <input className="rounded-xl bg-black/30 p-3 text-white" placeholder="End seconds (optional)" value={end} onChange={e=>setEnd(e.target.value)} disabled={working} />
-        </div>
-        <select className="mt-3 w-full rounded-xl bg-black/30 p-3 text-white" value={momentType} onChange={e=>setMomentType(e.target.value)} disabled={working}>
-          <option value="highlight">🔥 Highlight</option><option value="combat">⚔️ Combat</option><option value="funny">😂 Funny</option><option value="boss_fight">🏆 Boss Fight</option><option value="story">📖 Story</option><option value="fail">💀 Fail</option><option value="reaction">😱 Reaction</option>
-        </select>
-        <textarea className="mt-3 min-h-[110px] w-full rounded-xl bg-black/30 p-3 text-white" placeholder="Optional context for AI titles: what happened in this moment?" value={context} onChange={e=>setContext(e.target.value)} disabled={working} />
-        <button className="pp-button mt-3 w-full" onClick={makeCandidate} disabled={working || !selectedVod}>{working?"🤖 AI is working...":"🤖 Find AI Moments / 🎯 Create Manual Clip"}</button>
-      </div>
-    </div>
 
     <div className="pp-panel p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-black text-pink-400">🎬 Clip Library</h2>
-          <p className="mt-1 text-xs text-slate-500">AI finds the moments; you choose which candidate to render. This keeps the render workflow simple and reliable.</p>
+          <h2 className="text-xl font-black text-cyan-400">📡 Recent Veiltactician VODs</h2>
+          <p className="mt-1 text-xs text-slate-500">Select a recent VOD and load it directly into PulsePlay's Videos section. No clip library or render queue is involved.</p>
         </div>
-        {selectedVod && (()=> {
-          const vodClips=clips.filter(c=>c.vod_id===selectedVod);
-          const ready=vodClips.filter(c=>c.status==="ready").length;
-          const failed=vodClips.filter(c=>c.status==="failed").length;
-          const candidates=vodClips.filter(c=>c.status==="candidate").length;
-          const rendering=vodClips.filter(c=>c.status==="rendering").length;
-          return <div className="flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-300">Ready: {ready}</span>
-            <span className="rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1 text-yellow-300">Rendering: {rendering}</span>
-            <span className="rounded-full border border-purple-400/30 bg-purple-400/10 px-3 py-1 text-purple-300">Candidates: {candidates}</span>
-            <span className="rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-red-300">Historical failures: {failed}</span>
-          </div>;
-        })()}
+        <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-300">{vods.length} recent VODs</span>
       </div>
-      <div className="mt-5 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="font-black text-cyan-300">🧹 Clip Library Cleanup</div><div className="mt-1 text-xs text-slate-500">Keeps the newest 50 clips, archives clips older than 60 days, and removes their stored MP4 files. Protected clips are never touched.</div></div>
-          <div className="flex flex-wrap gap-2"><button className="rounded-xl bg-white/10 px-4 py-2 text-sm font-bold text-slate-200" onClick={loadCleanup} disabled={cleanupBusy}>Check Cleanup</button><button className="rounded-xl bg-pink-500/20 px-4 py-2 text-sm font-bold text-pink-300" onClick={cleanupLibrary} disabled={cleanupBusy}>🧹 Clean Up Library</button></div></div>
-        {cleanup && <div className="mt-3 flex flex-wrap gap-2 text-xs"><span className="rounded-full border border-white/10 px-3 py-1 text-slate-300">Active: {cleanup.totalActive}</span><span className="rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1 text-yellow-300">Eligible: {cleanup.eligibleCount}</span><span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-300">Limit: {cleanup.maxClips}</span><span className="rounded-full border border-purple-400/30 bg-purple-400/10 px-3 py-1 text-purple-300">Age: {cleanup.ageDays} days</span></div>}
-      </div>
+
       <div className="mt-5 grid gap-4">
-        {clips.map(c=><div key={c.id} className="rounded-2xl border border-white/10 bg-black/20 p-5">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-black">{c.title}</h3>
-              <p className="mt-1 text-sm text-slate-500">{c.moment_type || "highlight"} • {clock(c.start_seconds)} - {clock(c.end_seconds)} • {c.status}</p>
+        {vods.map(v=><div key={v.id} className="rounded-2xl border border-white/10 bg-black/20 p-5">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-black text-white">{v.title}</h3>
+                {v.status==="loaded_to_site" && <span className="rounded-full border border-green-400/30 bg-green-400/10 px-2 py-1 text-xs font-bold text-green-300">ON SITE</span>}
+              </div>
+              <p className="mt-2 text-sm text-slate-500">
+                {v.published_at ? new Date(v.published_at).toLocaleString() : "Unknown date"} • {v.duration || "duration unavailable"} • {v.view_count || 0} views
+              </p>
             </div>
-            {c.status!=="ready" && <button className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300" onClick={()=>render(c.id)} disabled={working}>🎬 Render MP4</button>}
+            <div className="flex flex-wrap gap-2">
+              <a className="rounded-xl bg-white/10 px-4 py-2 font-bold text-slate-200" href={v.url} target="_blank" rel="noreferrer">Open VOD</a>
+              <button
+                className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300 disabled:opacity-50"
+                onClick={()=>loadToSite(v)}
+                disabled={!!workingId}
+              >
+                {workingId===v.id ? "Loading..." : v.status==="loaded_to_site" ? "↻ Update on Site" : "📺 Load to Site"}
+              </button>
+            </div>
           </div>
-          {c.ai_title_options?.length ? <div className="mt-3 text-sm text-slate-400">AI title options: {c.ai_title_options.join(" • ")}</div>:null}
-          {c.description && <p className="mt-3 text-slate-300">{c.description}</p>}
-          <div className="mt-3 flex flex-wrap gap-2"><button className={`rounded-xl px-4 py-2 font-bold ${c.keep?"bg-yellow-400/20 text-yellow-300":"bg-white/10 text-slate-300"}`} onClick={()=>toggleKeep(c)} disabled={cleanupBusy}>{c.keep?"🔒 Keep Protected":"🔓 Keep Clip"}</button>{!c.keep && c.status!=="rendering" && <button className="rounded-xl bg-red-500/15 px-4 py-2 font-bold text-red-300" onClick={()=>archive(c.id)} disabled={cleanupBusy}>🗄️ Archive</button>}</div>
-          {c.clip_url && <div className="mt-4">
-            <video className="w-full rounded-xl border border-white/10" controls src={c.clip_url} />
-            <div className="mt-3 flex flex-wrap gap-2">
-              <a className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300" href={c.clip_url} download={downloadName(c)} target="_blank" rel="noreferrer">⬇️ Download MP4</a>
-              <a className="rounded-xl bg-white/10 px-4 py-2 font-bold text-slate-200" href={c.clip_url} target="_blank" rel="noreferrer">↗ Open MP4</a>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {!c.vertical_clip_url && <button className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-300" onClick={()=>renderVertical(c.id)} disabled={working}>📱 Create 9:16 Vertical</button>}
-              {c.vertical_clip_url && <a className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-300" href={c.vertical_clip_url} download={downloadName(c).replace(/\.mp4$/,"-vertical.mp4")} target="_blank" rel="noreferrer">⬇️ Download 9:16</a>}\n              {c.vertical_clip_url && <button className="rounded-xl bg-purple-500/20 px-4 py-2 font-bold text-purple-300" onClick={()=>renderCaptionedVertical(c.id)} disabled={working}>📝 Add AI Captions</button>}\n              {c.captioned_vertical_clip_url && <a className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300" href={c.captioned_vertical_clip_url} download={downloadName(c).replace(/\.mp4$/,"-vertical-captioned.mp4")} target="_blank" rel="noreferrer">⬇️ Download Captioned</a>}
-            </div>
-            <p className="mt-2 text-xs text-slate-500">Landscape MP4 is the master. The vertical version is 720×1280 (9:16), ready for Shorts, Reels, and TikTok.</p>
-          </div>}
-          {c.status==="ready" && <details className="mt-4 rounded-xl border border-purple-400/20 bg-purple-400/5 p-4">
-            <summary className="cursor-pointer font-bold text-purple-300">📲 Social-Ready Content Package</summary>
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              {Object.entries(socialPackage(c)).map(([platform,pkg])=><div key={platform} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-black capitalize text-cyan-300">{platform === "youtube" ? "YouTube Shorts" : platform === "facebook" ? "Facebook Reels" : platform === "instagram" ? "Instagram Reels" : "TikTok"}</span>
-                  <button className="rounded-lg bg-white/10 px-3 py-1 text-xs font-bold text-slate-200" onClick={()=>navigator.clipboard?.writeText(pkg.title+"\n\n"+pkg.text)}>Copy</button>
-                </div>
-                <p className="mt-2 text-sm font-bold text-white">{pkg.title}</p>
-                <p className="mt-2 whitespace-pre-line text-xs text-slate-400">{pkg.text}</p>
-              </div>)}
-            </div>
-            <p className="mt-3 text-xs text-slate-500">Use the rendered MP4 above with the matching platform package. Posting remains manual until platform publishing is connected.</p>
-          </details>}
-          {c.status==="failed" && <p className="mt-3 text-sm text-red-300">{c.error}</p>}
         </div>)}
-        {!clips.length && <div className="text-slate-500">No clip candidates yet.</div>}
+        {!vods.length && !loading && <div className="text-slate-500">No recent VODs found. Make sure Twitch credentials are configured in Render.</div>}
       </div>
     </div>
   </div>;
