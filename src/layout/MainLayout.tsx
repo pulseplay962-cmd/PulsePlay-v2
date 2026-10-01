@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Outlet,
   useLocation,
@@ -16,6 +16,7 @@ export default function MainLayout() {
 
 
   const location = useLocation();
+  const [pageBooting, setPageBooting] = useState(true);
 
 
   /*
@@ -36,6 +37,11 @@ export default function MainLayout() {
       location.pathname
     );
 
+    setPageBooting(true);
+    const timer = window.setTimeout(() => setPageBooting(false), 10000);
+
+    return () => window.clearTimeout(timer);
+
   }, [location.pathname]);
 
 
@@ -46,7 +52,9 @@ export default function MainLayout() {
 
   return (
 
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className={`relative min-h-screen overflow-x-hidden ${pageBooting ? "pp-page-booting" : ""}`}>
+
+      <div className="page-ui">
 
       <div
         aria-hidden="true"
@@ -140,7 +148,9 @@ export default function MainLayout() {
           Navigation
       ======================================= */}
 
-      <div className="relative z-10">\n        <Navbar />\n      </div>
+      <div className="relative z-10">
+        <Navbar />
+      </div>
 
 
       {/* ======================================
@@ -295,6 +305,7 @@ export default function MainLayout() {
 
       </div>
 
+      </div>
 
     </div>
 
