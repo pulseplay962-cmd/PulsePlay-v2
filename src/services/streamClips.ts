@@ -5,48 +5,15 @@ const API_URL = "https://pulseplay-api-yubf.onrender.com";
 async function adminFetch(path:string, options:RequestInit={}) {
   const {data:{session}}=await supabase.auth.getSession();
   if(!session?.access_token) throw new Error("You must be logged in as an administrator.");
-
-  const maxAttempts = 3;
-  let lastError: unknown = null;
-
-  for(let attempt=1; attempt<=maxAttempts; attempt++) {
-    try {
-      const headers=new Headers(options.headers);
-      headers.set("Content-Type","application/json");
-      headers.set("Authorization",`Bearer ${session.access_token}`);
-
-      const response=await fetch(API_URL + path,{
-        ...options,
-        headers,
-        mode:"cors",
-        cache:"no-store"
-      });
-
-      const contentType=response.headers.get("content-type")||"";
-      const data=contentType.includes("application/json") ? await response.json() : null;
-
-      if(!response.ok) {
-        throw new Error(data?.error||`PulsePlay AI request failed (HTTP ${response.status}).`);
-      }
-      if(!data) throw new Error("PulsePlay API returned an unexpected non-JSON response.");
-      return data;
-    } catch(error) {
-      lastError = error;
-      const message = error instanceof Error ? error.message : String(error);
-      const isNetworkFailure =
-        message === "Failed to fetch" ||
-        /network|fetch|load failed|connection|timeout/i.test(message);
-
-      if(!isNetworkFailure || attempt===maxAttempts) break;
-      await new Promise(resolve=>setTimeout(resolve,1500 * attempt));
-    }
-  }
-
-  if(lastError instanceof Error && lastError.message === "Failed to fetch") {
-    throw new Error("PulsePlay API could not be reached after 3 attempts. Please try Auto-Render again in a few seconds.");
-  }
-
-  throw lastError instanceof Error ? lastError : new Error("PulsePlay AI request failed.");
+  const headers=new Headers(options.headers);
+  headers.set("Content-Type","application/json");
+  headers.set("Authorization",`Bearer ${session.access_token}`);
+  const response=await fetch(`${API_URL}${path}`,{...options,headers});
+  const contentType=response.headers.get("content-type")||"";
+  const data=contentType.includes("application/json") ? await response.json() : null;
+  if(!response.ok) throw new Error(data?.error||`PulsePlay AI request failed (HTTP ${response.status}).`);
+  if(!data) throw new Error("PulsePlay API returned an unexpected non-JSON response.");
+  return data;
 }
 
 export type StreamVod={id:string;twitch_id:string;channel:string;title:string;description?:string;url:string;thumbnail_url?:string;published_at?:string;duration?:string;view_count?:number;status?:string;analyzed_at?:string};
