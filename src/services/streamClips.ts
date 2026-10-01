@@ -11,61 +11,32 @@ async function adminFetch(path:string, options:RequestInit={}) {
   const response=await fetch(`${API_URL}${path}`,{...options,headers});
   const contentType=response.headers.get("content-type")||"";
   const data=contentType.includes("application/json") ? await response.json() : null;
-  if(!response.ok) throw new Error(data?.error||`PulsePlay AI request failed (HTTP ${response.status}).`);
+  if(!response.ok) throw new Error(data?.error||`PulsePlay request failed (HTTP ${response.status}).`);
   if(!data) throw new Error("PulsePlay API returned an unexpected non-JSON response.");
   return data;
 }
 
-export type StreamVod={id:string;twitch_id:string;channel:string;title:string;description?:string;url:string;thumbnail_url?:string;published_at?:string;duration?:string;view_count?:number;status?:string;analyzed_at?:string};
-export type StreamClip={id:string;vod_id:string;title:string;description?:string;start_seconds:number;end_seconds:number;duration_seconds:number;moment_type?:string;score?:number;ai_reason?:string;ai_title_options?:string[];source_url?:string;clip_url?:string;vertical_clip_url?:string;captioned_vertical_clip_url?:string;thumbnail_url?:string;status:string;error?:string;keep?:boolean;archived_at?:string};
+export type StreamVod={
+  id:string;
+  twitch_id:string;
+  channel:string;
+  title:string;
+  description?:string;
+  url:string;
+  thumbnail_url?:string;
+  published_at?:string;
+  duration?:string;
+  view_count?:number;
+  status?:string;
+  analyzed_at?:string;
+};
 
 export async function getStreamVods(sync=true):Promise<StreamVod[]>{
   const d=await adminFetch(`/api/ai/stream-clips/vods?sync=${sync?"true":"false"}&limit=20`);
   return d.vods||[];
 }
 
-export async function getStreamClips(vodId?:string):Promise<StreamClip[]>{
-  const q=vodId?`?vodId=${encodeURIComponent(vodId)}`:"";
-  const d=await adminFetch(`/api/ai/stream-clips/clips${q}`);
-  return d.clips||[];
+export async function loadStreamVodToSite(id:string){
+  const d=await adminFetch(`/api/ai/stream-clips/vods/${encodeURIComponent(id)}/load-to-site`,{method:"POST"});
+  return d.video;
 }
-
-export async function analyzeStreamVod(id:string){
-  return adminFetch(`/api/ai/stream-clips/vods/${id}/analyze`,{method:"POST"});
-}
-
-export async function createStreamClipCandidate(input:{vodId:string;startSeconds:number;endSeconds:number;momentType?:string;context?:string;score?:number}):Promise<StreamClip>{
-  const d=await adminFetch("/api/ai/stream-clips/candidates",{method:"POST",body:JSON.stringify(input)});
-  return d.clip;
-}
-
-export async function renderStreamClip(id:string):Promise<StreamClip>{
-  const d=await adminFetch(`/api/ai/stream-clips/${id}/render`,{method:"POST"});
-  return d.clip;
-}
-
-export async function renderVerticalStreamClip(id:string):Promise<StreamClip>{
-  const d=await adminFetch(`/api/ai/stream-clips/${id}/render-vertical`,{method:"POST"});
-  return d.clip;
-}
-
-export async function renderCaptionedVerticalStreamClip(id:string):Promise<StreamClip>{
-  const d=await adminFetch(`/api/ai/stream-clips/${id}/render-captioned-vertical`,{method:"POST"});
-  return d.clip || {id};
-}
-
-export async function autoRenderTopClips(id:string, limit=3){
-  // Use the PulsePlay API directly. The API route already authenticates the
-  // administrator and starts the background renderer, so routing this action
-  // through a separate Supabase Edge Function can fail with a browser-level
-  // "Failed to fetch" when that function is unavailable or misconfigured.
-  return adminFetch(`/api/ai/stream-clips/vods/${encodeURIComponent(id)}/auto-render`,{
-    method:"POST",
-    body:JSON.stringify({limit:Math.min(Math.max(Number(limit)||3,1),3)})
-  });
-}
-
-export async function archiveStreamClip(id:string):Promise<StreamClip>{ const d=await adminFetch(`/api/ai/stream-clips/${id}/archive`,{method:"POST"}); return d.clip; }
-export async function setStreamClipKeep(id:string,keep:boolean):Promise<StreamClip>{ const d=await adminFetch(`/api/ai/stream-clips/${id}/keep`,{method:"POST",body:JSON.stringify({keep})}); return d.clip; }
-export async function getClipCleanupPreview(maxClips=50,ageDays=60){ return adminFetch(`/api/ai/stream-clips/cleanup/preview?maxClips=${maxClips}&ageDays=${ageDays}`); }
-export async function cleanupStreamClips(maxClips=50,ageDays=60){ return adminFetch("/api/ai/stream-clips/cleanup",{method:"POST",body:JSON.stringify({maxClips,ageDays})}); }
