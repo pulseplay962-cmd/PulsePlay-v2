@@ -6,7 +6,7 @@
 body {
   margin:0;
   min-height:100vh;
-  background:#050510;
+  background: transparent;
   overflow-x:hidden;
 }
 
@@ -88,6 +88,7 @@ border-radius:
 
 box-shadow:
 
+
 0 10px 40px
 rgba(0,0,0,.35);
 
@@ -144,7 +145,6 @@ scale(1.02);
 
 
 
-
 /* =========================
    BUTTON SHINE
 ========================= */
@@ -196,6 +196,7 @@ translateX(120%);
 
 
 
+
 /* =========================
    SCAN EFFECT
 ========================= */
@@ -211,6 +212,7 @@ position:absolute;
 
 
 left:0;
+
 
 right:0;
 
@@ -277,8 +279,6 @@ opacity:0;
 
 
 
-
-
 /* =========================
    LIVE DOT
 ========================= */
@@ -326,7 +326,6 @@ transform:scale(1.25);
 
 
 }
-
 
 
 
