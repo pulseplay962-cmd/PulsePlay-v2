@@ -129,3 +129,12 @@ main::after {
 ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #a78bfa, #67e8f9); }
 ::selection { background: rgba(139, 92, 246, 0.65); color: white; }
 :focus-visible { outline: 2px solid rgba(34, 211, 238, 0.8); outline-offset: 3px; }
+
+
+/* =========================
+   Page Boot Transition
+========================= */
+
+.pp-page-booting .page-ui {
+  visibility: hidden;
+}
