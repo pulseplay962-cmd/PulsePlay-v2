@@ -7,7 +7,6 @@ import {
   renderVerticalStreamClip,
   renderCaptionedVerticalStreamClip,
   analyzeStreamVod,
-  autoRenderTopClips,
   archiveStreamClip,
   setStreamClipKeep,
   getClipCleanupPreview,
@@ -103,47 +102,6 @@ export default function AIStreamClipStudio() {
     finally { setWorking(false); }
   }
 
-  async function autoRender() {
-    try {
-      if(!selectedVod) throw new Error("Select a VOD first.");
-      setWorking(true); setError("");
-      setStatus("🎬 Selecting the top 3 AI-ranked clips for this VOD...");
-      const batchCandidates = clips.filter(c=>c.vod_id===selectedVod && c.status==="candidate").sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)).slice(0,3);
-      const batchIds = batchCandidates.map(c=>c.id);
-
-      if(!batchIds.length) {
-        const ready = clips.filter(c=>c.vod_id===selectedVod && c.status==="ready").length;
-        setStatus(ready ? `ℹ️ This VOD already has ${ready} rendered clip${ready===1?"":"s"}. Analyze the VOD again or create another candidate to render more.` : "ℹ️ No candidate clips are waiting to be rendered for this VOD.");
-        return;
-      }
-
-      setStatus(`🎬 Current Render Batch: 0/${batchIds.length} ready. Starting the isolated render worker...`);
-      await autoRenderTopClips(selectedVod,3);
-
-      let lastStatus = "";
-      for(let attempt=0; attempt<36; attempt++) {
-        await new Promise(resolve=>setTimeout(resolve,5000));
-        const newClips=await getStreamClips(selectedVod);
-        setClips(newClips);
-        const batch = newClips.filter(c=>batchIds.includes(c.id));
-        const rendering=batch.filter(c=>c.status==="rendering").length;
-        const ready=batch.filter(c=>c.status==="ready").length;
-        const failed=batch.filter(c=>c.status==="failed").length;
-        const remaining=batch.filter(c=>c.status==="candidate").length;
-
-        if(rendering || remaining) {
-          const message=`🎬 Auto-render running... ${ready}/${batchIds.length} ready, ${rendering} rendering, ${remaining} waiting.`;
-          if(message!==lastStatus) { setStatus(message); lastStatus=message; }
-          continue;
-        }
-        setStatus(`✅ Auto-render complete. ${ready}/${batchIds.length} clips ready${failed ? `, ${failed} failed` : ", 0 failed"}.`);
-        return;
-      }
-      setStatus("⏳ Rendering is still running in the background. The Clip Library will update as the selected clips finish.");
-    } catch(e:any) { setStatus(""); setError(e.message || "Unable to start auto-render."); }
-    finally { setWorking(false); }
-  }
-
   async function makeCandidate() {
     try {
       setWorking(true); setError("");
@@ -201,7 +159,6 @@ export default function AIStreamClipStudio() {
       <div className="mt-5 flex flex-wrap gap-3">
         <button className="pp-button" onClick={()=>load(true)} disabled={loading || working}>{loading?"Syncing VODs...":"🔄 Sync Twitch VODs"}</button>
         {currentVod && <button className="rounded-xl bg-pink-500/20 px-5 py-3 font-bold text-pink-300" onClick={()=>analyze(currentVod.id)} disabled={working}>🤖 Analyze VOD & Find Moments</button>}
-        {currentVod && <button className="rounded-xl bg-cyan-400/20 px-5 py-3 font-bold text-cyan-300" onClick={autoRender} disabled={working}>🎬 Auto-Render Top 3 Clips</button>}
         <a className="rounded-xl bg-purple-500/20 px-5 py-3 font-bold text-purple-300" href={currentVod?.url || "https://www.twitch.tv/veiltactician/videos"} target="_blank" rel="noreferrer">🎥 Open VOD</a>
       </div>
     </div>
@@ -241,7 +198,7 @@ export default function AIStreamClipStudio() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-xl font-black text-pink-400">🎬 Clip Library</h2>
-          <p className="mt-1 text-xs text-slate-500">Current Render Batch is tracked separately from historical attempts.</p>
+          <p className="mt-1 text-xs text-slate-500">AI finds the moments; you choose which candidate to render. This keeps the render workflow simple and reliable.</p>
         </div>
         {selectedVod && (()=> {
           const vodClips=clips.filter(c=>c.vod_id===selectedVod);
