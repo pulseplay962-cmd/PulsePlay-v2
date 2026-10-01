@@ -35,7 +35,8 @@ body {
   overflow-x: hidden;
 
   /*
-   * Deep futuristic base
+   * Deep futuristic base with the
+   * PulsePlay Command Center background.
    */
   background:
     radial-gradient(
@@ -53,6 +54,11 @@ body {
       rgba(236, 72, 153, 0.06),
       transparent 30%
     ),
+    linear-gradient(
+      rgba(4, 7, 17, 0.82),
+      rgba(2, 4, 11, 0.90)
+    ),
+    url("/pulseplay-command-center-bg.jpg") center / cover no-repeat,
     linear-gradient(
       180deg,
       #040711 0%,
