@@ -46,7 +46,16 @@ export default function MainLayout() {
 
   return (
 
-    <div className="relative min-h-screen overflow-x-hidden">\n\n      <div\n        aria-hidden="true"\n        className="pointer-events-none fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"\n        style={{\n          backgroundImage:\n            "linear-gradient(rgba(4,7,17,.82), rgba(2,4,11,.90)), url(/pulseplay-command-center-bg.jpg)",\n        }}\n      />
+    <div className="relative min-h-screen overflow-x-hidden">
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(4,7,17,.82), rgba(2,4,11,.90)), url(/pulseplay-command-center-bg.jpg)",
+        }}
+      />
 
 
       {/* ======================================
