@@ -514,6 +514,19 @@ export default function GameDetails() {
           </div>
         </div>
 
+        <div className="mb-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">
+            Game Image Notice
+          </p>
+          <p className="mt-2 text-xs leading-6 text-slate-400">
+            The image shown on this game page may be illustrative and may not
+            be an official screenshot from the actual game. Visuals may include
+            AI-generated, licensed, stock, or other sourced imagery. All
+            third-party game names, artwork, characters, logos, and trademarks
+            remain the property of their respective owners.
+          </p>
+        </div>
+
         {/* =====================================================
             COMMAND HERO
         ====================================================== */}
