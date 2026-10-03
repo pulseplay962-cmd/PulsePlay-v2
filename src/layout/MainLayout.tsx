@@ -217,6 +217,18 @@ export default function MainLayout() {
 
               <Outlet />
 
+          <div className="mb-4 rounded-2xl border border-white/10 bg-black/30 px-5 py-4 text-center backdrop-blur-sm">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+              Game Image Notice
+            </p>
+            <p className="mt-2 text-xs leading-6 text-slate-400">
+              Images used to represent games may be illustrative, AI-generated, licensed, stock, or otherwise sourced imagery and may not be official game screenshots. Third-party names, artwork, characters, logos, and trademarks belong to their respective owners.
+              <a href="/disclaimer" className="ml-1 font-bold text-cyan-400 transition hover:text-cyan-300">
+                Learn more →
+              </a>
+            </p>
+          </div>
+
               {showAffiliateRecommendations && (
                 <RelatedAffiliateProducts path={location.pathname} />
               )}
