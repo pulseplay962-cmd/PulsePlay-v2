@@ -26,6 +26,7 @@ import NewsSearch from "../pages/NewsSearch";
 import Feedback from "../pages/Feedback";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
+import Disclaimer from "../pages/Disclaimer";
 import Partners from "../pages/Partners";
 import MediaKit from "../pages/MediaKit";
 import NotFound from "../pages/NotFound";
@@ -64,6 +65,7 @@ const router = createBrowserRouter([
       { path: "feedback", element: <Feedback /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
+      { path: "disclaimer", element: <Disclaimer /> },
       { path: "partners", element: <Partners /> },
       { path: "media-kit", element: <MediaKit /> },
     ],
