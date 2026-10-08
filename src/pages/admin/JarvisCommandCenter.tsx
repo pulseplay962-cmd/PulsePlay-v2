@@ -15,7 +15,7 @@ type Health = {
 
 const starterMessages: Message[] = [{
   role: "jarvis",
-  text: "Good evening. PulsePlay JARVIS Command Center is ready. I am currently operating in interface mode while the protected JARVIS service connection is being brought online.",
+  text: "Good evening. PulsePlay JARVIS Command Center is online. The protected JARVIS core is connected and ready for commands.",
 }];
 
 const quickCommands = [
