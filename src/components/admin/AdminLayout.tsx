@@ -32,8 +32,8 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#05070d] text-white">
-      <aside className="w-72 flex flex-col border-r border-cyan-500/20 bg-[#0b1120] p-6">
+    <div className="admin-layout-shell flex bg-[#05070d] text-white">
+      <aside className="admin-layout-sidebar flex w-72 shrink-0 flex-col border-r border-cyan-500/20 bg-[#0b1120] p-6">
         <div>
           <h1 className="text-3xl font-black text-cyan-400 tracking-wide">PulsePlay</h1>
           <p className="mt-1 text-sm text-gray-400">Admin Control Center</p>
@@ -80,7 +80,7 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="admin-layout-main flex-1 overflow-y-auto p-8">
         <Outlet />
       </main>
     </div>
