@@ -22,6 +22,7 @@ export default function AdminLayout() {
     { name: "Partnerships", path: "/admin/partnerships", icon: "🤝" },
     { name: "AI Content Studio", path: "/admin/ai-content", icon: "🤖" },
     { name: "AI Clip Command Center", path: "/admin/ai-clips", icon: "✂️" },
+    { name: "JARVIS Command Center", path: "/admin/jarvis", icon: "⚡" },
     { name: "Settings", path: "/admin/settings", icon: "⚙️" },
     { name: "Social Queue", path: "/admin/social-queue", icon: "📡" },
   ];

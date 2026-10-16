@@ -40,6 +40,7 @@ import MerchandiseAdmin from "../pages/admin/Merchandise";
 import NewsAdmin from "../pages/admin/News";
 import Monetization from "../pages/admin/Monetization";
 import Settings from "../pages/admin/Settings";
+import JarvisCommandCenter from "../pages/admin/JarvisCommandCenter";
 import Login from "../pages/admin/Login";
 import Partnerships from "../pages/admin/Partnerships";
 
@@ -98,6 +99,7 @@ const router = createBrowserRouter([
       { path: "ai-clips", element: <AIStreamClipStudio /> },
       { path: "monetization", element: <Monetization /> },
       { path: "settings", element: <Settings /> },
+      { path: "jarvis", element: <JarvisCommandCenter /> },
     ],
   },
 
