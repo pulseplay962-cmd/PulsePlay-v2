@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { transform } from "esbuild";
+import ts from "typescript";
 
 test("analytics service inserts events without requesting a restricted SELECT/RETURNING read", async () => {
   const source = await readFile(new URL("../src/services/analytics.ts", import.meta.url), "utf8");
@@ -12,10 +12,11 @@ test("analytics service inserts events without requesting a restricted SELECT/RE
 
   assert.notEqual(instrumentedSource, source, "test must replace the real Supabase import");
 
-  const { code } = await transform(instrumentedSource, {
-    loader: "ts",
-    format: "esm",
-    target: "node24",
+  const { outputText: code } = ts.transpileModule(instrumentedSource, {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ES2022,
+    },
   });
 
   let inserted;
