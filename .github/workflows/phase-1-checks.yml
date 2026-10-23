@@ -24,3 +24,5 @@ jobs:
         run: npm ci
       - name: Build frontend
         run: npm run build
+      - name: Run isolated analytics integration check
+        run: node --test tests/analytics-integration.test.mjs
