@@ -4,7 +4,15 @@ import { once } from "node:events";
 import test from "node:test";
 import { createServer as createViteServer } from "vite";
 
-function withTimeout(promise, ms, label) {\n  let timer;\n  return Promise.race([\n    promise,\n    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms); }),\n  ]).finally(() => clearTimeout(timer));\n}\n\ntest("trackEvent inserts analytics without requesting a restricted SELECT/RETURNING read", async () => {
+function withTimeout(promise, ms, label) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms); }),
+  ]).finally(() => clearTimeout(timer));
+}
+
+test("trackEvent inserts analytics without requesting a restricted SELECT/RETURNING read", async () => {
   let captured;
   const mockDb = createHttpServer(async (req, res) => {
     let body = "";
