@@ -1286,13 +1286,13 @@ export default function News() {
                           font-black
                           uppercase
                           ${
-                            article.published
+                            isNewsArticlePublished(article)
                               ? "bg-green-500/20 text-green-300"
                               : "bg-yellow-500/20 text-yellow-300"
                           }
                         `}
                       >
-                        {article.published
+                        {isNewsArticlePublished(article)
                           ? "Published"
                           : "Draft"}
                       </span>
@@ -1534,7 +1534,7 @@ export default function News() {
                           hover:bg-green-500/20
                         "
                       >
-                        {article.published
+                        {isNewsArticlePublished(article)
                           ? "Unpublish"
                           : "Publish"}
                       </button>
