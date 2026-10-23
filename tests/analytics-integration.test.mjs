@@ -4,7 +4,7 @@ import { once } from "node:events";
 import test from "node:test";
 import { createServer as createViteServer } from "vite";
 
-test("trackEvent inserts analytics without requesting a restricted SELECT/RETURNING read", async () => {
+function withTimeout(promise, ms, label) {\n  let timer;\n  return Promise.race([\n    promise,\n    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms); }),\n  ]).finally(() => clearTimeout(timer));\n}\n\ntest("trackEvent inserts analytics without requesting a restricted SELECT/RETURNING read", async () => {
   let captured;
   const mockDb = createHttpServer(async (req, res) => {
     let body = "";
@@ -55,8 +55,8 @@ test("trackEvent inserts analytics without requesting a restricted SELECT/RETURN
   });
 
   try {
-    const analytics = await vite.ssrLoadModule("/src/services/analytics.ts");
-    const result = await analytics.trackEvent({
+    const analytics = await withTimeout(vite.ssrLoadModule("/src/services/analytics.ts"), 10000, "load analytics module");
+    const result = await withTimeout(analytics.trackEvent({
       eventType: "page_view",
       pagePath: "/store",
       pageTitle: "Integration Test Store",
