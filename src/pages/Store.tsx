@@ -6,12 +6,17 @@ import BrandButton from "../components/ui/BrandButton";
 import {
   getProducts,
 } from "../services/products";
+import {
+  getAffiliateRedirectUrl,
+  getPublicAffiliateLinkMap,
+} from "../services/monetization";
 
 type Product = {
   id: string;
   name: string;
   description?: string;
-  price?: number;
+  price?: string | number | null;
+  affiliateLinkId?: string;
   image?: string;
   category?: string;
   link?: string;
@@ -33,6 +38,34 @@ function cleanImageUrl(image?: string) {
   }
 
   return image;
+}
+
+function formatPrice(price?: string | number | null): string {
+  if (price === null || price === undefined || String(price).trim() === "") {
+    return "Check current price";
+  }
+
+  const amount =
+    typeof price === "number"
+      ? price
+      : Number(String(price).replace(/[$,\s]/g, ""));
+
+  if (!Number.isFinite(amount) || amount < 0) {
+    return "Check current price";
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+}
+
+function getAnalyticsSessionId(): string | undefined {
+  try {
+    return window.sessionStorage.getItem("pulseplay_analytics_session") || undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function formatCategory(category?: string) {
@@ -65,9 +98,22 @@ export default function Store() {
       try {
         setLoading(true);
 
-        const data = await getProducts();
+        const [data, affiliateLinkMap] = await Promise.all([
+          getProducts(),
+          getPublicAffiliateLinkMap().catch((error): Record<string, string> => {
+            // Affiliate mapping is an enhancement; keep direct product links usable
+            // if the tracking endpoint is temporarily unavailable.
+            console.warn("Failed loading affiliate link mappings:", error);
+            return {};
+          }),
+        ]);
 
-        setProducts(data || []);
+        setProducts(
+          (data || []).map((product: Product) => ({
+            ...product,
+            affiliateLinkId: affiliateLinkMap[product.id],
+          }))
+        );
       } catch (error) {
         console.error(
           "Failed loading armory:",
@@ -568,15 +614,9 @@ export default function Store() {
                               {product.name}
                             </h3>
 
-                            {product.price !== undefined &&
-                              product.price !== null && (
-                                <span className="shrink-0 text-lg font-black text-cyan-300">
-                                  $
-                                  {Number(
-                                    product.price
-                                  ).toFixed(2)}
-                                </span>
-                              )}
+                            <span className="shrink-0 text-right text-sm font-black text-cyan-300">
+                              {formatPrice(product.price)}
+                            </span>
                           </div>
 
                           {product.description && (
@@ -628,7 +668,15 @@ export default function Store() {
                         <div className="mt-6">
                           {product.link ? (
                             <a
-                              href={product.link}
+                              href={
+                                product.affiliateLinkId
+                                  ? getAffiliateRedirectUrl(product.affiliateLinkId, {
+                                      pagePath: "/store",
+                                      campaign: "store_armory",
+                                      sessionId: getAnalyticsSessionId(),
+                                    })
+                                  : product.link
+                              }
                               target="_blank"
                               rel="noopener noreferrer"
                               aria-label={`View ${product.name}`}
