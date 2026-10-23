@@ -19,7 +19,7 @@ export type NewsArticle = {
 
     author:string;
 
-    published:boolean;
+    published:boolean | string;
 
     featured:boolean;
 
@@ -98,6 +98,19 @@ export async function getNews(){
 
 
 
+// Publication is intentionally strict: both fields must agree.
+// The database stores published as text, not a PostgreSQL boolean.
+export function isNewsArticlePublished(
+    article: Pick<NewsArticle, "published" | "status">
+): boolean {
+    const flagIsTrue =
+        article.published === true ||
+        article.published === "true";
+
+    return flagIsTrue && article.status === "published";
+}
+
+
 // ================================
 // Get Published News
 // ================================
@@ -111,7 +124,11 @@ export async function getPublishedNews(){
             .select("*")
             .eq(
                 "published",
-                true
+                "true"
+            )
+            .eq(
+                "status",
+                "published"
             )
             .order(
                 "created_at",
@@ -150,6 +167,14 @@ export async function getFeaturedNews(){
             .eq(
                 "featured",
                 true
+            )
+            .eq(
+                "published",
+                "true"
+            )
+            .eq(
+                "status",
+                "published"
             )
             .order(
                 "created_at",
@@ -193,6 +218,8 @@ export async function getNewsBySlug(
             .from("news")
             .select("*")
             .eq("slug", slug)
+            .eq("published", "true")
+            .eq("status", "published")
             .maybeSingle();
 
 
