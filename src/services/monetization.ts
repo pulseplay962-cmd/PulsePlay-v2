@@ -115,6 +115,27 @@ export function getAffiliateRedirectUrl(
   return `${API_URL}/api/monetization/go/${encodeURIComponent(linkId)}${query ? `?${query}` : ""}`;
 }
 
+export async function getPublicAffiliateLinkMap(): Promise<Record<string, string>> {
+  const response = await fetch(`${API_URL}/api/monetization/public-links`);
+  const body = await response.json().catch(() => ({}));
+
+  if (!response.ok || !body?.success || !Array.isArray(body.links)) {
+    throw new Error(body?.error || "Unable to load public affiliate link mappings.");
+  }
+
+  return Object.fromEntries(
+    body.links
+      .filter(
+        (link: { id?: unknown; product_id?: unknown }) =>
+          typeof link.id === "string" && typeof link.product_id === "string"
+      )
+      .map((link: { id: string; product_id: string }) => [
+        link.product_id,
+        link.id,
+      ])
+  );
+}
+
 async function authorizedRequest<T>(token: string, path: string, options: RequestInit = {}) {
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
