@@ -242,14 +242,12 @@ export async function trackEvent({
     );
 
 
-    const {
-      data,
-      error,
-    } = await supabase
+    // Public visitors may insert analytics events, but SELECT is restricted
+    // to admins by RLS. Do not request the inserted row back here, because
+    // that RETURNING read can fail for anonymous visitors.
+    const { error } = await supabase
       .from("analytics_events")
-      .insert(payload)
-      .select()
-      .single();
+      .insert(payload);
 
 
     if (error) {
@@ -268,11 +266,10 @@ export async function trackEvent({
 
     console.log(
       "✅ ANALYTICS EVENT RECORDED:",
-      data
+      payload
     );
 
-
-    return data;
+    return payload;
 
 
   } catch (error) {
