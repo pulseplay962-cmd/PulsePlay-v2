@@ -5,6 +5,7 @@ import {
   getNews,
   updateNews,
   deleteNews,
+  isNewsArticlePublished,
   type NewsArticle,
 } from "../../services/news";
 
@@ -185,7 +186,9 @@ export default function News() {
 
         featured,
 
-        published,
+        published: published ? "true" : "false",
+
+        status: published ? "published" : "draft",
 
         author: author.trim() || "PulsePlay",
 
@@ -277,7 +280,7 @@ export default function News() {
     );
 
     setPublished(
-      article.published === true
+      isNewsArticlePublished(article)
     );
 
     setMetaDescription(
@@ -347,11 +350,14 @@ export default function News() {
     article: NewsArticle
   ) {
     try {
+      const shouldPublish = !isNewsArticlePublished(article);
+
       await updateNews(
         article.id,
         {
-          published:
-            !article.published,
+          published: shouldPublish ? "true" : "false",
+          status: shouldPublish ? "published" : "draft",
+          published_at: shouldPublish ? new Date().toISOString() : null,
         }
       );
 
@@ -1280,13 +1286,13 @@ export default function News() {
                           font-black
                           uppercase
                           ${
-                            article.published
+                            isNewsArticlePublished(article)
                               ? "bg-green-500/20 text-green-300"
                               : "bg-yellow-500/20 text-yellow-300"
                           }
                         `}
                       >
-                        {article.published
+                        {isNewsArticlePublished(article)
                           ? "Published"
                           : "Draft"}
                       </span>
@@ -1528,7 +1534,7 @@ export default function News() {
                           hover:bg-green-500/20
                         "
                       >
-                        {article.published
+                        {isNewsArticlePublished(article)
                           ? "Unpublish"
                           : "Publish"}
                       </button>
