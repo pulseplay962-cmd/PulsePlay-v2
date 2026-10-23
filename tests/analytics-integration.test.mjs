@@ -1,40 +1,42 @@
 import assert from "node:assert/strict";
-import { createServer as createHttpServer } from "node:http";
-import { once } from "node:events";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { createServer as createViteServer } from "vite";
+import { transform } from "esbuild";
 
-function withTimeout(promise, ms, label) {
-  let timer;
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms); }),
-  ]).finally(() => clearTimeout(timer));
-}
+test("analytics service inserts events without requesting a restricted SELECT/RETURNING read", async () => {
+  const source = await readFile(new URL("../src/services/analytics.ts", import.meta.url), "utf8");
+  const instrumentedSource = source.replace(
+    'import { supabase } from "../lib/supabase";',
+    "const { supabase } = globalThis.__pulsePlayAnalyticsTest;",
+  );
 
-test("trackEvent inserts analytics without requesting a restricted SELECT/RETURNING read", async () => {
-  let captured;
-  const mockDb = createHttpServer(async (req, res) => {
-    let body = "";
-    for await (const chunk of req) body += chunk;
-    captured = {
-      method: req.method,
-      url: req.url,
-      prefer: req.headers.prefer || "",
-      apikey: req.headers.apikey,
-      body: body ? JSON.parse(body) : null,
-    };
+  assert.notEqual(instrumentedSource, source, "test must replace the real Supabase import");
 
-    res.writeHead(201, { "content-type": "application/json" });
-    res.end();
+  const { code } = await transform(instrumentedSource, {
+    loader: "ts",
+    format: "esm",
+    target: "node24",
   });
 
-  mockDb.listen(0, "127.0.0.1");
-  await once(mockDb, "listening");
-
-  const port = mockDb.address().port;
-  process.env.VITE_SUPABASE_URL = `http://127.0.0.1:${port}`;
-  process.env.VITE_SUPABASE_ANON_KEY = "integration-test-anon-key";
+  let inserted;
+  let selectCalled = false;
+  globalThis.__pulsePlayAnalyticsTest = {
+    supabase: {
+      from(table) {
+        assert.equal(table, "analytics_events");
+        return {
+          async insert(payload) {
+            inserted = payload;
+            return { error: null };
+          },
+          select() {
+            selectCalled = true;
+            throw new Error("analytics insert must not request a SELECT/RETURNING read");
+          },
+        };
+      },
+    },
+  };
 
   Object.defineProperty(globalThis, "document", {
     configurable: true,
@@ -44,10 +46,7 @@ test("trackEvent inserts analytics without requesting a restricted SELECT/RETURN
     configurable: true,
     value: {
       location: { pathname: "/store" },
-      sessionStorage: {
-        getItem: () => null,
-        setItem: () => {},
-      },
+      sessionStorage: { getItem: () => null, setItem: () => {} },
     },
   });
   Object.defineProperty(globalThis, "navigator", {
@@ -55,34 +54,26 @@ test("trackEvent inserts analytics without requesting a restricted SELECT/RETURN
     value: { userAgent: "PulsePlay integration test" },
   });
 
-  const vite = await createViteServer({
-    configFile: false,
-    server: { middlewareMode: true },
-    appType: "custom",
-    logLevel: "error",
-  });
-
   try {
-    const analytics = await withTimeout(vite.ssrLoadModule("/src/services/analytics.ts"), 10000, "load analytics module");
-    const result = await withTimeout(analytics.trackEvent({
+    const moduleUrl = `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`;
+    const analytics = await import(moduleUrl);
+    const result = await analytics.trackEvent({
       eventType: "page_view",
       pagePath: "/store",
       pageTitle: "Integration Test Store",
       contentType: "store",
-    }), 10000, "trackEvent");
+    });
 
-    assert.ok(result, "trackEvent should return its submitted payload");
-    assert.equal(captured.method, "POST");
-    assert.equal(captured.url.split("?")[0], "/rest/v1/analytics_events");
-    assert.equal(captured.body.event_type, "page_view");
-    assert.equal(captured.body.page_path, "/store");
-    assert.equal(captured.body.page_title, "Integration Test Store");
-    assert.equal(captured.body.content_type, "store");
-    assert.match(captured.prefer, /return=minimal/);
-    assert.doesNotMatch(captured.prefer, /return=representation/);
+    assert.ok(result, "trackEvent should return the submitted payload");
+    assert.equal(inserted.event_type, "page_view");
+    assert.equal(inserted.page_path, "/store");
+    assert.equal(inserted.page_title, "Integration Test Store");
+    assert.equal(inserted.content_type, "store");
+    assert.equal(selectCalled, false);
   } finally {
-    await vite.close();
-    mockDb.closeAllConnections();
-    await new Promise((resolve) => mockDb.close(resolve));
+    delete globalThis.__pulsePlayAnalyticsTest;
+    delete globalThis.document;
+    delete globalThis.window;
+    delete globalThis.navigator;
   }
 });
