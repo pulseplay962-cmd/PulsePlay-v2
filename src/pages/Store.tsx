@@ -100,7 +100,7 @@ export default function Store() {
 
         const [data, affiliateLinkMap] = await Promise.all([
           getProducts(),
-          getPublicAffiliateLinkMap().catch((error) => {
+          getPublicAffiliateLinkMap().catch((error): Record<string, string> => {
             // Affiliate mapping is an enhancement; keep direct product links usable
             // if the tracking endpoint is temporarily unavailable.
             console.warn("Failed loading affiliate link mappings:", error);
