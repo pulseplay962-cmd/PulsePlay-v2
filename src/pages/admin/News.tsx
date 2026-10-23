@@ -5,6 +5,7 @@ import {
   getNews,
   updateNews,
   deleteNews,
+  isNewsArticlePublished,
   type NewsArticle,
 } from "../../services/news";
 
@@ -185,7 +186,9 @@ export default function News() {
 
         featured,
 
-        published,
+        published: published ? "true" : "false",
+
+        status: published ? "published" : "draft",
 
         author: author.trim() || "PulsePlay",
 
@@ -277,7 +280,7 @@ export default function News() {
     );
 
     setPublished(
-      article.published === true
+      isNewsArticlePublished(article)
     );
 
     setMetaDescription(
@@ -347,11 +350,14 @@ export default function News() {
     article: NewsArticle
   ) {
     try {
+      const shouldPublish = !isNewsArticlePublished(article);
+
       await updateNews(
         article.id,
         {
-          published:
-            !article.published,
+          published: shouldPublish ? "true" : "false",
+          status: shouldPublish ? "published" : "draft",
+          published_at: shouldPublish ? new Date().toISOString() : null,
         }
       );
 
