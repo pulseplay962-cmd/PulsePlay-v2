@@ -69,7 +69,7 @@ test("trackEvent inserts analytics without requesting a restricted SELECT/RETURN
       pagePath: "/store",
       pageTitle: "Integration Test Store",
       contentType: "store",
-    });
+    }), 10000, "trackEvent");
 
     assert.ok(result, "trackEvent should return its submitted payload");
     assert.equal(captured.method, "POST");
