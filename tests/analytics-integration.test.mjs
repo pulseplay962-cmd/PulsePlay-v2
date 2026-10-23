@@ -74,6 +74,7 @@ test("trackEvent inserts analytics without requesting a restricted SELECT/RETURN
     assert.doesNotMatch(captured.prefer, /return=representation/);
   } finally {
     await vite.close();
-    mockDb.close();
+    mockDb.closeAllConnections();
+    await new Promise((resolve) => mockDb.close(resolve));
   }
 });
