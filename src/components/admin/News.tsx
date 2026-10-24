@@ -51,7 +51,7 @@ export default function News() {
 
   const [featured, setFeatured] = useState(false);
 
-  const [published, setPublished] = useState(true);
+  const [published, setPublished] = useState(false);
 
 
 
@@ -260,7 +260,7 @@ export default function News() {
 
     setFeatured(false);
 
-    setPublished(true);
+    setPublished(false);
 
   }
 
