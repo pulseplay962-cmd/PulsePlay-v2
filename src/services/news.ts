@@ -19,7 +19,7 @@ export type NewsArticle = {
 
     author:string;
 
-    published:boolean;
+    published:boolean | string;
 
     featured:boolean;
 
@@ -111,7 +111,7 @@ export async function getPublishedNews(){
             .select("*")
             .eq(
                 "published",
-                true
+                "true"
             )
             .eq(
                 "status",
@@ -157,7 +157,7 @@ export async function getFeaturedNews(){
             )
             .eq(
                 "published",
-                true
+                "true"
             )
             .eq(
                 "status",
@@ -205,7 +205,7 @@ export async function getNewsBySlug(
             .from("news")
             .select("*")
             .eq("slug", slug)
-            .eq("published", true)
+            .eq("published", "true")
             .eq("status", "published")
             .maybeSingle();
 
@@ -399,7 +399,7 @@ export async function saveAIDraft(
 
                     featured:false,
 
-                    published:false,
+                    published:"false",
 
                     author:
                     "PulsePlay AI",
