@@ -113,6 +113,10 @@ export async function getPublishedNews(){
                 "published",
                 true
             )
+            .eq(
+                "status",
+                "published"
+            )
             .order(
                 "created_at",
                 {
@@ -150,6 +154,14 @@ export async function getFeaturedNews(){
             .eq(
                 "featured",
                 true
+            )
+            .eq(
+                "published",
+                true
+            )
+            .eq(
+                "status",
+                "published"
             )
             .order(
                 "created_at",
@@ -193,6 +205,8 @@ export async function getNewsBySlug(
             .from("news")
             .select("*")
             .eq("slug", slug)
+            .eq("published", true)
+            .eq("status", "published")
             .maybeSingle();
 
 
