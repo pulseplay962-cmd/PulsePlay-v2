@@ -282,7 +282,7 @@ export type GameReleasePublishResult = {
 };
 
 // =====================================
-// Scan Game Releases
+// Scan Game Releases (administrator session required)
 // =====================================
 
 export async function scanGameReleases(
