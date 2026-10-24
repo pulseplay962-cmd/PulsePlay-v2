@@ -1,6 +1,8 @@
 name: PulsePlay Frontend CI
 
 on:
+  push:
+    branches: [feat/ai-news-worker-safety]
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
