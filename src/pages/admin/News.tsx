@@ -10,6 +10,10 @@ import {
 
 import { uploadImage } from "../../services/storage";
 
+function isArticlePublished(value: NewsArticle["published"]) {
+  return value === true || value === "true";
+}
+
 export default function News() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
 
@@ -189,7 +193,7 @@ export default function News() {
 
         featured,
 
-        published,
+        published: published ? "true" : "false",
         status: published ? "published" : "draft",
         published_at: published
           ? existingArticle?.published_at || new Date().toISOString()
@@ -285,7 +289,7 @@ export default function News() {
     );
 
     setPublished(
-      article.published === true
+      isArticlePublished(article.published)
     );
 
     setMetaDescription(
@@ -355,12 +359,12 @@ export default function News() {
     article: NewsArticle
   ) {
     try {
-      const nextPublished = !article.published;
+      const nextPublished = !isArticlePublished(article.published);
 
       await updateNews(
         article.id,
         {
-          published: nextPublished,
+          published: nextPublished ? "true" : "false",
           status: nextPublished ? "published" : "draft",
           published_at: nextPublished
             ? article.published_at || new Date().toISOString()
@@ -1293,13 +1297,13 @@ export default function News() {
                           font-black
                           uppercase
                           ${
-                            article.published
+                            isArticlePublished(article.published)
                               ? "bg-green-500/20 text-green-300"
                               : "bg-yellow-500/20 text-yellow-300"
                           }
                         `}
                       >
-                        {article.published
+                        {isArticlePublished(article.published)
                           ? "Published"
                           : "Draft"}
                       </span>
@@ -1541,7 +1545,7 @@ export default function News() {
                           hover:bg-green-500/20
                         "
                       >
-                        {article.published
+                        {isArticlePublished(article.published)
                           ? "Unpublish"
                           : "Publish"}
                       </button>
