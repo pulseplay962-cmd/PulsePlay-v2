@@ -6,12 +6,13 @@ import BrandButton from "../components/ui/BrandButton";
 import {
   getProducts,
 } from "../services/products";
+import { trackEvent } from "../services/analytics";
 
 type Product = {
   id: string;
   name: string;
   description?: string;
-  price?: number;
+  price?: string | number | null;
   image?: string;
   category?: string;
   link?: string;
@@ -45,6 +46,23 @@ function formatCategory(category?: string) {
     .replace(/\b\w/g, (letter) =>
       letter.toUpperCase()
     );
+}
+
+function formatProductPrice(price?: string | number | null): string | null {
+  if (price === undefined || price === null || String(price).trim() === "") {
+    return null;
+  }
+
+  const rawPrice = String(price).trim();
+  if (/check|current price|view deal/i.test(rawPrice)) return rawPrice;
+
+  const numericPrice = Number(rawPrice.replace(/[$,\s]/g, ""));
+  if (!Number.isFinite(numericPrice)) return rawPrice;
+
+  return numericPrice.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
 }
 
 export default function Store() {
@@ -127,6 +145,17 @@ export default function Store() {
   const productsWithLinks = products.filter(
     (product) => Boolean(product.link)
   ).length;
+
+  function trackProductClick(product: Product) {
+    void trackEvent({
+      eventType: "affiliate_click",
+      pagePath: "/store",
+      pageTitle: document.title,
+      contentType: "product",
+      contentId: product.id,
+      contentTitle: product.name,
+    });
+  }
 
   return (
     <main className="min-h-[72vh] px-6 py-12">
@@ -568,15 +597,11 @@ export default function Store() {
                               {product.name}
                             </h3>
 
-                            {product.price !== undefined &&
-                              product.price !== null && (
-                                <span className="shrink-0 text-lg font-black text-cyan-300">
-                                  $
-                                  {Number(
-                                    product.price
-                                  ).toFixed(2)}
-                                </span>
-                              )}
+                            {formatProductPrice(product.price) && (
+                              <span className="shrink-0 text-right text-lg font-black text-cyan-300">
+                                {formatProductPrice(product.price)}
+                              </span>
+                            )}
                           </div>
 
                           {product.description && (
@@ -632,6 +657,7 @@ export default function Store() {
                               target="_blank"
                               rel="noopener noreferrer"
                               aria-label={`View ${product.name}`}
+                              onClick={() => trackProductClick(product)}
                             >
                               <BrandButton>
                                 Equip Loadout →
