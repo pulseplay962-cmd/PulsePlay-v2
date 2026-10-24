@@ -290,13 +290,12 @@ export async function scanGameReleases(
   month: number,
   limit = 10
 ): Promise<GameReleaseScanResult> {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/ai/game-releases/scan`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
         year,
         month,
@@ -324,13 +323,12 @@ export async function scanGameReleases(
 export async function generateGameReleasePackage(
   release: GameReleaseCandidate
 ): Promise<GameReleasePackage> {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/ai/game-releases/generate`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
         release,
       }),
