@@ -157,18 +157,26 @@ export async function updateAIContent(
   id:string,
   updates:Partial<AIContentItem>
 ){
-  const {
-    error
-  } = await supabase
-    .from("ai_content_queue")
-    .update(updates)
-    .eq("id", id);
-
-  if(error){
-    throw error;
+  if (updates.status !== "approved") {
+    throw new Error("Only approval status updates are supported.");
   }
 
-  return true;
+  const headers = await getAdminHeaders();
+  const response = await fetch(
+    `${API_URL}/api/ai/queue/${id}/status`,
+    {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ status: "approved" }),
+    }
+  );
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data?.error || "Failed updating AI content status.");
+  }
+
+  return data.item;
 }
 
 // =====================================
@@ -178,15 +186,18 @@ export async function updateAIContent(
 export async function deleteAIContent(
   id:string
 ){
-  const {
-    error
-  } = await supabase
-    .from("ai_content_queue")
-    .delete()
-    .eq("id", id);
+  const headers = await getAdminHeaders();
+  const response = await fetch(
+    `${API_URL}/api/ai/queue/${id}`,
+    {
+      method: "DELETE",
+      headers,
+    }
+  );
 
-  if(error){
-    throw error;
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data?.error || "Failed deleting AI content.");
   }
 
   return true;
