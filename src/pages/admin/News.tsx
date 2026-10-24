@@ -530,7 +530,7 @@ export default function News() {
 
             <p className="mt-1 text-sm text-slate-500">
               Complete the article, SEO,
-              social, and visual information.
+              social, and visual information. New articles stay in Draft unless you deliberately select Published.
             </p>
 
           </div>
