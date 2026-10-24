@@ -19,9 +19,15 @@ type Article = {
   image: string;
   category: string;
   featured: boolean;
-  published: boolean;
+  published: boolean | string;
+  status?: string;
+  published_at?: string | null;
   author: string;
 };
+
+function isArticlePublished(value: Article["published"]) {
+  return value === true || value === "true";
+}
 
 
 export default function News() {
@@ -102,6 +108,10 @@ export default function News() {
 
 
 
+      const existingArticle = editingId
+        ? articles.find((item) => item.id === editingId)
+        : undefined;
+
       const article = {
 
         title,
@@ -122,7 +132,13 @@ export default function News() {
 
         featured,
 
-        published,
+        published: published ? "true" : "false",
+
+        status: published ? "published" : "draft",
+
+        published_at: published
+          ? existingArticle?.published_at || new Date().toISOString()
+          : null,
 
         author: "PulsePlay",
 
@@ -188,7 +204,7 @@ export default function News() {
 
     setFeatured(article.featured);
 
-    setPublished(article.published);
+    setPublished(isArticlePublished(article.published));
 
     setImageFile(null);
 

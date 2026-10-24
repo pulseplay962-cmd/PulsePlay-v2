@@ -19,7 +19,7 @@ export type NewsArticle = {
 
     author:string;
 
-    published:boolean;
+    published:boolean | string;
 
     featured:boolean;
 
@@ -29,7 +29,7 @@ export type NewsArticle = {
 
     created_at?:string;
 
-    published_at?:string;
+    published_at?:string | null;
 
     meta_description?:string | null;
 
@@ -111,7 +111,11 @@ export async function getPublishedNews(){
             .select("*")
             .eq(
                 "published",
-                true
+                "true"
+            )
+            .eq(
+                "status",
+                "published"
             )
             .order(
                 "created_at",
@@ -150,6 +154,14 @@ export async function getFeaturedNews(){
             .eq(
                 "featured",
                 true
+            )
+            .eq(
+                "published",
+                "true"
+            )
+            .eq(
+                "status",
+                "published"
             )
             .order(
                 "created_at",
@@ -193,6 +205,8 @@ export async function getNewsBySlug(
             .from("news")
             .select("*")
             .eq("slug", slug)
+            .eq("published", "true")
+            .eq("status", "published")
             .maybeSingle();
 
 
@@ -385,7 +399,7 @@ export async function saveAIDraft(
 
                     featured:false,
 
-                    published:false,
+                    published:"false",
 
                     author:
                     "PulsePlay AI",

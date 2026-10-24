@@ -4,6 +4,18 @@ const API_URL =
   import.meta.env.VITE_API_URL ||
   "http://localhost:5000";
 
+async function getAdminHeaders(): Promise<Record<string, string>> {
+  const { data, error } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (error || !token) {
+    throw new Error("Please sign in with an administrator account to use the AI News Worker.");
+  }
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 export type AIContentItem = {
   id:string;
   title:string;
@@ -26,13 +38,12 @@ export type AIContentItem = {
 // =====================================
 
 export async function refreshAINews() {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/news/refresh-ai`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     }
   );
 
@@ -53,8 +64,10 @@ export async function refreshAINews() {
 // =====================================
 
 export async function getAIContent(): Promise<AIContentItem[]> {
+  const headers = await getAdminHeaders();
   const response = await fetch(
-    `${API_URL}/api/ai/queue`
+    `${API_URL}/api/ai/queue`,
+    { headers }
   );
 
   const data = await response.json().catch(() => ({}));
@@ -73,14 +86,13 @@ export async function getAIContent(): Promise<AIContentItem[]> {
 // =====================================
 
 export async function generateWeeklyContent(){
+  const headers = await getAdminHeaders();
   const response =
     await fetch(
       `${API_URL}/api/ai/generate-weekly-save`,
       {
         method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
+        headers,
       }
     );
 
@@ -109,14 +121,13 @@ export async function generateAIImage(
     id
   );
 
+  const headers = await getAdminHeaders();
   const response =
     await fetch(
       `${API_URL}/api/ai/image/${id}`,
       {
         method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
+        headers,
       }
     );
 
@@ -146,18 +157,26 @@ export async function updateAIContent(
   id:string,
   updates:Partial<AIContentItem>
 ){
-  const {
-    error
-  } = await supabase
-    .from("ai_content_queue")
-    .update(updates)
-    .eq("id", id);
-
-  if(error){
-    throw error;
+  if (updates.status !== "approved") {
+    throw new Error("Only approval status updates are supported.");
   }
 
-  return true;
+  const headers = await getAdminHeaders();
+  const response = await fetch(
+    `${API_URL}/api/ai/queue/${id}/status`,
+    {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ status: "approved" }),
+    }
+  );
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data?.error || "Failed updating AI content status.");
+  }
+
+  return data.item;
 }
 
 // =====================================
@@ -167,15 +186,18 @@ export async function updateAIContent(
 export async function deleteAIContent(
   id:string
 ){
-  const {
-    error
-  } = await supabase
-    .from("ai_content_queue")
-    .delete()
-    .eq("id", id);
+  const headers = await getAdminHeaders();
+  const response = await fetch(
+    `${API_URL}/api/ai/queue/${id}`,
+    {
+      method: "DELETE",
+      headers,
+    }
+  );
 
-  if(error){
-    throw error;
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data?.error || "Failed deleting AI content.");
   }
 
   return true;
@@ -188,14 +210,13 @@ export async function deleteAIContent(
 export async function publishAIContent(
   id:string
 ){
+  const headers = await getAdminHeaders();
   const response =
     await fetch(
       `${API_URL}/api/ai/publish/${id}`,
       {
         method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
+        headers,
       }
     );
 
@@ -261,7 +282,7 @@ export type GameReleasePublishResult = {
 };
 
 // =====================================
-// Scan Game Releases
+// Scan Game Releases (administrator session required)
 // =====================================
 
 export async function scanGameReleases(
@@ -269,13 +290,12 @@ export async function scanGameReleases(
   month: number,
   limit = 10
 ): Promise<GameReleaseScanResult> {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/ai/game-releases/scan`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
         year,
         month,
@@ -303,13 +323,12 @@ export async function scanGameReleases(
 export async function generateGameReleasePackage(
   release: GameReleaseCandidate
 ): Promise<GameReleasePackage> {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/ai/game-releases/generate`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
         release,
       }),
@@ -386,13 +405,12 @@ export async function publishGameRelease(
 
 
 export async function refreshAINewsTest() {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/news/refresh-ai?test=true`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     }
   );
 
