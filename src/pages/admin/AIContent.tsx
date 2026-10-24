@@ -6,6 +6,7 @@ import {
     generateAIImage,
     updateAIContent,
     deleteAIContent,
+    publishAIContent,
     type AIContentItem,
 } from "../../services/aiContent";
 
@@ -224,27 +225,7 @@ export default function AIContentStudio() {
 
             setError("");
 
-            const response =
-                await fetch(
-                    `http://localhost:5000/api/ai/publish/${id}`,
-                    {
-                        method: "POST"
-                    }
-                );
-
-
-            const result =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    result.error ||
-                    "Publishing failed"
-                );
-
-            }
+            await publishAIContent(id);
 
 
             await loadContent();
