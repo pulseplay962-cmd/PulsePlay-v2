@@ -29,7 +29,7 @@ export type NewsArticle = {
 
     created_at?:string;
 
-    published_at?:string;
+    published_at?:string | null;
 
     meta_description?:string | null;
 
