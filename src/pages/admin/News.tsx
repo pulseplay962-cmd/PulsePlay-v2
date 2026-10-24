@@ -170,6 +170,10 @@ export default function News() {
        * =========================
        */
 
+      const existingArticle = editingId
+        ? articles.find((item) => item.id === editingId)
+        : undefined;
+
       const article = {
         title: title.trim(),
 
@@ -186,6 +190,10 @@ export default function News() {
         featured,
 
         published,
+        status: published ? "published" : "draft",
+        published_at: published
+          ? existingArticle?.published_at || new Date().toISOString()
+          : null,
 
         author: author.trim() || "PulsePlay",
 
@@ -347,11 +355,16 @@ export default function News() {
     article: NewsArticle
   ) {
     try {
+      const nextPublished = !article.published;
+
       await updateNews(
         article.id,
         {
-          published:
-            !article.published,
+          published: nextPublished,
+          status: nextPublished ? "published" : "draft",
+          published_at: nextPublished
+            ? article.published_at || new Date().toISOString()
+            : null,
         }
       );
 
