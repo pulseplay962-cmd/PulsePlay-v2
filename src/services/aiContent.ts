@@ -4,6 +4,18 @@ const API_URL =
   import.meta.env.VITE_API_URL ||
   "http://localhost:5000";
 
+async function getAdminHeaders(): Promise<Record<string, string>> {
+  const { data, error } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (error || !token) {
+    throw new Error("Please sign in with an administrator account to use the AI News Worker.");
+  }
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 export type AIContentItem = {
   id:string;
   title:string;
@@ -26,13 +38,12 @@ export type AIContentItem = {
 // =====================================
 
 export async function refreshAINews() {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/news/refresh-ai`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     }
   );
 
@@ -53,8 +64,10 @@ export async function refreshAINews() {
 // =====================================
 
 export async function getAIContent(): Promise<AIContentItem[]> {
+  const headers = await getAdminHeaders();
   const response = await fetch(
-    `${API_URL}/api/ai/queue`
+    `${API_URL}/api/ai/queue`,
+    { headers }
   );
 
   const data = await response.json().catch(() => ({}));
@@ -73,14 +86,13 @@ export async function getAIContent(): Promise<AIContentItem[]> {
 // =====================================
 
 export async function generateWeeklyContent(){
+  const headers = await getAdminHeaders();
   const response =
     await fetch(
       `${API_URL}/api/ai/generate-weekly-save`,
       {
         method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
+        headers,
       }
     );
 
@@ -109,14 +121,13 @@ export async function generateAIImage(
     id
   );
 
+  const headers = await getAdminHeaders();
   const response =
     await fetch(
       `${API_URL}/api/ai/image/${id}`,
       {
         method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
+        headers,
       }
     );
 
@@ -188,14 +199,13 @@ export async function deleteAIContent(
 export async function publishAIContent(
   id:string
 ){
+  const headers = await getAdminHeaders();
   const response =
     await fetch(
       `${API_URL}/api/ai/publish/${id}`,
       {
         method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
+        headers,
       }
     );
 
@@ -386,13 +396,12 @@ export async function publishGameRelease(
 
 
 export async function refreshAINewsTest() {
+  const headers = await getAdminHeaders();
   const response = await fetch(
     `${API_URL}/api/news/refresh-ai?test=true`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     }
   );
 
