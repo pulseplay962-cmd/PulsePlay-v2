@@ -24,18 +24,18 @@ export default function MainLayout() {
    * Analytics
    * ======================================
    *
-   * Track every public page navigation.
-   *
-   * Because MainLayout wraps the public
-   * website, we only need this tracking
-   * code in one place.
+   * Track public page navigation here, except
+   * news articles. NewsArticle tracks those
+   * after loading the article so it can attach
+   * the article ID/title; skipping them here
+   * prevents duplicate page-view events.
    */
 
   useEffect(() => {
 
-    trackPageView(
-      location.pathname
-    );
+    if (!location.pathname.startsWith("/news/")) {
+      trackPageView(location.pathname);
+    }
 
     setPageBooting(true);
     const timer = window.setTimeout(() => setPageBooting(false), 10000);
