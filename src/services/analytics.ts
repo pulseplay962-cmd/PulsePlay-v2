@@ -154,140 +154,137 @@ function getSessionId(): string {
  * ======================================
  */
 
-export async function trackEvent({
+const ANALYTICS_MAX_ATTEMPTS = 3;
+const ANALYTICS_RETRY_DELAYS_MS = [300, 900];
 
-  eventType,
-
-  pagePath,
-
-  pageTitle,
-
-  contentType,
-
-  contentId,
-
-  contentTitle,
-
-}: {
-
-  eventType: string;
-
-  pagePath?: string;
-
-  pageTitle?: string;
-
-  contentType?: string;
-
-  contentId?: string;
-
-  contentTitle?: string;
-
-}) {
-
-
-  try {
-
-
-    const sessionId =
-      getSessionId();
-
-
-    const referrer =
-      document.referrer || null;
-
-
-    const userAgent =
-      navigator.userAgent || null;
-
-
-    const payload = {
-
-      session_id:
-        sessionId,
-
-      event_type:
-        eventType,
-
-      page_path:
-        pagePath ||
-        window.location.pathname,
-
-      page_title:
-        pageTitle ||
-        document.title,
-
-      content_type:
-        contentType ||
-        null,
-
-      content_id:
-        contentId ||
-        null,
-
-      content_title:
-        contentTitle ||
-        null,
-
-      referrer,
-
-      user_agent:
-        userAgent,
-
-    };
-
-
-    console.log(
-      "📊 PULSEPLAY ANALYTICS EVENT:",
-      payload
-    );
-
-
-    const {
-      data,
-      error,
-    } = await supabase
-      .from("analytics_events")
-      .insert(payload)
-      .select()
-      .single();
-
-
-    if (error) {
-
-
-      console.error(
-        "❌ ANALYTICS INSERT ERROR:",
-        error
-      );
-
-
-      return null;
-
-    }
-
-
-    console.log(
-      "✅ ANALYTICS EVENT RECORDED:",
-      data
-    );
-
-
-    return data;
-
-
-  } catch (error) {
-
-
-    console.error(
-      "❌ ANALYTICS ERROR:",
-      error
-    );
-
-
-    return null;
-
+function generateEventId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
   }
 
+  // RFC 4122-style UUID fallback for older browser contexts.
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (character) => {
+    const random = Math.floor(Math.random() * 16);
+    const value = character === "x" ? random : (random & 0x3) | 0x8;
+    return value.toString(16);
+  });
+}
+
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+}
+
+/*
+ * Use the same client-generated primary key for every retry. The database
+ * primary key plus upsert(ignoreDuplicates) makes an uncertain retry
+ * idempotent without requiring SELECT permission for public visitors.
+ */
+export async function trackEvent({
+  eventType,
+  pagePath,
+  pageTitle,
+  contentType,
+  contentId,
+  contentTitle,
+}: {
+  eventType: string;
+  pagePath?: string;
+  pageTitle?: string;
+  contentType?: string;
+  contentId?: string;
+  contentTitle?: string;
+}) {
+  const eventId = generateEventId();
+
+  try {
+    const sessionId = getSessionId();
+    const referrer = document.referrer || null;
+    const userAgent = navigator.userAgent || null;
+
+    const payload = {
+      id: eventId,
+      session_id: sessionId,
+      event_type: eventType,
+      page_path: pagePath || window.location.pathname,
+      page_title: pageTitle || document.title,
+      content_type: contentType || null,
+      content_id: contentId || null,
+      content_title: contentTitle || null,
+      referrer,
+      user_agent: userAgent,
+    };
+
+    console.debug("📊 PULSEPLAY ANALYTICS EVENT:", {
+      id: eventId,
+      event_type: payload.event_type,
+      page_path: payload.page_path,
+      attempt_limit: ANALYTICS_MAX_ATTEMPTS,
+    });
+
+    for (let attempt = 1; attempt <= ANALYTICS_MAX_ATTEMPTS; attempt += 1) {
+      let writeError: { code?: string; message: string } | null = null;
+
+      try {
+        const { error } = await supabase
+          .from("analytics_events")
+          .upsert(payload, {
+            onConflict: "id",
+            ignoreDuplicates: true,
+          });
+
+        if (!error) {
+          console.debug("✅ PULSEPLAY ANALYTICS EVENT ACKNOWLEDGED:", {
+            id: eventId,
+            event_type: eventType,
+            page_path: payload.page_path,
+            attempt,
+          });
+
+          return payload;
+        }
+
+        writeError = {
+          code: error.code,
+          message: error.message,
+        };
+      } catch (error) {
+        writeError = {
+          message: error instanceof Error ? error.message : String(error),
+        };
+      }
+
+      console.error("❌ PULSEPLAY ANALYTICS INSERT ATTEMPT FAILED:", {
+        id: eventId,
+        event_type: eventType,
+        page_path: payload.page_path,
+        attempt,
+        maxAttempts: ANALYTICS_MAX_ATTEMPTS,
+        code: writeError.code,
+        message: writeError.message,
+      });
+
+      if (attempt < ANALYTICS_MAX_ATTEMPTS) {
+        await wait(ANALYTICS_RETRY_DELAYS_MS[attempt - 1] ?? 900);
+      }
+    }
+
+    console.error("❌ PULSEPLAY ANALYTICS EVENT DROPPED AFTER RETRIES:", {
+      id: eventId,
+      event_type: eventType,
+      page_path: pagePath || window.location.pathname,
+      attempts: ANALYTICS_MAX_ATTEMPTS,
+    });
+
+    return null;
+  } catch (error) {
+    console.error("❌ PULSEPLAY ANALYTICS UNEXPECTED ERROR:", {
+      id: eventId,
+      event_type: eventType,
+      error,
+    });
+
+    return null;
+  }
 }
 
 
