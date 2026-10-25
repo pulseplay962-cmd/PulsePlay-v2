@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import { retryAnalyticsWrite } from "./analyticsRetry.js";
 
 console.log("🔥 PULSEPLAY ANALYTICS SERVICE LOADED");
 
@@ -221,10 +222,8 @@ export async function trackEvent({
       attempt_limit: ANALYTICS_MAX_ATTEMPTS,
     });
 
-    for (let attempt = 1; attempt <= ANALYTICS_MAX_ATTEMPTS; attempt += 1) {
-      let writeError: { code?: string; message: string } | null = null;
-
-      try {
+    const retryResult = await retryAnalyticsWrite(
+      async () => {
         const { error } = await supabase
           .from("analytics_events")
           .upsert(payload, {
@@ -232,47 +231,44 @@ export async function trackEvent({
             ignoreDuplicates: true,
           });
 
-        if (!error) {
-          console.debug("✅ PULSEPLAY ANALYTICS EVENT ACKNOWLEDGED:", {
+        return error
+          ? { code: error.code, message: error.message }
+          : null;
+      },
+      {
+        maxAttempts: ANALYTICS_MAX_ATTEMPTS,
+        delays: ANALYTICS_RETRY_DELAYS_MS,
+        wait,
+        onFailure: ({ attempt, maxAttempts, error }) => {
+          const writeError = error as { code?: string; message?: string };
+          console.error("❌ PULSEPLAY ANALYTICS INSERT ATTEMPT FAILED:", {
             id: eventId,
             event_type: eventType,
             page_path: payload.page_path,
             attempt,
+            maxAttempts,
+            code: writeError.code,
+            message: writeError.message ?? String(error),
           });
+        },
+      },
+    );
 
-          return payload;
-        }
-
-        writeError = {
-          code: error.code,
-          message: error.message,
-        };
-      } catch (error) {
-        writeError = {
-          message: error instanceof Error ? error.message : String(error),
-        };
-      }
-
-      console.error("❌ PULSEPLAY ANALYTICS INSERT ATTEMPT FAILED:", {
+    if (retryResult.success) {
+      console.debug("✅ PULSEPLAY ANALYTICS EVENT ACKNOWLEDGED:", {
         id: eventId,
         event_type: eventType,
         page_path: payload.page_path,
-        attempt,
-        maxAttempts: ANALYTICS_MAX_ATTEMPTS,
-        code: writeError.code,
-        message: writeError.message,
+        attempt: retryResult.attempt,
       });
-
-      if (attempt < ANALYTICS_MAX_ATTEMPTS) {
-        await wait(ANALYTICS_RETRY_DELAYS_MS[attempt - 1] ?? 900);
-      }
+      return payload;
     }
 
     console.error("❌ PULSEPLAY ANALYTICS EVENT DROPPED AFTER RETRIES:", {
       id: eventId,
       event_type: eventType,
       page_path: pagePath || window.location.pathname,
-      attempts: ANALYTICS_MAX_ATTEMPTS,
+      attempts: retryResult.attempts,
     });
 
     return null;
