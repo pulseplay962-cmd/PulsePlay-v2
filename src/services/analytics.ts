@@ -222,22 +222,35 @@ export async function trackEvent({
     });
 
     for (let attempt = 1; attempt <= ANALYTICS_MAX_ATTEMPTS; attempt += 1) {
-      const { error } = await supabase
-        .from("analytics_events")
-        .upsert(payload, {
-          onConflict: "id",
-          ignoreDuplicates: true,
-        });
+      let writeError: { code?: string; message: string } | null = null;
 
-      if (!error) {
-        console.debug("✅ PULSEPLAY ANALYTICS EVENT ACKNOWLEDGED:", {
-          id: eventId,
-          event_type: eventType,
-          page_path: payload.page_path,
-          attempt,
-        });
+      try {
+        const { error } = await supabase
+          .from("analytics_events")
+          .upsert(payload, {
+            onConflict: "id",
+            ignoreDuplicates: true,
+          });
 
-        return payload;
+        if (!error) {
+          console.debug("✅ PULSEPLAY ANALYTICS EVENT ACKNOWLEDGED:", {
+            id: eventId,
+            event_type: eventType,
+            page_path: payload.page_path,
+            attempt,
+          });
+
+          return payload;
+        }
+
+        writeError = {
+          code: error.code,
+          message: error.message,
+        };
+      } catch (error) {
+        writeError = {
+          message: error instanceof Error ? error.message : String(error),
+        };
       }
 
       console.error("❌ PULSEPLAY ANALYTICS INSERT ATTEMPT FAILED:", {
@@ -246,8 +259,8 @@ export async function trackEvent({
         page_path: payload.page_path,
         attempt,
         maxAttempts: ANALYTICS_MAX_ATTEMPTS,
-        code: "code" in error ? error.code : undefined,
-        message: error.message,
+        code: writeError.code,
+        message: writeError.message,
       });
 
       if (attempt < ANALYTICS_MAX_ATTEMPTS) {
