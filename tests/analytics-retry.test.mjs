@@ -1,6 +1,23 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { retryAnalyticsWrite } from "../src/services/analyticsRetry.js";
+
+const analyticsSource = readFileSync(
+  new URL("../src/services/analytics.ts", import.meta.url),
+  "utf8",
+);
+
+test("analytics service reuses one event id and configures duplicate-safe upsert", () => {
+  // This is a source-contract test: it verifies the production service wiring
+  // without importing the app's Supabase client or contacting any database.
+  assert.match(analyticsSource, /const eventId = generateEventId\(\);/);
+  assert.match(analyticsSource, /const payload = \{[\s\S]*?id:\s*eventId,/);
+  assert.match(
+    analyticsSource,
+    /retryAnalyticsWrite\(\s*async\s*\(\)\s*=>\s*\{[\s\S]*?\.upsert\(payload,\s*\{\s*onConflict:\s*"id",\s*ignoreDuplicates:\s*true,\s*\}\)/,
+  );
+});
 
 test("retries a failed write and succeeds on the next attempt", async () => {
   const eventIds = [];
