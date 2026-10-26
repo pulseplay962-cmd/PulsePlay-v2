@@ -33,6 +33,7 @@ export default function AIContentStudio() {
   const [testImageUrl, setTestImageUrl] = useState("");
   const [showFreshOnly, setShowFreshOnly] = useState(false);
   const [freshBatchCount, setFreshBatchCount] = useState(0);
+  const [deduplicationReport, setDeduplicationReport] = useState<Record<string, number> | null>(null);
   const [testMode, setTestMode] = useState(false);
   const [testImagePrompt, setTestImagePrompt] = useState(
     "A cinematic futuristic gaming setup with dark neon purple and cyan lighting, premium editorial gaming aesthetic, no logos, no text."
@@ -90,6 +91,7 @@ export default function AIContentStudio() {
 
       const result = await refreshAINewsTest();
       console.log("AI NEWS NO-CREDIT TEST RESULT:", result);
+      setDeduplicationReport(result?.deduplication || null);
 
       const testPosts = filterNews(result?.posts || []);
       setFreshBatchCount(testPosts.length);
@@ -111,6 +113,7 @@ export default function AIContentStudio() {
 
       const result = await refreshAINews();
       console.log("AI NEWS REFRESH RESULT:", result);
+      setDeduplicationReport(result?.deduplication || null);
 
       const freshPosts = filterNews(result?.posts || []);
       setFreshBatchCount(freshPosts.length);
@@ -336,6 +339,35 @@ export default function AIContentStudio() {
           )}
         </div>
       </div>
+
+      {deduplicationReport && (
+        <div className="pp-panel p-6">
+          <h2 className="text-xl font-black text-cyan-300">🔎 News Deduplication Report</h2>
+          <p className="mt-2 text-sm text-slate-400">
+            Counts from the latest refresh. Rejected counts explain why researched items were filtered before selection.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {([
+              ["researched", "Stories researched"],
+              ["rejected_total", "Total rejected"],
+              ["rejected_duplicate_url", "Duplicate URLs"],
+              ["rejected_exact_title", "Exact-title duplicates"],
+              ["rejected_similar_title", "Similar-title duplicates"],
+              ["rejected_recurring_puzzle_format", "Recurring puzzle formats"],
+              ["rejected_duplicate_in_batch", "Duplicates within this batch"],
+              ["fresh_candidates", "Fresh candidates"],
+              ["selected_candidates", "Selected stories"],
+            ] as const).map(([key, label]) => (
+              <div key={key} className="rounded-xl border border-slate-700 bg-black/20 p-4">
+                <p className="text-sm text-slate-400">{label}</p>
+                <p className="mt-1 text-2xl font-black text-white">
+                  {deduplicationReport[key] ?? 0}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="pp-panel border border-red-500/40 text-red-300">{error}</div>
