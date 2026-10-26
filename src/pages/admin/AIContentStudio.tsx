@@ -354,6 +354,7 @@ export default function AIContentStudio() {
               ["rejected_exact_title", "Exact-title duplicates"],
               ["rejected_similar_title", "Similar-title duplicates"],
               ["rejected_recurring_puzzle_format", "Recurring puzzle formats"],
+              ["rejected_off_topic_hardware", "Off-topic hardware stories"],
               ["rejected_duplicate_in_batch", "Duplicates within this batch"],
               ["fresh_candidates", "Fresh candidates"],
               ["selected_candidates", "Selected stories"],
