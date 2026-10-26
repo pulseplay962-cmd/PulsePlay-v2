@@ -16,7 +16,19 @@ async function getAdminHeaders(): Promise<Record<string, string>> {
   };
 }
 
+export type NewsQualityFlag = {
+  code: string;
+  severity: string;
+  message: string;
+};
+
+export type NewsQualityReview = {
+  flagged: boolean;
+  flags: NewsQualityFlag[];
+};
+
 export type AIContentItem = {
+  quality_review?: NewsQualityReview;
   id:string;
   title:string;
   content_type:string;

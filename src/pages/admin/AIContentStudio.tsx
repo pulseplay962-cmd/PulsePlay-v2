@@ -34,6 +34,7 @@ export default function AIContentStudio() {
   const [showFreshOnly, setShowFreshOnly] = useState(false);
   const [freshBatchCount, setFreshBatchCount] = useState(0);
   const [deduplicationReport, setDeduplicationReport] = useState<Record<string, number> | null>(null);
+  const [qualityReviewReport, setQualityReviewReport] = useState<{ reviewed_stories: number; flagged_stories: number; flag_counts: Record<string, number> } | null>(null);
   const [testMode, setTestMode] = useState(false);
   const [testImagePrompt, setTestImagePrompt] = useState(
     "A cinematic futuristic gaming setup with dark neon purple and cyan lighting, premium editorial gaming aesthetic, no logos, no text."
@@ -92,6 +93,7 @@ export default function AIContentStudio() {
       const result = await refreshAINewsTest();
       console.log("AI NEWS NO-CREDIT TEST RESULT:", result);
       setDeduplicationReport(result?.deduplication || null);
+      setQualityReviewReport(result?.quality_review || null);
 
       const testPosts = filterNews(result?.posts || []);
       setFreshBatchCount(testPosts.length);
@@ -114,6 +116,7 @@ export default function AIContentStudio() {
       const result = await refreshAINews();
       console.log("AI NEWS REFRESH RESULT:", result);
       setDeduplicationReport(result?.deduplication || null);
+      setQualityReviewReport(result?.quality_review || null);
 
       const freshPosts = filterNews(result?.posts || []);
       setFreshBatchCount(freshPosts.length);
@@ -370,6 +373,34 @@ export default function AIContentStudio() {
         </div>
       )}
 
+      {qualityReviewReport && (
+        <div className="pp-panel border border-amber-500/30 p-6">
+          <h2 className="text-xl font-black text-amber-300">🛡️ News Quality Review</h2>
+          <p className="mt-2 text-sm text-slate-400">
+            These are review prompts, not automatic rejections. Verify flagged details against the original source before approving publication.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-slate-700 bg-black/20 p-4">
+              <p className="text-sm text-slate-400">Stories reviewed</p>
+              <p className="mt-1 text-2xl font-black text-white">{qualityReviewReport.reviewed_stories}</p>
+            </div>
+            <div className="rounded-xl border border-amber-500/30 bg-black/20 p-4">
+              <p className="text-sm text-slate-400">Stories needing a closer look</p>
+              <p className="mt-1 text-2xl font-black text-amber-300">{qualityReviewReport.flagged_stories}</p>
+            </div>
+          </div>
+          {Object.keys(qualityReviewReport.flag_counts).length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {Object.entries(qualityReviewReport.flag_counts).map(([code, count]) => (
+                <span key={code} className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                  {code.replaceAll("_", " ")}: {count}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {error && (
         <div className="pp-panel border border-red-500/40 text-red-300">{error}</div>
       )}
@@ -476,6 +507,17 @@ export default function AIContentStudio() {
                             <p className="mt-3 text-sm text-slate-400">
                               Source: {item.source_name || "Original source"} — {item.source_url}
                             </p>
+                          )}
+
+                          {item.quality_review?.flagged && (
+                            <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+                              <h3 className="font-bold text-amber-300">⚠️ Review before approval</h3>
+                              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-100">
+                                {item.quality_review.flags.map((flag, index) => (
+                                  <li key={flag.code + index}>{flag.message}</li>
+                                ))}
+                              </ul>
+                            </div>
                           )}
 
                           {item.image_url && (
