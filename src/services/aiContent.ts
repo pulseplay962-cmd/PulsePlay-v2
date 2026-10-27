@@ -169,23 +169,40 @@ export async function updateAIContent(
   id:string,
   updates:Partial<AIContentItem>
 ){
-  if (updates.status !== "approved") {
-    throw new Error("Only approval status updates are supported.");
-  }
-
   const headers = await getAdminHeaders();
+  const isApprovalOnly =
+    updates.status === "approved" &&
+    Object.keys(updates).every((key) => key === "status");
+
   const response = await fetch(
-    `${API_URL}/api/ai/queue/${id}/status`,
+    isApprovalOnly
+      ? `${API_URL}/api/ai/queue/${id}/status`
+      : `${API_URL}/api/ai/queue/${id}/edit`,
     {
       method: "PATCH",
       headers,
-      body: JSON.stringify({ status: "approved" }),
+      body: JSON.stringify(
+        isApprovalOnly
+          ? { status: "approved" }
+          : {
+              title: updates.title,
+              body: updates.body,
+              social_caption: updates.social_caption,
+              image_prompt: updates.image_prompt,
+              scheduled_date: updates.scheduled_date,
+            }
+      ),
     }
   );
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data?.error || "Failed updating AI content status.");
+    throw new Error(
+      data?.error ||
+      (isApprovalOnly
+        ? "Failed updating AI content status."
+        : "Failed saving AI content edits.")
+    );
   }
 
   return data.item;
