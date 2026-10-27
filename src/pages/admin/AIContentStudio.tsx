@@ -39,6 +39,16 @@ export default function AIContentStudio() {
   const [testImagePrompt, setTestImagePrompt] = useState(
     "A cinematic futuristic gaming setup with dark neon purple and cyan lighting, premium editorial gaming aesthetic, no logos, no text."
   );
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const statusCounts = allContent.reduce<Record<string, number>>((counts, item) => {
+    const status = String(item.status || "unknown").toLowerCase();
+    counts[status] = (counts[status] || 0) + 1;
+    return counts;
+  }, {});
+  const visibleContent = statusFilter === "all"
+    ? content
+    : content.filter((item) => String(item.status || "").toLowerCase() === statusFilter);
 
   function filterNews(data: AIContentItem[]) {
     return (data || []).filter(
@@ -401,6 +411,57 @@ export default function AIContentStudio() {
         </div>
       )}
 
+      {!testMode && (
+        <div className="pp-panel p-6">
+          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-xl font-black text-cyan-300">Newsroom Review Queue</h2>
+              <p className="mt-1 text-sm text-slate-400">Queue totals across all loaded AI news. Publishing always requires your explicit action.</p>
+            </div>
+            <label className="text-sm text-slate-300">
+              Filter stories
+              <select
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value)}
+                className="ml-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-white"
+              >
+                <option value="all">All statuses</option>
+                <option value="pending">Pending review</option>
+                <option value="draft">Draft</option>
+                <option value="approved">Approved</option>
+                <option value="publishing">Publishing</option>
+                <option value="published">Published</option>
+                <option value="failed">Failed</option>
+              </select>
+            </label>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {[
+              ["pending", "Pending review"],
+              ["draft", "Drafts"],
+              ["approved", "Approved"],
+              ["publishing", "Publishing"],
+              ["published", "Published"],
+              ["failed", "Failed"],
+            ].map(([status, label]) => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={`rounded-xl border p-4 text-left transition ${statusFilter === status ? "border-cyan-400 bg-cyan-500/10" : "border-slate-700 bg-black/20 hover:border-slate-500"}`}
+              >
+                <p className="text-xs text-slate-400">{label}</p>
+                <p className="mt-1 text-2xl font-black text-white">{statusCounts[status] || 0}</p>
+              </button>
+            ))}
+          </div>
+          {statusFilter !== "all" && (
+            <button onClick={() => setStatusFilter("all")} className="mt-3 text-sm font-bold text-cyan-300 hover:text-cyan-200">
+              Clear status filter
+            </button>
+          )}
+        </div>
+      )}
+
       {error && (
         <div className="pp-panel border border-red-500/40 text-red-300">{error}</div>
       )}
@@ -428,16 +489,23 @@ export default function AIContentStudio() {
               <AIContentCalendar content={content} onSelect={(item) => startEdit(item)} />
 
               <div className="grid gap-6">
-                {content.length === 0 ? (
+                {visibleContent.length === 0 ? (
                   <div className="pp-panel p-8 text-center">
                     <div className="text-4xl">🤖</div>
                     <h2 className="mt-3 text-xl font-bold">No AI Content Yet</h2>
                     <p className="mt-2 text-slate-400">
-                      Click "Refresh Fresh Gaming + Hardware News" to create your first PulsePlay AI news package.
+                      {statusFilter !== "all"
+                        ? `No stories currently match the "${statusFilter}" status filter.`
+                        : "Click \"Refresh Fresh Gaming + Hardware News\" to create your first PulsePlay AI news package."}
                     </p>
+                    {statusFilter !== "all" && (
+                      <button onClick={() => setStatusFilter("all")} className="mt-4 rounded-xl bg-slate-700 px-4 py-2 font-bold">
+                        Show all statuses
+                      </button>
+                    )}
                   </div>
                 ) : (
-                  content.map((item) => (
+                  visibleContent.map((item) => (
                     <div key={item.id} className="pp-panel p-6">
                       {editingId === item.id && editForm ? (
                         <div className="space-y-4">
@@ -505,7 +573,15 @@ export default function AIContentStudio() {
 
                           {item.source_url && (
                             <p className="mt-3 text-sm text-slate-400">
-                              Source: {item.source_name || "Original source"} — {item.source_url}
+                              Source: {item.source_name || "Original source"} —{" "}
+                              <a
+                                href={item.source_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="break-all text-cyan-300 underline decoration-cyan-500/40 underline-offset-2 hover:text-cyan-200"
+                              >
+                                Open original source ↗
+                              </a>
                             </p>
                           )}
 
