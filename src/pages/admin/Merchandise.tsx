@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PODAgentPanel from "./PODAgentPanel";
 
 import {
   getMerchandise,
@@ -884,6 +885,8 @@ export default function Merchandise(){
         Manage PulsePlay print-on-demand merchandise.
 
       </p>
+
+      <PODAgentPanel />
 
 
 
