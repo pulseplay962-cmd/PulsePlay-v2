@@ -42,13 +42,19 @@ export default function PODAgentPanel() {
   useEffect(() => { void refreshConcepts(); }, []);
 
   function preparePrompt() {
-    const target = mode === "improve"
-      ? `Improvement concept for existing product: ${product.trim() || "existing PulsePlay merchandise"}.`
-      : "New PulsePlay print-on-demand product concept.";
-    setPrompt(`Create original PulsePlay gaming merchandise artwork. ${target} ${goal.trim()} Use a dark futuristic esports look with neon cyan, purple, and restrained pink accents. Bold clean shapes, strong contrast, print-friendly composition, no product mockup, no tiny text, no third-party logos. Artwork concept only.`);
     setPreview("");
     setError("");
     setNotice("");
+
+    if (mode === "improve" && !product.trim()) {
+      setError("Enter an existing product name before building the preview prompt.");
+      return;
+    }
+
+    const target = mode === "improve"
+      ? `Improvement concept for existing product: ${product.trim()}.`
+      : "New PulsePlay print-on-demand product concept.";
+    setPrompt(`Create original PulsePlay gaming merchandise artwork. ${target} ${goal.trim()} Use a dark futuristic esports look with neon cyan, purple, and restrained pink accents. Bold clean shapes, strong contrast, print-friendly composition, no product mockup, no tiny text, no third-party logos. Artwork concept only.`);
   }
 
   async function makePreview() {
