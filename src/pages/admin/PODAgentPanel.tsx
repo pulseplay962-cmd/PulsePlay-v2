@@ -119,18 +119,41 @@ export default function PODAgentPanel() {
     <h2 className="text-xl font-black text-purple-300">⚡ POD Merchandise Agent</h2>
     <p className="mt-2 text-sm text-gray-300">Generate design concepts, save artwork privately, and record approval decisions. Saving or approving a concept never creates a product or publishes it.</p>
 
-    <div className="mt-4 flex flex-wrap gap-3">
-      <button type="button" onClick={() => { setMode("improve"); setPreview(""); setError(""); setNotice(""); }} className={`rounded-lg px-4 py-2 font-bold ${mode === "improve" ? "bg-cyan-600" : "bg-gray-800"}`}>Improve Existing Product</button>
-      <button type="button" onClick={() => { setMode("new"); setPreview(""); setError(""); setNotice(""); }} className={`rounded-lg px-4 py-2 font-bold ${mode === "new" ? "bg-cyan-600" : "bg-gray-800"}`}>Suggest New Product</button>
+    <div className="mt-5 grid gap-3 sm:grid-cols-2" aria-label="Choose concept type">
+      <button
+        type="button"
+        aria-pressed={mode === "improve"}
+        onClick={() => { setMode("improve"); setPreview(""); setError(""); setNotice(""); }}
+        className={`rounded-xl border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-cyan-300 ${mode === "improve" ? "border-cyan-300 bg-cyan-950/70 ring-2 ring-cyan-400/60" : "border-gray-700 bg-gray-900 hover:border-gray-500"}`}
+      >
+        <span className="flex items-center gap-2 font-bold text-white"><span aria-hidden="true">{mode === "improve" ? "●" : "○"}</span> Improve Existing Product</span>
+        <span className="mt-2 block text-sm text-gray-300">Refine artwork for an item already in your catalog.</span>
+        <span className={`mt-3 inline-block rounded-full px-2 py-1 text-xs font-bold ${mode === "improve" ? "bg-cyan-500 text-gray-950" : "bg-gray-800 text-gray-300"}`}>{mode === "improve" ? "SELECTED" : "Choose this option"}</span>
+      </button>
+      <button
+        type="button"
+        aria-pressed={mode === "new"}
+        onClick={() => { setMode("new"); setPreview(""); setError(""); setNotice(""); }}
+        className={`rounded-xl border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-purple-300 ${mode === "new" ? "border-purple-300 bg-purple-950/70 ring-2 ring-purple-400/60" : "border-gray-700 bg-gray-900 hover:border-gray-500"}`}
+      >
+        <span className="flex items-center gap-2 font-bold text-white"><span aria-hidden="true">{mode === "new" ? "●" : "○"}</span> Suggest New Product</span>
+        <span className="mt-2 block text-sm text-gray-300">Create artwork for a potential new merchandise idea.</span>
+        <span className={`mt-3 inline-block rounded-full px-2 py-1 text-xs font-bold ${mode === "new" ? "bg-purple-400 text-gray-950" : "bg-gray-800 text-gray-300"}`}>{mode === "new" ? "SELECTED" : "Choose this option"}</span>
+      </button>
     </div>
 
-    {mode === "improve" && <label className="mt-4 block text-sm text-gray-300">Existing product
-      <input value={product} onChange={e => setProduct(e.target.value)} placeholder="e.g. Cyber Wolf mouse mat" className="mt-2 w-full rounded-lg border border-gray-700 bg-[#050912] p-3 text-white" />
-    </label>}
-    <label className="mt-4 block text-sm text-gray-300">Design direction / improvement goal
-      <textarea value={goal} onChange={e => setGoal(e.target.value)} rows={3} className="mt-2 w-full rounded-lg border border-gray-700 bg-[#050912] p-3 text-white" />
-    </label>
-    <button type="button" onClick={preparePrompt} className="mt-4 rounded-lg bg-gray-700 px-4 py-2 font-bold">Build Preview Prompt</button>
+    <div className="mt-5 rounded-lg border border-gray-700 bg-[#080e1b] p-4">
+      <h3 className="font-bold text-cyan-200">Step 1 · Describe your idea</h3>
+      <p className="mt-1 text-sm text-gray-300">{mode === "improve" ? "Enter the name of an existing product below. This is a text field, not a dropdown." : "Describe the new merchandise idea in the design direction field below."}</p>
+      {mode === "improve" && <label className="mt-4 block text-sm font-semibold text-white">Existing product name <span className="text-cyan-300">(required for this mode)</span>
+        <input value={product} onChange={e => setProduct(e.target.value)} placeholder="Type a product name, e.g. Cyber Wolf Desk Mat" aria-required="true" className="mt-2 w-full rounded-lg border border-cyan-700 bg-[#050912] p-3 text-white placeholder:text-gray-500 focus:border-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/30" />
+        <span className="mt-1 block text-xs text-gray-400">Tip: use the product's name as it appears in your Store catalog.</span>
+      </label>}
+      <label className="mt-4 block text-sm font-semibold text-white">Design direction / improvement goal
+        <textarea value={goal} onChange={e => setGoal(e.target.value)} rows={3} className="mt-2 w-full rounded-lg border border-gray-700 bg-[#050912] p-3 text-white focus:border-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/30" />
+      </label>
+      <button type="button" onClick={preparePrompt} className="mt-4 rounded-lg bg-cyan-700 px-4 py-2 font-bold text-white hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-300">Step 2 · Build Preview Prompt</button>
+    </div>
     <label className="mt-4 block text-sm text-gray-300">Preview prompt (review or edit before generating)
       <textarea value={prompt} onChange={e => setPrompt(e.target.value)} rows={4} maxLength={4000} className="mt-2 w-full rounded-lg border border-gray-700 bg-[#050912] p-3 text-white" />
     </label>
