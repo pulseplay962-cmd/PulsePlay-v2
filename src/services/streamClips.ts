@@ -79,6 +79,10 @@ export async function renderTopStreamClips(id:string,limit=3){
   });
 }
 
+export async function renderSingleStreamClip(id:string){
+  return adminFetch(`/api/ai/stream-clips/clips/${encodeURIComponent(id)}/render`,{method:"POST"});
+}
+
 export async function renderVerticalStreamClip(id:string){
   return adminFetch(`/api/ai/stream-clips/clips/${encodeURIComponent(id)}/render-vertical`,{method:"POST"});
 }
