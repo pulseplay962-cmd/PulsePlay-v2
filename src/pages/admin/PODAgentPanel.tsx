@@ -18,7 +18,7 @@ export default function PODAgentPanel() {
   const [product, setProduct] = useState("");
   const [goal, setGoal] = useState("Make the design clearer and more distinctive while keeping it readable on merchandise.");
   const [prompt, setPrompt] = useState("Create original PulsePlay gaming merchandise artwork with a dark futuristic esports look, neon cyan and purple with restrained pink accents, bold shapes, strong contrast, print-friendly composition, no tiny text and no third-party logos.");
-  const [title, setTitle] = useState("PulsePlay Design Concept");
+  const [title, setTitle] = useState("New PulsePlay Merchandise Concept");
   const [preview, setPreview] = useState("");
   const [busy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -54,6 +54,15 @@ export default function PODAgentPanel() {
     const target = mode === "improve"
       ? `Improvement concept for existing product: ${product.trim()}.`
       : "New PulsePlay print-on-demand product concept.";
+    const suggestedTitle = mode === "improve"
+      ? `${product.trim()} — Artwork Improvement`
+      : (() => {
+          const idea = goal.trim().split(/[.!?\n—]/, 1)[0].replace(/^PulsePlay\s+/i, "").trim();
+          if (!idea || idea.toLowerCase().startsWith("make the design")) return "New PulsePlay Merchandise Concept";
+          const conciseIdea = idea.length > 90 ? `${idea.slice(0, 87).trimEnd()}…` : idea;
+          return conciseIdea;
+        })();
+    setTitle(suggestedTitle.slice(0, 160));
     setPrompt(`Create original PulsePlay gaming merchandise artwork. ${target} ${goal.trim()} Use a dark futuristic esports look with neon cyan, purple, and restrained pink accents. Bold clean shapes, strong contrast, print-friendly composition, no product mockup, no tiny text, no third-party logos. Artwork concept only.`);
   }
 
