@@ -31,6 +31,26 @@ export type StreamVod={
   analyzed_at?:string;
 };
 
+export type StreamClip={
+  id:string;
+  vod_id:string;
+  title:string;
+  description?:string;
+  status:string;
+  score?:number;
+  start_seconds:number;
+  end_seconds:number;
+  duration_seconds?:number;
+  moment_type?:string;
+  ai_reason?:string;
+  error?:string|null;
+  clip_url?:string|null;
+  vertical_clip_url?:string|null;
+  captioned_vertical_clip_url?:string|null;
+  created_at?:string;
+  ai_stream_vods?:{title?:string;url?:string;thumbnail_url?:string}|null;
+};
+
 export async function getStreamVods(sync=true):Promise<StreamVod[]>{
   const d=await adminFetch(`/api/ai/stream-clips/vods?sync=${sync?"true":"false"}&limit=20`);
   return d.vods||[];
@@ -39,4 +59,34 @@ export async function getStreamVods(sync=true):Promise<StreamVod[]>{
 export async function loadStreamVodToSite(id:string){
   const d=await adminFetch(`/api/ai/stream-clips/vods/${encodeURIComponent(id)}/load-to-site`,{method:"POST"});
   return d.video;
+}
+
+export async function getStreamClips(vodId?:string):Promise<StreamClip[]>{
+  const query=new URLSearchParams({limit:"100"});
+  if(vodId) query.set("vodId",vodId);
+  const d=await adminFetch(`/api/ai/stream-clips/clips?${query.toString()}`);
+  return d.clips||[];
+}
+
+export async function analyzeStreamVod(id:string){
+  return adminFetch(`/api/ai/stream-clips/vods/${encodeURIComponent(id)}/analyze`,{method:"POST"});
+}
+
+export async function renderTopStreamClips(id:string,limit=3){
+  return adminFetch(`/api/ai/stream-clips/vods/${encodeURIComponent(id)}/render-top`,{
+    method:"POST",
+    body:JSON.stringify({limit})
+  });
+}
+
+export async function renderSingleStreamClip(id:string){
+  return adminFetch(`/api/ai/stream-clips/clips/${encodeURIComponent(id)}/render`,{method:"POST"});
+}
+
+export async function renderVerticalStreamClip(id:string){
+  return adminFetch(`/api/ai/stream-clips/clips/${encodeURIComponent(id)}/render-vertical`,{method:"POST"});
+}
+
+export async function renderCaptionedVerticalStreamClip(id:string){
+  return adminFetch(`/api/ai/stream-clips/clips/${encodeURIComponent(id)}/render-captioned-vertical`,{method:"POST"});
 }
