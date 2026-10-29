@@ -182,7 +182,7 @@ export default function AIStreamClipStudio() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {clip.status === "candidate" && <button className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300 disabled:opacity-50" onClick={() => void runAction(clip.id, `Queueing “${clip.title}” for rendering...`, () => renderSingleStreamClip(clip.id))} disabled={!!workingId}>🎬 Render top clips</button>}
+              {(clip.status === "candidate" || clip.status === "failed") && !clip.clip_url && <button className="rounded-xl bg-cyan-400/20 px-4 py-2 font-bold text-cyan-300 disabled:opacity-50" onClick={() => void runAction(clip.id, `Queueing “${clip.title}” for rendering...`, () => renderSingleStreamClip(clip.id))} disabled={!!workingId}>🎬 Render this clip</button>}
               {clip.clip_url && !clip.vertical_clip_url && <button className="rounded-xl bg-purple-500/20 px-4 py-2 font-bold text-purple-200 disabled:opacity-50" onClick={() => void runAction(clip.id, `Queueing vertical render for “${clip.title}”...`, () => renderVerticalStreamClip(clip.id))} disabled={!!workingId}>📱 Make 9:16</button>}
               {clip.vertical_clip_url && !clip.captioned_vertical_clip_url && <button className="rounded-xl bg-pink-500/20 px-4 py-2 font-bold text-pink-200 disabled:opacity-50" onClick={() => void runAction(clip.id, `Generating captions and queueing “${clip.title}”...`, () => renderCaptionedVerticalStreamClip(clip.id))} disabled={!!workingId}>💬 Add Captions</button>}
             </div>
