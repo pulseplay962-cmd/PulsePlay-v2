@@ -53,8 +53,10 @@ export default function AIStreamClipStudio() {
       setError("");
       setStatus(label);
       const result = await action();
-      if (result?.queued !== undefined) {
-        setStatus(`Queued ${result.queued} clip render(s). Refresh the clip library in a moment to see progress.`);
+      if (Array.isArray(result?.queued)) {
+        setStatus(`Queued ${result.queued.length} clip render(s). Refresh the clip library in a moment to see progress.`);
+      } else if (result?.queued === true) {
+        setStatus(result.message || "Render request queued. Refresh the clip library in a moment to see progress.");
       } else if (result?.candidates) {
         setStatus(`Analysis complete: ${result.detectedMoments || result.candidates.length} moment(s) detected; ${result.candidates.length} candidate(s) saved.`);
       } else {
