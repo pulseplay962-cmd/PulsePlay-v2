@@ -266,6 +266,16 @@ export async function publishAIContent(
 // GAME RELEASE AI
 // =====================================
 
+export type GameReleaseDuplicateCheck = {
+  status: "new" | "already_listed" | "possible_match";
+  match: {
+    id?: string;
+    title: string;
+    release_date?: string | null;
+    platform?: string | null;
+  } | null;
+};
+
 export type GameReleaseCandidate = {
   title: string;
   release_date: string;
@@ -274,6 +284,7 @@ export type GameReleaseCandidate = {
   category?: string;
   source?: string;
   source_url?: string;
+  duplicate_check?: GameReleaseDuplicateCheck;
 };
 
 export type GameReleasePackage = {
