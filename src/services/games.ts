@@ -108,11 +108,7 @@ function findManualGameMatch(candidate: GameInput, records: Pick<Game,"id"|"titl
   if(known&&!overlap)continue;
   if(a&&b&&a!==b)throw new Error(`Possible duplicate: "${existing.title}" is already listed with release date ${b}. Check the date and platform before adding this game.`);
   if(!a||!b||!known)throw new Error(`Possible duplicate: "${existing.title}" may be the same release. Confirm its release date and platform before adding this game.`);
-  throw new Error(`This game release is already listed as "${existing.title}".`);
- }
-}
-
-/*
+  throw new Error(`This game release is already listed as "${existing.title}".`);/*
  * =========================
  * ADD GAME
  * =========================
