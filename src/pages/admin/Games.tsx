@@ -1002,6 +1002,28 @@ export default function Games() {
                           {candidate.title}
                         </h4>
 
+                        {candidate.duplicate_check?.status === "already_listed" && (
+                          <div className="mt-2 rounded-lg border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-xs font-bold text-rose-200">
+                            ALREADY IN LIBRARY — AI generation blocked
+                            {candidate.duplicate_check.match?.title && (
+                              <span className="ml-2 font-normal text-rose-100/80">
+                                Match: {candidate.duplicate_check.match.title}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {candidate.duplicate_check?.status === "possible_match" && (
+                          <div className="mt-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-bold text-amber-200">
+                            POSSIBLE MATCH — review the existing game before generating
+                            {candidate.duplicate_check.match?.title && (
+                              <span className="ml-2 font-normal text-amber-100/80">
+                                Match: {candidate.duplicate_check.match.title}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
                         <div className="flex flex-wrap gap-2 mt-2 text-xs">
 
                           <span className="px-2 py-1 rounded-md bg-white/5 text-slate-300">
@@ -1036,7 +1058,18 @@ export default function Games() {
                         onClick={() =>
                           handleGenerateGamePackage(candidate, index)
                         }
-                        disabled={releaseGenerating}
+                        disabled={
+                          releaseGenerating ||
+                          candidate.duplicate_check?.status === "already_listed" ||
+                          candidate.duplicate_check?.status === "possible_match"
+                        }
+                        title={
+                          candidate.duplicate_check?.status === "already_listed"
+                            ? "This game is already listed."
+                            : candidate.duplicate_check?.status === "possible_match"
+                              ? "Review the possible match in the Games library first."
+                              : undefined
+                        }
                         className="shrink-0 rounded-xl px-4 py-3 font-bold bg-purple-500/20 border border-purple-400/30 text-purple-200 hover:bg-purple-500/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
 
