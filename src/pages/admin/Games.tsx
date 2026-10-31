@@ -462,7 +462,7 @@ export default function Games() {
       );
 
       alert(
-        "Failed to save game."
+        error instanceof Error ? error.message : "Failed to save game."
       );
     } finally {
       setSaving(false);
