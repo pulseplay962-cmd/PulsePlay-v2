@@ -91,24 +91,87 @@ export type GameInput = {
   hashtags?: string | null;
 };
 
-const EDITION_TERMS = new Set(["remastered","remaster","remake","definitive","director","cut","deluxe","ultimate","complete","gold","goty","anniversary","enhanced","collector","collectors","edition"]);
-function normalizeGameTitle(value: string): string { return String(value||"").toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim(); }
-function editionKey(value: string): string { return normalizeGameTitle(value).split(" ").filter(t=>EDITION_TERMS.has(t)).sort().join(" "); }
-function platformKey(value?: string|null): Set<string> {
- const v=String(value||"").toLowerCase(), found=new Set<string>();
- const patterns:Array<[RegExp,string]>=[[/\b(?:ps5|playstation 5)\b/g,"ps5"],[/\b(?:ps4|playstation 4)\b/g,"ps4"],[/\b(?:xbox series x|xbox series s|xbox series x s|xbox series xs)\b/g,"xbox-series"],[/\b(?:xbox one)\b/g,"xbox-one"],[/\b(?:nintendo switch 2|switch 2)\b/g,"switch-2"],[/\b(?:nintendo switch|switch)\b/g,"switch"],[/\b(?:pc|windows|steam)\b/g,"pc"]];
- for(const [re,key] of patterns)if(re.test(v))found.add(key);return found;
+const EDITION_TERMS = new Set([
+  "remastered", "remaster", "remake", "definitive", "director", "cut",
+  "deluxe", "ultimate", "complete", "gold", "goty", "anniversary",
+  "enhanced", "collector", "collectors", "edition",
+]);
+
+function normalizeGameTitle(value: string): string {
+  return String(value || "").toLowerCase().replace(/[’']/g, "")
+    .replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 }
-function findManualGameMatch(candidate: GameInput, records: Pick<Game,"id"|"title"|"release_date"|"platform">[]) {
- const base=(value:string)=>normalizeGameTitle(value).split(" ").filter(t=>!EDITION_TERMS.has(t)).join(" ");
- for(const existing of records) {
-  if(!base(candidate.title)||base(candidate.title)!==base(existing.title)||editionKey(candidate.title)!==editionKey(existing.title))continue;
-  const a=String(candidate.release_date||"").slice(0,10),b=String(existing.release_date||"").slice(0,10);
-  const x=platformKey(candidate.platform),y=platformKey(existing.platform),known=x.size>0&&y.size>0,overlap=[...x].some(k=>y.has(k));
-  if(known&&!overlap)continue;
-  if(a&&b&&a!==b)throw new Error(`Possible duplicate: "${existing.title}" is already listed with release date ${b}. Check the date and platform before adding this game.`);
-  if(!a||!b||!known)throw new Error(`Possible duplicate: "${existing.title}" may be the same release. Confirm its release date and platform before adding this game.`);
-  throw new Error(`This game release is already listed as "${existing.title}".`);/*
+
+function editionKey(value: string): string {
+  return normalizeGameTitle(value).split(" ")
+    .filter((token) => EDITION_TERMS.has(token)).sort().join(" ");
+}
+
+function platformKey(value?: string | null): Set<string> {
+  const normalized = String(value || "").toLowerCase();
+  const patterns: Array<[RegExp, string]> = [
+    [/\b(?:ps5|playstation 5)\b/, "ps5"],
+    [/\b(?:ps4|playstation 4)\b/, "ps4"],
+    [/\b(?:xbox series x|xbox series s|xbox series x s|xbox series xs)\b/, "xbox-series"],
+    [/\b(?:xbox one)\b/, "xbox-one"],
+    [/\b(?:nintendo switch 2|switch 2)\b/, "switch-2"],
+    [/\b(?:nintendo switch|switch)\b/, "switch"],
+    [/\b(?:pc|windows|steam)\b/, "pc"],
+  ];
+  const found = new Set<string>();
+  for (const [pattern, token] of patterns) {
+    if (pattern.test(normalized)) found.add(token);
+  }
+  return found;
+}
+
+function findManualGameMatch(
+  candidate: GameInput,
+  records: Pick<Game, "id" | "title" | "release_date" | "platform">[],
+): void {
+  const baseTitle = (value: string) => normalizeGameTitle(value).split(" ")
+    .filter((token) => !EDITION_TERMS.has(token)).join(" ");
+
+  for (const existing of records) {
+    if (!baseTitle(candidate.title) ||
+        baseTitle(candidate.title) !== baseTitle(existing.title) ||
+        editionKey(candidate.title) !== editionKey(existing.title)) continue;
+
+    const candidateDate = String(candidate.release_date || "").slice(0, 10);
+    const existingDate = String(existing.release_date || "").slice(0, 10);
+    const candidatePlatforms = platformKey(candidate.platform);
+    const existingPlatforms = platformKey(existing.platform);
+    const platformsKnown = candidatePlatforms.size > 0 && existingPlatforms.size > 0;
+    const platformOverlap = [...candidatePlatforms].some((key) => existingPlatforms.has(key));
+
+    if (platformsKnown && !platformOverlap) continue;
+    if (candidateDate && existingDate && candidateDate !== existingDate) {
+      throw new Error(`Possible duplicate: "${existing.title}" is already listed with release date ${existingDate}. Check the date and platform before adding this game.`);
+    }
+    if (!candidateDate || !existingDate || !platformsKnown) {
+      throw new Error(`Possible duplicate: "${existing.title}" may be the same release. Confirm its release date and platform before adding this game.`);
+    }
+    throw new Error(`This game release is already listed as "${existing.title}".`);
+  }
+
+  const tokens = (value: string) => new Set(normalizeGameTitle(value).split(" ").filter(Boolean));
+  const incomingTokens = tokens(candidate.title);
+  for (const existing of records) {
+    if (editionKey(candidate.title) !== editionKey(existing.title)) continue;
+    const existingTokens = tokens(existing.title);
+    const overlap = [...incomingTokens].filter((token) => existingTokens.has(token)).length;
+    const similarity = overlap / new Set([...incomingTokens, ...existingTokens]).size;
+    const leftPlatforms = platformKey(candidate.platform);
+    const rightPlatforms = platformKey(existing.platform);
+    const platformsDiffer = leftPlatforms.size > 0 && rightPlatforms.size > 0 &&
+      ![...leftPlatforms].some((key) => rightPlatforms.has(key));
+    if (similarity >= 0.8 && existingTokens.size >= 2 && !platformsDiffer) {
+      throw new Error(`Possible duplicate: "${existing.title}" looks similar. Review the release and platform before adding this game.`);
+    }
+  }
+}
+
+/*
  * =========================
  * ADD GAME
  * =========================
