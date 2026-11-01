@@ -12,18 +12,14 @@ export type Feedback = {
 
 export async function submitFeedback(
     feedback: Omit<Feedback, "id" | "created_at">
-) {
-    const { data, error } = await supabase
+): Promise<void> {
+    const { error } = await supabase
         .from("feedback")
         .insert([
             feedback
-        ])
-        .select()
-        .single();
+        ]);
 
     if (error) {
         throw error;
     }
-
-    return data as Feedback;
 }
