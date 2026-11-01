@@ -19,16 +19,12 @@ export type PartnershipInquiry = {
 
 export async function submitPartnershipInquiry(
   inquiry: Omit<PartnershipInquiry, "id" | "status" | "admin_notes" | "created_at">
-) {
-  const { data, error } = await supabase
+): Promise<void> {
+  const { error } = await supabase
     .from("partnership_inquiries")
-    .insert([inquiry])
-    .select()
-    .single();
+    .insert([inquiry]);
 
   if (error) {
     throw error;
   }
-
-  return data as PartnershipInquiry;
 }
